@@ -2,17 +2,25 @@ package com.justplay.habittracker.ui.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.justplay.habittracker.R
 import com.justplay.habittracker.ui.screen.HomeScreen
 import com.justplay.habittracker.ui.screen.MoodStatScreen
@@ -32,37 +40,58 @@ enum class MainNavSuiteDest(
 @PreviewScreenSizes
 @Composable
 fun MainNavSuite() {
-    /**
-     * The current destination of the navigation suite.
-     */
-    var suiteCurrDest by rememberSaveable { mutableStateOf(MainNavSuiteDest.HOME) }
+    val navHost = rememberNavController()
+    val navBackStackEntry by navHost.currentBackStackEntryAsState()
+    val currDest = navBackStackEntry?.destination
 
     NavigationSuiteScaffold(
-        navigationSuiteItems = {
-            MainNavSuiteDest.entries.forEach { dest ->
-                item(
-                    icon = {
-                        Icon(
-                            painter = painterResource(dest.icon),
-                            contentDescription = stringResource(dest.title)
-                        )
-                    },
-                    label = { Text(stringResource(dest.title)) },
-                    selected = dest == suiteCurrDest,
-                    onClick = { suiteCurrDest = dest }
-                )
-            }
-        }
+        modifier = Modifier.fillMaxSize(),
+        navigationSuiteItems = getNavigationSuiteItems(currDest, navHost)
     ) {
-        MainNavSuiteDest.entries.forEach { dest ->
-            if (dest == suiteCurrDest) {
-                when(dest) {
-                    MainNavSuiteDest.HOME -> HomeScreen()
-                    MainNavSuiteDest.MOOD_STAT -> MoodStatScreen()
-                    MainNavSuiteDest.REPORT -> ReportScreen()
-                    MainNavSuiteDest.MY_HABITS -> MyHabitsScreen()
+        NavHost(
+            navController = navHost,
+            startDestination = MainNavSuiteDest.HOME.name
+        ) {
+            MainNavSuiteDest.entries.forEach { dest ->
+                composable(dest.name) {
+                    when (dest) {
+                        MainNavSuiteDest.HOME -> HomeScreen()
+                        MainNavSuiteDest.MOOD_STAT -> MoodStatScreen()
+                        MainNavSuiteDest.REPORT -> ReportScreen()
+                        MainNavSuiteDest.MY_HABITS -> MyHabitsScreen()
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun getNavigationSuiteItems(
+    currDest: NavDestination?,
+    navHost: NavHostController
+): NavigationSuiteScope.() -> Unit = {
+    MainNavSuiteDest.entries.forEach { dest ->
+        item(
+            selected = currDest?.hierarchy?.any {it.route == dest.name} == true,
+            onClick = {
+                navigateWithBackStackHandling(dest.name, navHost)
+            },
+            label = { Text(stringResource(dest.title))},
+            icon = {
+                Icon(painter = painterResource(dest.icon),
+                    contentDescription = stringResource(dest.title))
+            }
+        )
+    }
+}
+
+private fun navigateWithBackStackHandling(route: String, navHost: NavHostController) {
+    navHost.navigate(route) {
+        popUpTo(navHost.graph.findStartDestination().id) {
+            saveState = true
+        }
+        launchSingleTop = true
+        restoreState = true
     }
 }
