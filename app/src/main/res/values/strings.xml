@@ -6,4 +6,6 @@
     <string name="title_my_habits">My Habits</string>
     <string name="title_report">Report</string>
     <string name="title_setting">Setting</string>
+
+    <string name="desc_create_habit">Create Habit</string>
 </resources>

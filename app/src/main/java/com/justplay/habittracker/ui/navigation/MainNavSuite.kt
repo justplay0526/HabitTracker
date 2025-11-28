@@ -55,7 +55,9 @@ fun MainNavSuite() {
             MainNavSuiteDest.entries.forEach { dest ->
                 composable(dest.name) {
                     when (dest) {
-                        MainNavSuiteDest.HOME -> HomeScreen()
+                        MainNavSuiteDest.HOME -> HomeScreen(onFabClick =
+                            { /* TODO Create Habit Screen */ }
+                        )
                         MainNavSuiteDest.MOOD_STAT -> MoodStatScreen()
                         MainNavSuiteDest.REPORT -> ReportScreen()
                         MainNavSuiteDest.MY_HABITS -> MyHabitsScreen()

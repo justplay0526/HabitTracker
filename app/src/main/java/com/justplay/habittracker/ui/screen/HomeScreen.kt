@@ -17,32 +17,41 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.justplay.habittracker.R
-import com.justplay.habittracker.ui.view.Greeting
+
 
 @OptIn(ExperimentalMaterial3Api::class)
-@PreviewScreenSizes
 @Composable
 fun HomeScreen(
+    onFabClick: () -> Unit
 ) {
-    Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
-        CenterAlignedTopAppBar(
-            title = { Text(stringResource(R.string.title_home)) },
-            navigationIcon = {
-                Image(painter = painterResource(R.drawable.ic_habit_tracker_36),
-                    contentDescription = stringResource(R.string.app_name))
-            },
-            actions = {
-                IconButton(onClick = {/* TODO Setting Button */}) {
-                    Icon(imageVector = Icons.Default.MoreVert,
-                        contentDescription = stringResource(R.string.title_setting)
-                    )
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text(stringResource(R.string.title_home)) },
+                navigationIcon = {
+                    Image(painter = painterResource(R.drawable.ic_habit_tracker_36),
+                        contentDescription = stringResource(R.string.app_name))
+                },
+                actions = {
+                    IconButton(onClick = {/* TODO Setting Button */}) {
+                        Icon(imageVector = Icons.Default.MoreVert,
+                            contentDescription = stringResource(R.string.title_setting)
+                        )
+                    }
                 }
-            }
-        )
-    }) { innerPadding ->
-        Greeting(
-            name = stringResource(R.string.title_home),
-            modifier = Modifier.padding(innerPadding)
-        )
+            )
+        },
+        floatingActionButton = {
+            HomeScreenFab(onShortClick = onFabClick)
+        }
+    ) { innerPadding ->
+        HomePeriodPager(modifier = Modifier.padding(innerPadding))
     }
+}
+
+@PreviewScreenSizes
+@Composable
+fun HomeScreenPreView() {
+    HomeScreen {  }
 }
