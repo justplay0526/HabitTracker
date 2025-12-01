@@ -17,7 +17,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.justplay.habittracker.R
-
+import com.justplay.habittracker.ui.view.HomePeriodPager
+import com.justplay.habittracker.ui.view.HomeScreenFab
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -1,4 +1,4 @@
-package com.justplay.habittracker.ui.screen
+package com.justplay.habittracker.ui.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
