@@ -22,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.justplay.habittracker.R
+import com.justplay.habittracker.ui.screen.CreateNewHabitScreen
 import com.justplay.habittracker.ui.screen.HomeScreen
 import com.justplay.habittracker.ui.screen.MoodStatScreen
 import com.justplay.habittracker.ui.screen.MyHabitsScreen
@@ -35,6 +36,11 @@ enum class MainNavSuiteDest(
     MOOD_STAT(R.string.title_mood_stat, R.drawable.round_mood_24),
     REPORT(R.string.title_report, R.drawable.round_show_chart_24),
     MY_HABITS(R.string.title_my_habits, R.drawable.round_grid_view_24)
+}
+
+enum class HomeNavDest(
+) {
+    CREATE_NEW_HABIT
 }
 
 @PreviewScreenSizes
@@ -56,11 +62,20 @@ fun MainNavSuite() {
                 composable(dest.name) {
                     when (dest) {
                         MainNavSuiteDest.HOME -> HomeScreen(onFabClick =
-                            { /* TODO Create Habit Screen */ }
+                            { navHost.navigate(HomeNavDest.CREATE_NEW_HABIT.name) }
                         )
                         MainNavSuiteDest.MOOD_STAT -> MoodStatScreen()
                         MainNavSuiteDest.REPORT -> ReportScreen()
                         MainNavSuiteDest.MY_HABITS -> MyHabitsScreen()
+                    }
+                }
+            }
+            HomeNavDest.entries.forEach { dest ->
+                composable(dest.name) {
+                    when (dest) {
+                        HomeNavDest.CREATE_NEW_HABIT -> CreateNewHabitScreen(
+                            onBackClick = { navHost.popBackStack() }
+                        )
                     }
                 }
             }
