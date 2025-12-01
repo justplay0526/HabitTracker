@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import com.justplay.habittracker.R
 import kotlinx.coroutines.launch
@@ -47,7 +48,11 @@ fun HomeScreenFab(
 fun HomePeriodPager(
     modifier: Modifier
 ) {
-    val tabs = listOf("Today", "Weekly", "Overall")
+    val tabs = listOf(
+        stringResource(R.string.title_period_today),
+        stringResource(R.string.title_period_weekly),
+        stringResource(R.string.title_period_overall)
+    )
 
     val pagerState = rememberPagerState(
         initialPage = 0,
@@ -61,9 +66,8 @@ fun HomePeriodPager(
         Row(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .padding(4.dp),
+                .clip(RoundedCornerShape(8.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant),
             verticalAlignment = Alignment.CenterVertically
         ) {
             tabs.forEachIndexed { index, label ->
@@ -72,7 +76,7 @@ fun HomePeriodPager(
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .clip(RoundedCornerShape(16.dp))
+                        .clip(RoundedCornerShape(8.dp))
                         .background(
                             if (selected) MaterialTheme.colorScheme.primary
                             else Color.Transparent
@@ -103,10 +107,16 @@ fun HomePeriodPager(
             modifier = Modifier.fillMaxSize()
         ) { page ->
             when (page) {
-                0 -> Text("Today") // TODO Create Today Screen
-                1 -> Text("Weekly") // TODO Create Weekly Screen
-                2 -> Text("Overall") // TODO Create Overall Screen
+                0 -> Text(stringResource(R.string.title_period_today)) // TODO Create Today Screen
+                1 -> Text(stringResource(R.string.title_period_weekly)) // TODO Create Weekly Screen
+                2 -> Text(stringResource(R.string.title_period_overall)) // TODO Create Overall Screen
             }
         }
     }
+}
+
+@PreviewScreenSizes
+@Composable
+fun HomePeriodPagerPreView() {
+    HomePeriodPager(modifier = Modifier.fillMaxSize())
 }

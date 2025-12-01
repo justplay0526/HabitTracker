@@ -5,6 +5,9 @@
     <string name="title_home">Home</string>
     <string name="title_mood_stat">Mood Stat</string>
     <string name="title_my_habits">My Habits</string>
+    <string name="title_period_today">Today</string>
+    <string name="title_period_weekly">Weekly</string>
+    <string name="title_period_overall">Overall</string>
     <string name="title_report">Report</string>
     <string name="title_setting">Setting</string>
 
