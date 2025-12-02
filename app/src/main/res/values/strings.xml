@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">HabitTracker</string>
 
+    <string name="ex_habit_list">Set Small Goals</string>
+
     <string name="title_create_new_habit">Create New Habit</string>
     <string name="title_home">Home</string>
     <string name="title_mood_stat">Mood Stat</string>
