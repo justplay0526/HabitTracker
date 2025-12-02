@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">HabitTracker</string>
 
-    <string name="ex_habit_list">Set Small Goals</string>
+    <string name="ex_habit_list_1">Set Small Goals</string>
+    <string name="ex_habit_list_2">Work</string>
+    <string name="ex_habit_list_3">Meditation</string>
 
     <string name="title_create_new_habit">Create New Habit</string>
     <string name="title_home">Home</string>
