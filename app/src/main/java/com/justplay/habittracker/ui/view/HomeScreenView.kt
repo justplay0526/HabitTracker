@@ -28,10 +28,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import com.justplay.habittracker.R
+import com.justplay.habittracker.ui.screen.period.OverallScreen
+import com.justplay.habittracker.ui.screen.period.TodayScreen
+import com.justplay.habittracker.ui.screen.period.WeeklyScreen
 import kotlinx.coroutines.launch
 
 @Composable
-fun HomeScreenFab(
+fun HomeFab(
     onShortClick: () -> Unit
 ) {
     FloatingActionButton(
@@ -107,9 +110,9 @@ fun HomePeriodPager(
             modifier = Modifier.fillMaxSize()
         ) { page ->
             when (page) {
-                0 -> Text(stringResource(R.string.title_period_today)) // TODO Create Today Screen
-                1 -> Text(stringResource(R.string.title_period_weekly)) // TODO Create Weekly Screen
-                2 -> Text(stringResource(R.string.title_period_overall)) // TODO Create Overall Screen
+                0 -> TodayScreen()
+                1 -> WeeklyScreen()
+                2 -> OverallScreen()
             }
         }
     }

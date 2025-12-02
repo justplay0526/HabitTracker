@@ -18,7 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.justplay.habittracker.R
 import com.justplay.habittracker.ui.view.HomePeriodPager
-import com.justplay.habittracker.ui.view.HomeScreenFab
+import com.justplay.habittracker.ui.view.HomeFab
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,7 +44,7 @@ fun HomeScreen(
             )
         },
         floatingActionButton = {
-            HomeScreenFab(onShortClick = onFabClick)
+            HomeFab(onShortClick = onFabClick)
         }
     ) { innerPadding ->
         HomePeriodPager(modifier = Modifier.padding(innerPadding))
