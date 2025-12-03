@@ -5,6 +5,14 @@
     <string name="ex_habit_list_2">Work</string>
     <string name="ex_habit_list_3">Meditation</string>
 
+    <string name="text_repeat_freq_daily">Daily</string>
+    <string name="text_repeat_freq_weekly">Weekly</string>
+    <string name="text_repeat_freq_monthly">Monthly</string>
+
+    <string name="text_time_of_day_morning">Morning</string>
+    <string name="text_time_of_day_afternoon">Afternoon</string>
+    <string name="text_time_of_day_evening">Evening</string>
+
     <string name="title_create_new_habit">Create New Habit</string>
     <string name="title_home">Home</string>
     <string name="title_mood_stat">Mood Stat</string>
