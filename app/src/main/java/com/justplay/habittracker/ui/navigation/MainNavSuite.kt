@@ -4,12 +4,17 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItemColors
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
@@ -50,9 +55,20 @@ fun MainNavSuite() {
     val navBackStackEntry by navHost.currentBackStackEntryAsState()
     val currDest = navBackStackEntry?.destination
 
+    val itemColors = NavigationSuiteDefaults.itemColors(
+        navigationBarItemColors = NavigationBarItemDefaults.colors(
+            indicatorColor = Color.Transparent,
+            selectedIconColor = MaterialTheme.colorScheme.primary,
+            selectedTextColor = MaterialTheme.colorScheme.primary,
+            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+        ),
+    )
+
     NavigationSuiteScaffold(
         modifier = Modifier.fillMaxSize(),
-        navigationSuiteItems = getNavigationSuiteItems(currDest, navHost)
+        navigationSuiteItems =
+            getNavigationSuiteItems(currDest, navHost, itemColors)
     ) {
         NavHost(
             navController = navHost,
@@ -86,19 +102,31 @@ fun MainNavSuite() {
 @Composable
 private fun getNavigationSuiteItems(
     currDest: NavDestination?,
-    navHost: NavHostController
+    navHost: NavHostController,
+    itemColors: NavigationSuiteItemColors
 ): NavigationSuiteScope.() -> Unit = {
     MainNavSuiteDest.entries.forEach { dest ->
+        /**
+         * 是否為被選擇的導航欄
+         */
+        val isSelected = currDest?.hierarchy?.any {
+            it.route == dest.name
+        } == true
+
         item(
-            selected = currDest?.hierarchy?.any {it.route == dest.name} == true,
+            selected = isSelected,
             onClick = {
                 navigateWithBackStackHandling(dest.name, navHost)
             },
-            label = { Text(stringResource(dest.title))},
+            label = {
+                Text(stringResource(dest.title))
+            },
             icon = {
                 Icon(painter = painterResource(dest.icon),
-                    contentDescription = stringResource(dest.title))
-            }
+                    contentDescription = stringResource(dest.title)
+                )
+            },
+            colors = itemColors
         )
     }
 }

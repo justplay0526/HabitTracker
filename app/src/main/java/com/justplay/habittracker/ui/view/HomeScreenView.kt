@@ -38,11 +38,14 @@ fun HomeFab(
     onShortClick: () -> Unit
 ) {
     FloatingActionButton(
-        onClick = onShortClick
+        onClick = onShortClick,
+        containerColor = MaterialTheme.colorScheme.primary,
+        shape = RoundedCornerShape(50),
     ) {
         Icon(
             imageVector = Icons.Rounded.Add,
-            contentDescription = stringResource(R.string.desc_create_habit)
+            contentDescription = stringResource(R.string.desc_create_habit),
+            tint = MaterialTheme.colorScheme.onPrimary
         )
     }
 }
