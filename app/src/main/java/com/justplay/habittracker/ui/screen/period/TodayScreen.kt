@@ -3,8 +3,10 @@ package com.justplay.habittracker.ui.screen.period
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,6 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.toColorInt
 import com.justplay.habittracker.R
 import com.justplay.habittracker.ui.theme.AppTypography
 import com.justplay.habittracker.ui.view.DraggableItemWithActions
@@ -33,26 +36,25 @@ data class HabitUi(
 
 @Composable
 fun TodayScreen() {
-
     /**
      * TODO Replace with database
      */
     val habits = remember {
         mutableStateListOf(
             HabitUi(
-                color = Color.LightGray,
+                color = Color("#FC9CA0".toColorInt()),
                 title = R.string.ex_habit_list_1,
-                icon = R.mipmap.vec_grinning_face
+                icon = R.mipmap.vec_bulls_eye
             ),
             HabitUi(
-                color = Color.Cyan,
+                color = Color("#CCCCFB".toColorInt()),
                 title = R.string.ex_habit_list_2,
-                icon = R.mipmap.vec_grinning_face
+                icon = R.mipmap.vec_trophy
             ),
             HabitUi(
-                color = Color.Magenta ,
+                color = Color("#D0FCCC".toColorInt()) ,
                 title = R.string.ex_habit_list_3
-                , icon = R.mipmap.vec_grinning_face
+                , icon = R.mipmap.vec_smile_face_with_halo
             )
         ).toTypedArray()
     }
@@ -60,6 +62,7 @@ fun TodayScreen() {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
+            .padding(horizontal = 16.dp)
     ) {
         itemsIndexed(
             items = habits,
@@ -72,6 +75,7 @@ fun TodayScreen() {
                     modifier = it
                 )
             }
+            Spacer(modifier = Modifier.height(12.dp))
         }
     }
 }

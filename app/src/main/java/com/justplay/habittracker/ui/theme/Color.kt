@@ -2,7 +2,7 @@ package com.justplay.habittracker.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val primaryLight = Color(0xFF5A5891)
+val primaryLight = Color(0xFF8985E9)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFFE3DFFF)
 val onPrimaryContainerLight = Color(0xFF434078)
