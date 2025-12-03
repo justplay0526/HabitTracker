@@ -23,8 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.justplay.habittracker.R
 import com.justplay.habittracker.ui.theme.AppTypography
-import com.justplay.habittracker.ui.view.SwipeableItemWithActions
-
+import com.justplay.habittracker.ui.view.DraggableItemWithActions
 
 data class HabitUi(
     val color: Color,
@@ -34,7 +33,6 @@ data class HabitUi(
 
 @Composable
 fun TodayScreen() {
-
 
     /**
      * TODO Replace with database
@@ -67,10 +65,11 @@ fun TodayScreen() {
             items = habits,
             key = { _, habit -> habit.title }
         ) { _, habit ->
-            SwipeableItemWithActions {
+            DraggableItemWithActions {
                 HabitListBaseItem(color = habit.color,
                     habit.title,
-                    habit.icon
+                    habit.icon,
+                    modifier = it
                 )
             }
         }
@@ -83,10 +82,11 @@ val ListItemHeight = 68.dp
 fun HabitListBaseItem(
     color: Color,
     @StringRes headlineText: Int,
-    @DrawableRes leadingIcon: Int
+    @DrawableRes leadingIcon: Int,
+    modifier: Modifier = Modifier
 ) {
     ListItem(
-        modifier = Modifier
+        modifier = modifier
             .clip(RoundedCornerShape(8.dp))
             .height(ListItemHeight),
         colors = ListItemDefaults.colors(
