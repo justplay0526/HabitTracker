@@ -1,27 +1,65 @@
 <resources>
     <string name="app_name">HabitTracker</string>
-
+<!-- Button Text -->
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_ok">OK</string>
+    <string name="btn_save">Save</string>
+<!-- Example Content -->
     <string name="ex_habit_list_1">Set Small Goals</string>
     <string name="ex_habit_list_2">Work</string>
     <string name="ex_habit_list_3">Meditation</string>
-
+<!-- Hint -->
+    <string name="hint_habit_name">Habit Name</string>
+    <string name="hint_search_icon">Search Icon</string>
+    <string name="hint_task_name">Task Name</string>
+<!-- Text -->
+    <string name="text_all_day">All day</string>
+    <string name="text_date">Date</string>
+    <string name="text_days">Day</string>
+    <string name="text_emoji">Emoji</string>
+<!-- Habit Task Type -->
+    <string name="text_habit_task_regular">Regular Habit</string>
+    <string name="text_habit_task_one_time">One-Time Task</string>
+    <string name="text_icon">Icon</string>
+<!--Habit Repeat Frequency -->
     <string name="text_repeat_freq_daily">Daily</string>
     <string name="text_repeat_freq_weekly">Weekly</string>
     <string name="text_repeat_freq_monthly">Monthly</string>
-
+<!-- Time of Day -->
+    <string name="text_time_of_day_all">All</string>
     <string name="text_time_of_day_morning">Morning</string>
     <string name="text_time_of_day_afternoon">Afternoon</string>
     <string name="text_time_of_day_evening">Evening</string>
-
+    <string name="text_view_all">View All</string>
+<!-- Day of Week in one alphabet (Start From Sunday) -->
+    <string name="text_week_one_sun">S</string>
+    <string name="text_week_one_mon">M</string>
+    <string name="text_week_one_tue">T</string>
+    <string name="text_week_one_wed">W</string>
+    <string name="text_week_one_thu">T</string>
+    <string name="text_week_one_fri">F</string>
+    <string name="text_week_one_sat">S</string>
+    <string name="text_when">When</string>
+<!-- Title -->
+    <string name="title_color">Color</string>
     <string name="title_create_new_habit">Create New Habit</string>
+    <string name="title_do_it_at">Do it at:</string>
+    <string name="title_end_habit_on">End Habit On</string>
+    <string name="title_habit_name">Habit Name</string>
     <string name="title_home">Home</string>
+    <string name="title_icon">Icon</string>
     <string name="title_mood_stat">Mood Stat</string>
     <string name="title_my_habits">My Habits</string>
+    <string name="title_on_these_day">On these day:</string>
+<!-- Habit Period -->
     <string name="title_period_today">Today</string>
     <string name="title_period_weekly">Weekly</string>
     <string name="title_period_overall">Overall</string>
+    <string name="title_repeat">Repeat</string>
     <string name="title_report">Report</string>
     <string name="title_setting">Setting</string>
-
+    <string name="title_set_reminder">Set Reminder</string>
+    <string name="title_task_name">Task Name</string>
+<!-- Content Description -->
     <string name="desc_create_habit">Create Habit</string>
 </resources>
