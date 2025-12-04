@@ -12,10 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,23 +28,6 @@ import com.justplay.habittracker.ui.screen.period.OverallScreen
 import com.justplay.habittracker.ui.screen.period.TodayScreen
 import com.justplay.habittracker.ui.screen.period.WeeklyScreen
 import kotlinx.coroutines.launch
-
-@Composable
-fun HomeFab(
-    onShortClick: () -> Unit
-) {
-    FloatingActionButton(
-        onClick = onShortClick,
-        containerColor = MaterialTheme.colorScheme.primary,
-        shape = RoundedCornerShape(50),
-    ) {
-        Icon(
-            imageVector = Icons.Rounded.Add,
-            contentDescription = stringResource(R.string.desc_create_habit),
-            tint = MaterialTheme.colorScheme.onPrimary
-        )
-    }
-}
 
 @Composable
 fun HomePeriodPager(
