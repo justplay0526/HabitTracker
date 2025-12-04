@@ -58,7 +58,7 @@ fun SingleChoicePreview() {
             stringResource(R.string.text_time_of_day_evening),
         ),
         selectedOption = selected,
-        onSelectedChanged = { },
+        onSelectedChanged = { selected = it },
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
