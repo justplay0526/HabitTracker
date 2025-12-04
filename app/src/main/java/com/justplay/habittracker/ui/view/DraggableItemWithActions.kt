@@ -34,7 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.justplay.habittracker.R
-import com.justplay.habittracker.ui.screen.period.HabitListBaseItem
+import com.justplay.habittracker.ui.screen.period.TodayHabitsListItem
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.roundToInt
@@ -171,10 +171,11 @@ fun DraggableItemWithActions(
 @Composable
 fun DraggableItemWithActionsPreView() {
     DraggableItemWithActions {
-        HabitListBaseItem(
+        TodayHabitsListItem(
             color = Color.Cyan,
-            headlineText = R.string.ex_habit_list_1,
-            leadingIcon = R.mipmap.vec_grinning_face,
+            textRes = R.string.ex_habit_list_1,
+            iconRes = R.mipmap.vec_grinning_face,
+            state = DragToActionValue.Settle,
             modifier = it
         )
     }
