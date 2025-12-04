@@ -17,7 +17,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.justplay.habittracker.R
-import com.justplay.habittracker.ui.view.HomePeriodPager
+import com.justplay.habittracker.ui.screen.period.OverallScreen
+import com.justplay.habittracker.ui.screen.period.TodayScreen
+import com.justplay.habittracker.ui.screen.period.WeeklyScreen
+import com.justplay.habittracker.ui.view.CustomHorizontalPager
 import com.justplay.habittracker.ui.view.HomeFab
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,7 +50,24 @@ fun HomeScreen(
             HomeFab(onShortClick = onFabClick)
         }
     ) { innerPadding ->
-        HomePeriodPager(modifier = Modifier.padding(innerPadding))
+        val periodTabs = listOf(
+            stringResource(R.string.title_period_today),
+            stringResource(R.string.title_period_weekly),
+            stringResource(R.string.title_period_overall)
+        )
+
+        val periodPages: List<@Composable () -> Unit> = listOf(
+            { TodayScreen() },
+            { WeeklyScreen() },
+            { OverallScreen() }
+        )
+
+        CustomHorizontalPager(
+            tabs = periodTabs,
+            pages = periodPages,
+            modifier = Modifier
+                .padding(innerPadding)
+        )
     }
 }
 

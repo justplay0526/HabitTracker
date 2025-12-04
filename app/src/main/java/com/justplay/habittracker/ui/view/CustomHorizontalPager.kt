@@ -30,14 +30,15 @@ import com.justplay.habittracker.ui.screen.period.WeeklyScreen
 import kotlinx.coroutines.launch
 
 @Composable
-fun HomePeriodPager(
+fun CustomHorizontalPager(
+    tabs: List<String>,
+    pages: List<@Composable () -> Unit>,
     modifier: Modifier
 ) {
-    val tabs = listOf(
-        stringResource(R.string.title_period_today),
-        stringResource(R.string.title_period_weekly),
-        stringResource(R.string.title_period_overall)
-    )
+    // 警告用
+    require(tabs.size == pages.size) {
+        "Tabs and Pages should have the same size"
+    }
 
     val pagerState = rememberPagerState(
         initialPage = 0,
@@ -91,17 +92,25 @@ fun HomePeriodPager(
             state = pagerState,
             modifier = Modifier.fillMaxSize()
         ) { page ->
-            when (page) {
-                0 -> TodayScreen()
-                1 -> WeeklyScreen()
-                2 -> OverallScreen()
-            }
+            pages[page].invoke()
         }
     }
 }
 
 @PreviewScreenSizes
 @Composable
-fun HomePeriodPagerPreView() {
-    HomePeriodPager(modifier = Modifier.fillMaxSize())
+fun CustomHorizontalPagerPreView() {
+    val periodTabs = listOf(
+        stringResource(R.string.title_period_today),
+        stringResource(R.string.title_period_weekly),
+        stringResource(R.string.title_period_overall)
+    )
+
+    val periodPages: List<@Composable () -> Unit> = listOf(
+        { TodayScreen() },
+        { WeeklyScreen() },
+        { OverallScreen() }
+    )
+
+    CustomHorizontalPager(tabs = periodTabs, pages = periodPages, modifier = Modifier.fillMaxSize())
 }
