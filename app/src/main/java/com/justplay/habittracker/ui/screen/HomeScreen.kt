@@ -17,32 +17,62 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.justplay.habittracker.R
-import com.justplay.habittracker.ui.view.Greeting
+import com.justplay.habittracker.ui.screen.period.OverallScreen
+import com.justplay.habittracker.ui.screen.period.TodayRoute
+import com.justplay.habittracker.ui.screen.period.WeeklyScreen
+import com.justplay.habittracker.ui.view.CustomHorizontalPager
+import com.justplay.habittracker.ui.view.HomeFab
 
 @OptIn(ExperimentalMaterial3Api::class)
-@PreviewScreenSizes
 @Composable
 fun HomeScreen(
+    onFabClick: () -> Unit
 ) {
-    Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
-        CenterAlignedTopAppBar(
-            title = { Text(stringResource(R.string.title_home)) },
-            navigationIcon = {
-                Image(painter = painterResource(R.drawable.ic_habit_tracker_36),
-                    contentDescription = stringResource(R.string.app_name))
-            },
-            actions = {
-                IconButton(onClick = {/* TODO Setting Button */}) {
-                    Icon(imageVector = Icons.Default.MoreVert,
-                        contentDescription = stringResource(R.string.title_setting)
-                    )
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text(stringResource(R.string.title_home)) },
+                navigationIcon = {
+                    Image(painter = painterResource(R.drawable.ic_habit_tracker_36),
+                        contentDescription = stringResource(R.string.app_name))
+                },
+                actions = {
+                    IconButton(onClick = {/* TODO Setting Button */}) {
+                        Icon(imageVector = Icons.Default.MoreVert,
+                            contentDescription = stringResource(R.string.title_setting)
+                        )
+                    }
                 }
-            }
+            )
+        },
+        floatingActionButton = {
+            HomeFab(onShortClick = onFabClick)
+        }
+    ) { innerPadding ->
+        val periodTabs = listOf(
+            stringResource(R.string.title_period_today),
+            stringResource(R.string.title_period_weekly),
+            stringResource(R.string.title_period_overall)
         )
-    }) { innerPadding ->
-        Greeting(
-            name = stringResource(R.string.title_home),
-            modifier = Modifier.padding(innerPadding)
+
+        val periodPages: List<@Composable () -> Unit> = listOf(
+            { TodayRoute() },
+            { WeeklyScreen() },
+            { OverallScreen() }
+        )
+
+        CustomHorizontalPager(
+            tabs = periodTabs,
+            pages = periodPages,
+            modifier = Modifier
+                .padding(innerPadding)
         )
     }
+}
+
+@PreviewScreenSizes
+@Composable
+fun HomeScreenPreView() {
+    HomeScreen {  }
 }
