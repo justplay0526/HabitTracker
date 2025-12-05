@@ -34,16 +34,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.justplay.habittracker.R
+import com.justplay.habittracker.data.DragToActionValue
 import com.justplay.habittracker.ui.screen.period.TodayHabitsListItem
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.roundToInt
-
-enum class DragToActionValue {
-    Settle,
-    COMPLETE,
-    SKIP
-}
 
 @Composable
 fun DraggableItemWithActions(

@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import com.justplay.habittracker.R
 import com.justplay.habittracker.ui.screen.period.OverallScreen
-import com.justplay.habittracker.ui.screen.period.TodayScreen
+import com.justplay.habittracker.ui.screen.period.TodayRoute
 import com.justplay.habittracker.ui.screen.period.WeeklyScreen
 import kotlinx.coroutines.launch
 
@@ -108,7 +108,7 @@ fun CustomHorizontalPagerPreView() {
     )
 
     val periodPages: List<@Composable () -> Unit> = listOf(
-        { TodayScreen() },
+        { TodayRoute() },
         { WeeklyScreen() },
         { OverallScreen() }
     )

@@ -25,8 +25,8 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,70 +35,38 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.toColorInt
-import com.justplay.habittracker.R
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.justplay.habittracker.data.DragToActionValue
+import com.justplay.habittracker.data.HabitUi
+import com.justplay.habittracker.data.TodayTestUiState
+import com.justplay.habittracker.data.TodayUiState
 import com.justplay.habittracker.ui.theme.AppTypography
-import com.justplay.habittracker.ui.view.DragToActionValue
 import com.justplay.habittracker.ui.view.DraggableItemWithActions
-
-data class HabitUi(
-    val color: Color,
-    val title: Int,
-    val icon: Int,
-    val state: DragToActionValue = DragToActionValue.Settle
-)
+import com.justplay.habittracker.viewModel.TodayViewModel
 
 @Composable
-fun TodayScreen() {
-    /**
-     * TODO Replace with database
-     */
-    val activeHabits = remember {
-        mutableStateListOf(
-            HabitUi(
-                color = Color("#FC9CA0".toColorInt()),
-                title = R.string.ex_habit_list_1,
-                icon = R.mipmap.vec_bulls_eye
-            ),
-            HabitUi(
-                color = Color("#CCCCFB".toColorInt()),
-                title = R.string.ex_habit_list_2,
-                icon = R.mipmap.vec_trophy
-            ),
-            HabitUi(
-                color = Color("#D0FCCC".toColorInt()) ,
-                title = R.string.ex_habit_list_3
-                , icon = R.mipmap.vec_smile_face_with_halo
-            )
-        )
-    }
-
-    val completedHabits = remember { mutableStateListOf<HabitUi>() }
-    val skippedHabits   = remember { mutableStateListOf<HabitUi>() }
-
+fun TodayScreen(
+    uiState: TodayUiState,
+    onComplete: (HabitUi) -> Unit = {},
+    onSkip: (HabitUi) -> Unit = {}
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
         // 尚未執行的區域
-        if (activeHabits.isNotEmpty()) {
+        if (uiState.activeHabits.isNotEmpty()) {
             items(
-                items = activeHabits,
+                items = uiState.activeHabits,
                 key = { habit -> habit.title }
             ) { habit ->
                 DraggableItemWithActions(
                     onComplete = {
-                        val updated = habit.copy(state = DragToActionValue.COMPLETE)
-                        if (activeHabits.remove(habit)) {
-                            completedHabits.add(updated)
-                        }
+                        onComplete(habit)
                     },
                     onSkip = {
-                        val updated = habit.copy(state = DragToActionValue.SKIP)
-                        if (activeHabits.remove(habit)) {
-                            skippedHabits.add(updated)
-                        }
+                        onSkip(habit)
                     }
                 ) {
                     TodayHabitsListItem(color = habit.color,
@@ -118,7 +86,7 @@ fun TodayScreen() {
             }
         }
 
-        if (completedHabits.isNotEmpty()) {
+        if (uiState.completedHabits.isNotEmpty()) {
             item {
                 SectionHeader(
                     title = "Completed"
@@ -126,7 +94,7 @@ fun TodayScreen() {
             }
 
             items(
-                items = completedHabits,
+                items = uiState.completedHabits,
                 key = { habit -> habit.title }
             ) { habit ->
                 TodayHabitsListItem(
@@ -139,7 +107,7 @@ fun TodayScreen() {
             }
         }
 
-        if (skippedHabits.isNotEmpty()) {
+        if (uiState.skippedHabits.isNotEmpty()) {
             item {
                 SectionHeader(
                     title = "Skipped"
@@ -147,7 +115,7 @@ fun TodayScreen() {
             }
 
             items(
-                items = skippedHabits,
+                items = uiState.skippedHabits,
                 key = { habit -> habit.title }
             ) { habit ->
                 TodayHabitsListItem(
@@ -256,9 +224,28 @@ fun SectionHeader(
     }
 }
 
+@Composable
+fun TodayRoute(
+    viewModel: TodayViewModel = viewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    TodayScreen(
+        uiState = uiState,
+        onComplete = viewModel::habitComplete,
+        onSkip = viewModel::habitSkip
+    )
+}
+
 @Preview
 @Composable
 fun TodayScreenPreview() {
-    TodayScreen()
+    val uiState = TodayTestUiState
+
+    TodayScreen(
+        uiState = uiState,
+        onComplete = {},
+        onSkip = {}
+    )
 }
 

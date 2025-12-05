@@ -18,7 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.justplay.habittracker.R
 import com.justplay.habittracker.ui.screen.period.OverallScreen
-import com.justplay.habittracker.ui.screen.period.TodayScreen
+import com.justplay.habittracker.ui.screen.period.TodayRoute
 import com.justplay.habittracker.ui.screen.period.WeeklyScreen
 import com.justplay.habittracker.ui.view.CustomHorizontalPager
 import com.justplay.habittracker.ui.view.HomeFab
@@ -57,7 +57,7 @@ fun HomeScreen(
         )
 
         val periodPages: List<@Composable () -> Unit> = listOf(
-            { TodayScreen() },
+            { TodayRoute() },
             { WeeklyScreen() },
             { OverallScreen() }
         )
