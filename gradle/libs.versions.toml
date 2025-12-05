@@ -9,7 +9,6 @@ lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.12.0"
 navigationCompose = "2.9.6"
 composeBom = "2024.09.00"
-uiTextGoogleFonts = "1.9.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -28,7 +27,6 @@ androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-te
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 androidx-compose-material3-adaptive-navigation-suite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite" }
-androidx-compose-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -43,7 +41,6 @@ androidx = [
     "androidx-activity-compose",
     "androidx-compose-ui",
     "androidx-compose-ui-graphics",
-    "androidx-compose-ui-text-google-fonts",
     "androidx-compose-ui-tooling-preview",
     "androidx-compose-material3",
     "androidx-compose-material3-adaptive-navigation-suite",
