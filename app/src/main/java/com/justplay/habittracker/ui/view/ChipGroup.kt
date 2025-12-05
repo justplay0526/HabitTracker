@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
@@ -17,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.justplay.habittracker.R
 
 @Composable
 fun SingleChoiceChipGroup(
@@ -37,6 +37,7 @@ fun SingleChoiceChipGroup(
                 selected = selected,
                 onClick = { onSelectedChanged(option) },
                 label = { Text(option) },
+                shape = CircleShape,
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = MaterialTheme.colorScheme.primary,
                     selectedLabelColor = MaterialTheme.colorScheme.onPrimary
@@ -50,13 +51,10 @@ fun SingleChoiceChipGroup(
 @Composable
 fun SingleChoicePreview() {
     var selected by remember { mutableStateOf<String?>(null) }
+    val testString = HabitPeriodStringRes.map { stringResource(it) }
 
     SingleChoiceChipGroup(
-        options = listOf(
-            stringResource(R.string.text_time_of_day_morning),
-            stringResource(R.string.text_time_of_day_afternoon),
-            stringResource(R.string.text_time_of_day_evening),
-        ),
+        options = testString,
         selectedOption = selected,
         onSelectedChanged = { selected = it },
         modifier = Modifier

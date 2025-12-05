@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,95 +39,124 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.justplay.habittracker.data.DragToActionValue
+import com.justplay.habittracker.data.HabitPeriod
 import com.justplay.habittracker.data.HabitUi
 import com.justplay.habittracker.data.TodayTestUiState
 import com.justplay.habittracker.data.TodayUiState
 import com.justplay.habittracker.ui.theme.AppTypography
 import com.justplay.habittracker.ui.view.DraggableItemWithActions
 import com.justplay.habittracker.ui.view.HabitListItemHeight
+import com.justplay.habittracker.ui.view.HabitPeriodStringRes
+import com.justplay.habittracker.ui.view.SingleChoiceChipGroup
 import com.justplay.habittracker.viewModel.TodayViewModel
 
 @Composable
 fun TodayScreen(
     uiState: TodayUiState,
+    selectedPeriod: HabitPeriod,
+    onPeriodSelected: (HabitPeriod) -> Unit,
     onComplete: (HabitUi) -> Unit = {},
     onSkip: (HabitUi) -> Unit = {}
 ) {
-    LazyColumn(
+    val periodEnums = remember { HabitPeriod.entries }
+    val periodString = HabitPeriodStringRes.map { stringResource(it) }
+    val selectedLabel = periodString[periodEnums.indexOf(selectedPeriod)]
+
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-        // 尚未執行的區域
-        if (uiState.activeHabits.isNotEmpty()) {
-            items(
-                items = uiState.activeHabits,
-                key = { habit -> habit.title }
-            ) { habit ->
-                DraggableItemWithActions(
-                    onComplete = {
-                        onComplete(habit)
-                    },
-                    onSkip = {
-                        onSkip(habit)
+        SingleChoiceChipGroup(
+            options = periodString,
+            selectedOption = selectedLabel,
+            onSelectedChanged = { newLabel ->
+                val index = periodString.indexOf(newLabel)
+                if (index != -1) {
+                    onPeriodSelected(periodEnums[index])
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+        )
+
+        Spacer(Modifier.height(12.dp))
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            // 尚未執行的區域
+            if (uiState.activeHabits.isNotEmpty()) {
+                items(
+                    items = uiState.activeHabits,
+                    key = { habit -> habit.title }
+                ) { habit ->
+                    DraggableItemWithActions(
+                        onComplete = {
+                            onComplete(habit)
+                        },
+                        onSkip = {
+                            onSkip(habit)
+                        }
+                    ) {
+                        TodayHabitsListItem(color = habit.color,
+                            habit.title,
+                            habit.icon,
+                            habit.state,
+                            modifier = it
+                        )
                     }
-                ) {
-                    TodayHabitsListItem(color = habit.color,
-                        habit.title,
-                        habit.icon,
-                        habit.state,
-                        modifier = it
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
+            } else {
+                item {
+                    SectionHeader(
+                        title = "You have no active habits now"
                     )
                 }
-                Spacer(modifier = Modifier.height(12.dp))
-            }
-        } else {
-            item {
-                SectionHeader(
-                    title = "You have no active habits now"
-                )
-            }
-        }
-
-        if (uiState.completedHabits.isNotEmpty()) {
-            item {
-                SectionHeader(
-                    title = "Completed"
-                )
             }
 
-            items(
-                items = uiState.completedHabits,
-                key = { habit -> habit.title }
-            ) { habit ->
-                TodayHabitsListItem(
-                    color = habit.color,
-                    textRes = habit.title,
-                    iconRes = habit.icon,
-                    state = DragToActionValue.COMPLETE
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-            }
-        }
+            if (uiState.completedHabits.isNotEmpty()) {
+                item {
+                    SectionHeader(
+                        title = "Completed"
+                    )
+                }
 
-        if (uiState.skippedHabits.isNotEmpty()) {
-            item {
-                SectionHeader(
-                    title = "Skipped"
-                )
+                items(
+                    items = uiState.completedHabits,
+                    key = { habit -> habit.title }
+                ) { habit ->
+                    TodayHabitsListItem(
+                        color = habit.color,
+                        textRes = habit.title,
+                        iconRes = habit.icon,
+                        state = DragToActionValue.COMPLETE
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
             }
 
-            items(
-                items = uiState.skippedHabits,
-                key = { habit -> habit.title }
-            ) { habit ->
-                TodayHabitsListItem(
-                    color = habit.color,
-                    textRes = habit.title,
-                    iconRes = habit.icon,
-                    state = DragToActionValue.SKIP
-                )
-                Spacer(modifier = Modifier.height(12.dp))
+            if (uiState.skippedHabits.isNotEmpty()) {
+                item {
+                    SectionHeader(
+                        title = "Skipped"
+                    )
+                }
+
+                items(
+                    items = uiState.skippedHabits,
+                    key = { habit -> habit.title }
+                ) { habit ->
+                    TodayHabitsListItem(
+                        color = habit.color,
+                        textRes = habit.title,
+                        iconRes = habit.icon,
+                        state = DragToActionValue.SKIP
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
             }
         }
     }
@@ -228,9 +259,12 @@ fun TodayRoute(
     viewModel: TodayViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val selectedPeriod by viewModel.selectedPeriod.collectAsState()
 
     TodayScreen(
         uiState = uiState,
+        selectedPeriod = selectedPeriod,
+        onPeriodSelected = viewModel::onPeriodSelected,
         onComplete = viewModel::habitComplete,
         onSkip = viewModel::habitSkip
     )
@@ -243,6 +277,8 @@ fun TodayScreenPreview() {
 
     TodayScreen(
         uiState = uiState,
+        selectedPeriod = HabitPeriod.ALL,
+        onPeriodSelected = {},
         onComplete = {},
         onSkip = {}
     )

@@ -6,7 +6,8 @@ data class HabitUi(
     val color: Color,
     val title: Int,
     val icon: Int,
-    val state: DragToActionValue = DragToActionValue.Settle
+    val state: DragToActionValue = DragToActionValue.Settle,
+    val period: HabitPeriod = HabitPeriod.ALL
 )
 
 data class TodayUiState(
