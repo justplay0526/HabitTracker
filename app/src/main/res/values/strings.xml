@@ -8,6 +8,12 @@
     <string name="ex_habit_list_1">Set Small Goals</string>
     <string name="ex_habit_list_2">Work</string>
     <string name="ex_habit_list_3">Meditation</string>
+    <string name="ex_habit_list_4">Take A Rest</string>
+    <string name="ex_habit_list_5">Watch Comedy</string>
+    <string name="ex_habit_list_6">Play Game</string>
+    <string name="ex_habit_list_7">Do Evil Things</string>
+    <string name="ex_habit_list_8">Eating</string>
+    <string name="ex_habit_list_9">Go to Sleep</string>
 <!-- Hint -->
     <string name="hint_habit_name">Habit Name</string>
     <string name="hint_search_icon">Search Icon</string>
