@@ -4,6 +4,7 @@ import androidx.compose.ui.unit.dp
 import com.justplay.habittracker.R
 
 val HabitListItemHeight = 68.dp
+val HabitTextFieldHeight = 52.dp
 
 val HabitPeriodStringRes = listOf(
     R.string.text_time_of_day_all,
