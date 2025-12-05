@@ -57,7 +57,7 @@ fun DraggableItemWithActions(
     val density = LocalDensity.current
 
     val anchors = remember(density) {
-        val dragOffset = with(density) { 68.dp.toPx() }
+        val dragOffset = with(density) { HabitListItemHeight.toPx() }
         DraggableAnchors {
             DragToActionValue.Settle at 0f // 中間
             DragToActionValue.COMPLETE at dragOffset // 向右

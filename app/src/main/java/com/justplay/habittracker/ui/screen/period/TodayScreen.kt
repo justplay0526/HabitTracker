@@ -42,6 +42,7 @@ import com.justplay.habittracker.data.TodayTestUiState
 import com.justplay.habittracker.data.TodayUiState
 import com.justplay.habittracker.ui.theme.AppTypography
 import com.justplay.habittracker.ui.view.DraggableItemWithActions
+import com.justplay.habittracker.ui.view.HabitListItemHeight
 import com.justplay.habittracker.viewModel.TodayViewModel
 
 @Composable
@@ -130,8 +131,6 @@ fun TodayScreen(
     }
 }
 
-val ListItemHeight = 68.dp
-
 @Composable
 fun TodayHabitsListItem(
     color: Color,
@@ -143,7 +142,7 @@ fun TodayHabitsListItem(
     ListItem(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
-            .height(ListItemHeight),
+            .height(HabitListItemHeight),
         colors = ListItemDefaults.colors(
             containerColor = color
         ),
