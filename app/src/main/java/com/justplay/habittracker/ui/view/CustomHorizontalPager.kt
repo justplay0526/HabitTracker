@@ -63,24 +63,25 @@ fun CustomHorizontalPager(
                     modifier = Modifier
                         .weight(1f)
                         .clip(RoundedCornerShape(8.dp))
-                        .background(
-                            if (selected) MaterialTheme.colorScheme.primary
-                            else Color.Transparent
-                        )
-                        .padding(vertical = 8.dp)
                         .clickable {
                             scope.launch {
                                 pagerState.animateScrollToPage(index)
                             }
-                        },
+                        }
+                        .background(
+                            if (selected) MaterialTheme.colorScheme.primary
+                            else Color.Transparent
+                        )
+                        .padding(vertical = 8.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = label,
+                        style = MaterialTheme.typography.titleMedium,
                         color = if (selected)
                             MaterialTheme.colorScheme.onPrimary
                         else
-                            MaterialTheme.colorScheme.onSurfaceVariant
+                            MaterialTheme.colorScheme.scrim
                     )
                 }
             }

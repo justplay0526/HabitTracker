@@ -182,7 +182,8 @@ fun TodayHabitsListItem(
         headlineContent = {
             Text(
                 text = stringResource(textRes),
-                style = AppTypography.titleMedium
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.scrim
             )
         },
         leadingContent = {
@@ -192,13 +193,13 @@ fun TodayHabitsListItem(
             )
         },
         trailingContent = {
-            trailingIcon(state)
+            TrailingIcon(state)
         }
     )
 }
 
 @Composable
-fun trailingIcon(
+fun TrailingIcon(
     state: DragToActionValue
 ) {
     when(state) {
