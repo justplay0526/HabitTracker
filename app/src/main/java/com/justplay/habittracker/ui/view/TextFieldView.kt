@@ -8,17 +8,24 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.justplay.habittracker.R
 
 @Composable
 fun HabitInputField(
     value: String,
     onValueChange: (String) -> Unit,
-    placeholder: String = "",
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    placeholder: String = ""
 ) {
     TextField(
         value = value,
@@ -44,5 +51,17 @@ fun HabitInputField(
             cursorColor = MaterialTheme.colorScheme.primary,
         ),
         textStyle = MaterialTheme.typography.bodyLarge
+    )
+}
+
+@Preview
+@Composable
+fun HabitInputFieldPreView() {
+    var text by remember { mutableStateOf("") }
+
+    HabitInputField(
+        value = text,
+        onValueChange = { text = it }, // Cause I need to try in Interactive mode
+        placeholder = stringResource(R.string.title_habit_name)
     )
 }

@@ -43,7 +43,7 @@ fun RegularTaskScreen() {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun RegularTaskScreenPreview() {
     RegularTaskScreen()
