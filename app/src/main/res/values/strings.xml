@@ -45,7 +45,6 @@
     <string name="text_week_one_thu">T</string>
     <string name="text_week_one_fri">F</string>
     <string name="text_week_one_sat">S</string>
-    <string name="text_when">When</string>
 <!-- Title -->
     <string name="title_color">Color</string>
     <string name="title_create_new_habit">Create New Habit</string>
@@ -66,6 +65,7 @@
     <string name="title_setting">Setting</string>
     <string name="title_set_reminder">Set Reminder</string>
     <string name="title_task_name">Task Name</string>
+    <string name="title_when">When</string>
 <!-- Content Description -->
     <string name="desc_create_habit">Create Habit</string>
 </resources>

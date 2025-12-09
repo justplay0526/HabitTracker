@@ -1,11 +1,11 @@
 package com.justplay.habittracker.ui.view
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.justplay.habittracker.R
 
 val HabitListItemHeight = 68.dp
 val HabitTextFieldHeight = 52.dp
-val IconBoxSize = 64.dp
 
 val HabitPeriodStringRes = listOf(
     R.string.text_time_of_day_all,
@@ -30,4 +30,12 @@ val IconsRes = listOf(
     R.mipmap.emoji_25_sleeping, R.mipmap.emoji_26_cold,
     R.mipmap.emoji_27_spiral_eyes, R.mipmap.emoji_28_symbol_on_month,
     R.mipmap.emoji_29_exploding_head, R.mipmap.emoji_30_smile_horns,
+)
+
+val ColorResource = listOf(
+    Color(0xFFFFFFCC), Color(0xFFFFCC99),Color(0xFFAA9499),
+    Color(0xFFC6A4A4), Color(0xFFFF9899),Color(0xFFFFCCCC),
+    Color(0xFFFF99CC), Color(0xFFFFCCFF),Color(0xFFCC99FF),
+    Color(0xFFCCCCFF), Color(0xFF99CCFF),Color(0xFF99C5C4),
+    Color(0xFFCCFFFF), Color(0xFFCCFFCC),Color.Red
 )

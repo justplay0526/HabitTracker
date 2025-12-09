@@ -1,9 +1,29 @@
 package com.justplay.habittracker.ui.view
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.justplay.habittracker.R
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 
 @Composable
@@ -14,10 +34,99 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     )
 }
 
+@Composable
+fun OutlinedIcon(
+    iconRes: Int,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val boxShape = RoundedCornerShape(8.dp)
+    Box(
+        modifier = modifier
+            .aspectRatio(1f)
+            .clip(boxShape)
+            .border(
+                width = 2.dp,
+                shape = boxShape,
+                color = MaterialTheme.colorScheme.outline
+            )
+            .background(
+                color = if (selected)
+                    MaterialTheme.colorScheme.primary
+                else
+                    MaterialTheme.colorScheme.surface
+            )
+            .clickable {
+                onClick()
+            }
+    ) {
+        Image(
+            painter = painterResource(iconRes),
+            modifier = Modifier
+                .padding(8.dp)
+                .align(Alignment.Center),
+            contentDescription = null
+        )
+    }
+}
+
+@Composable
+fun CircleColorBox(
+    color: Color,
+    selected: Boolean,
+    onClick: (Color) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .aspectRatio(1f)
+            .clip(CircleShape)
+            .background(color)
+            .clickable { onClick(color) },
+    ) {
+        if (selected) {
+            Icon(
+                imageVector = Icons.Default.Done,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.scrim,
+                modifier = Modifier
+                    .matchParentSize()
+                    .padding(6.dp)
+                    .align(Alignment.Center)
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     HabitTrackerTheme {
         Greeting("Android")
     }
+}
+
+@Preview
+@Composable
+fun OutlinedIconPreView() {
+    HabitTrackerTheme {
+        OutlinedIcon(
+            iconRes = R.mipmap.emoji_01_smile_sunglasses,
+            selected = true,
+            modifier = Modifier.size(32.dp),
+            onClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun CircleColorBoxPreview(){
+    CircleColorBox(
+        color = ColorResource.first(),
+        selected = true,
+        onClick = {},
+        modifier = Modifier.size(32.dp)
+    )
 }
