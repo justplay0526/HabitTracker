@@ -47,6 +47,17 @@ fun RegularTaskScreen() {
     var showIconPicker by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
+    if(showIconPicker) {
+        IconModalBottomSheet(
+            sheetState = sheetState,
+            onIconSelected = { icon ->
+                // TODO Handle icon selection
+                Toast.makeText(context, "Selected icon: $icon", Toast.LENGTH_SHORT).show()
+            },
+            onCancel = { showIconPicker = false }
+        )
+    }
+
     Column(
         modifier = Modifier.fillMaxSize()
             .padding(horizontal = 16.dp)
@@ -112,17 +123,6 @@ fun RegularTaskScreen() {
                     onClick = { selectedIcon = item }
                 )
             }
-        }
-
-        if(showIconPicker) {
-            IconModalBottomSheet(
-                sheetState = sheetState,
-                onIconSelected = { icon ->
-                    // TODO Handle icon selection
-                    Toast.makeText(context, "Selected icon: $icon", Toast.LENGTH_SHORT).show()
-                },
-                onCancel = { showIconPicker = false }
-            )
         }
     }
 }
