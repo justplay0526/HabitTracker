@@ -5,14 +5,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.outlined.DateRange
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -99,6 +106,59 @@ fun CircleColorBox(
     }
 }
 
+@Composable
+fun DateTimePickerRow(
+    text: String,
+    onClick: () -> Unit,
+    onAttachClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // 左邊圓底日曆 icon
+        Box(
+            modifier = Modifier
+                .size(24.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.DateRange,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(16.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        // 中間文字
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        IconButton(
+            onClick = onAttachClick,
+            modifier = Modifier.size(24.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Edit,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.scrim,
+                modifier = Modifier.size(18.dp)
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
@@ -129,4 +189,20 @@ fun CircleColorBoxPreview(){
         onClick = {},
         modifier = Modifier.size(32.dp)
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DateTimePickerRowPreview() {
+    HabitTrackerTheme {
+        DateTimePickerRow(
+            text = "Today, December 22, 2024",
+            onClick = {},
+            onAttachClick = {},
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+                .background(MaterialTheme.colorScheme.outlineVariant)
+        )
+    }
 }
