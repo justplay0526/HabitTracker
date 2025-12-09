@@ -1,16 +1,17 @@
 package com.justplay.habittracker.ui.navigation
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItemColors
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScope
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -26,35 +27,38 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.justplay.habittracker.R
+import com.justplay.habittracker.data.HomeNavDest
+import com.justplay.habittracker.data.MainNavSuiteDest
 import com.justplay.habittracker.ui.screen.CreateNewHabitScreen
 import com.justplay.habittracker.ui.screen.HomeScreen
 import com.justplay.habittracker.ui.screen.MoodStatScreen
 import com.justplay.habittracker.ui.screen.MyHabitsScreen
 import com.justplay.habittracker.ui.screen.ReportScreen
+import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 
-enum class MainNavSuiteDest(
-    @param:StringRes val title: Int,
-    @param:DrawableRes val icon: Int
-) {
-    HOME(R.string.title_home, R.drawable.round_home_24),
-    MOOD_STAT(R.string.title_mood_stat, R.drawable.round_mood_24),
-    REPORT(R.string.title_report, R.drawable.round_show_chart_24),
-    MY_HABITS(R.string.title_my_habits, R.drawable.round_grid_view_24)
-}
-
-enum class HomeNavDest(
-) {
-    CREATE_NEW_HABIT
-}
-
-@PreviewScreenSizes
 @Composable
 fun MainNavSuite() {
     val navHost = rememberNavController()
     val navBackStackEntry by navHost.currentBackStackEntryAsState()
+
+    /**
+     * 目前顯示的頁面
+     */
     val currDest = navBackStackEntry?.destination
 
+    /**
+     * 需要顯示 Navigation 的頁面
+     */
+    val showSuiteRoutes = MainNavSuiteDest.entries.map { it.name }.toSet()
+
+    /**
+     * 判斷是否顯示 NavigationSuite
+     */
+    val shouldShowSuite = currDest?.route in showSuiteRoutes
+
+    /**
+     * NavigationSuite 的顏色設定
+     */
     val itemColors = NavigationSuiteDefaults.itemColors(
         navigationBarItemColors = NavigationBarItemDefaults.colors(
             indicatorColor = Color.Transparent,
@@ -66,33 +70,47 @@ fun MainNavSuite() {
     )
 
     NavigationSuiteScaffold(
-        modifier = Modifier.fillMaxSize(),
         navigationSuiteItems =
-            getNavigationSuiteItems(currDest, navHost, itemColors)
+            getNavigationSuiteItems(currDest, navHost, itemColors),
+        modifier = Modifier.fillMaxSize(),
+        layoutType = if (!shouldShowSuite) {
+            NavigationSuiteType.None
+        } else {
+            NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(
+                currentWindowAdaptiveInfo()
+            )
+        }
     ) {
-        NavHost(
-            navController = navHost,
-            startDestination = MainNavSuiteDest.HOME.name
-        ) {
-            MainNavSuiteDest.entries.forEach { dest ->
-                composable(dest.name) {
-                    when (dest) {
-                        MainNavSuiteDest.HOME -> HomeScreen(onFabClick =
-                            { navHost.navigate(HomeNavDest.CREATE_NEW_HABIT.name) }
-                        )
-                        MainNavSuiteDest.MOOD_STAT -> MoodStatScreen()
-                        MainNavSuiteDest.REPORT -> ReportScreen()
-                        MainNavSuiteDest.MY_HABITS -> MyHabitsScreen()
-                    }
+        MainNavHost(navHost)
+    }
+}
+
+@Composable
+fun MainNavHost(
+    navHost: NavHostController
+) {
+    NavHost(
+        navController = navHost,
+        startDestination = MainNavSuiteDest.HOME.name
+    ) {
+        MainNavSuiteDest.entries.forEach { dest ->
+            composable(dest.name) {
+                when (dest) {
+                    MainNavSuiteDest.HOME -> HomeScreen(onFabClick =
+                        { navHost.navigate(HomeNavDest.CREATE_NEW_HABIT.name) }
+                    )
+                    MainNavSuiteDest.MOOD_STAT -> MoodStatScreen()
+                    MainNavSuiteDest.REPORT -> ReportScreen()
+                    MainNavSuiteDest.MY_HABITS -> MyHabitsScreen()
                 }
             }
-            HomeNavDest.entries.forEach { dest ->
-                composable(dest.name) {
-                    when (dest) {
-                        HomeNavDest.CREATE_NEW_HABIT -> CreateNewHabitScreen(
-                            onBackClick = { navHost.popBackStack() }
-                        )
-                    }
+        }
+        HomeNavDest.entries.forEach { dest ->
+            composable(dest.name) {
+                when (dest) {
+                    HomeNavDest.CREATE_NEW_HABIT -> CreateNewHabitScreen(
+                        onBackClick = { navHost.popBackStack() }
+                    )
                 }
             }
         }
@@ -138,5 +156,13 @@ private fun navigateWithBackStackHandling(route: String, navHost: NavHostControl
         }
         launchSingleTop = true
         restoreState = true
+    }
+}
+
+@PreviewScreenSizes
+@Composable
+fun MainNavSuitePreview() {
+    HabitTrackerTheme {
+        MainNavSuite()
     }
 }
