@@ -1,26 +1,7 @@
 package com.justplay.habittracker.ui.screen.task
 
 import android.widget.Toast
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,23 +9,13 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.justplay.habittracker.R
-import com.justplay.habittracker.data.formatUniformDate
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
-import com.justplay.habittracker.ui.view.CircleColorBox
-import com.justplay.habittracker.ui.view.ColorResource
-import com.justplay.habittracker.ui.view.DateTimePickerRow
-import com.justplay.habittracker.ui.view.HabitInputField
-import com.justplay.habittracker.ui.view.IconModalBottomSheet
-import com.justplay.habittracker.ui.view.IconsRes
-import com.justplay.habittracker.ui.view.OutlinedIcon
-import java.time.LocalDate
+import com.justplay.habittracker.ui.view.HabitPeriodStringRes
+import com.justplay.habittracker.ui.view.HabitRepeatStringRes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,144 +28,75 @@ fun RegularTaskScreen() {
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
-    var selectedIndex by remember { mutableIntStateOf(0) }
+    var selectedColorIndex by remember { mutableIntStateOf(0) }
 
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var selectedRepeatOptions by remember { mutableStateOf(setOf<String>()) }
+    val repeatString = HabitRepeatStringRes
+        .map { stringResource(it) }
 
-    val displayDate = formatUniformDate(selectedDate)
+    var selectedPeriodOptions by remember { mutableStateOf(setOf<String>()) }
+    val periodString = HabitPeriodStringRes
+        .filterNot { it == R.string.text_time_of_day_all }
+        .map { stringResource(it) }
 
-    if(showIconPicker) {
-        IconModalBottomSheet(
-            sheetState = sheetState,
-            onIconSelected = { icon ->
-                // TODO Handle icon selection
-                Toast.makeText(context, "Selected icon: $icon", Toast.LENGTH_SHORT).show()
-            },
-            onCancel = { showIconPicker = false }
-        )
-    }
+    var reminderCheck by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-    ) {
-        Text(
-            text = stringResource(R.string.title_habit_name),
-            style = MaterialTheme.typography.titleLarge
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        HabitInputField(
-            value = text,
-            onValueChange = { text = it },
-            placeholder = stringResource(R.string.title_habit_name)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.title_icon),
-                style = MaterialTheme.typography.titleLarge
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Row(
-                modifier = Modifier
-                    .clickable { showIconPicker = true },
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "View All",
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.titleLarge
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
+    IconPickerBottomSheet(
+        show = showIconPicker,
+        sheetState = sheetState,
+        onDismissRequest = { showIconPicker = false },
+        onIconSelected = { icon ->
+            Toast.makeText(context, "Selected icon: $icon", Toast.LENGTH_SHORT).show()
+            showIconPicker = false
         }
+    )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement =
-                Arrangement.spacedBy(8.dp)
-        ) {
-            IconsRes.take(5).forEach { item ->
-                OutlinedIcon(
-                    iconRes = item,
-                    selected = selectedIcon == item,
-                    modifier = Modifier.weight(1f),
-                    onClick = { selectedIcon = item }
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = stringResource(R.string.title_color),
-            style = MaterialTheme.typography.titleLarge
+    TaskScaffold {
+        NameSection(
+            title = R.string.title_habit_name,
+            hint = R.string.title_habit_name,
+            textValue = text,
+            onTextChange = { text = it }
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        SectionSpace()
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(5),
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalArrangement =
-                Arrangement.spacedBy(8.dp),
-            horizontalArrangement =
-                Arrangement.spacedBy(8.dp)
-        ) {
-            /**
-             * TODO handle color picker for last Circle Box
-             * TODO connect to ViewModel
-             */
-            itemsIndexed(ColorResource) {
-                index, colorData ->
-                CircleColorBox(
-                    color = colorData,
-                    selected = selectedIndex == index,
-                    onClick = {
-                        selectedIndex = index
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = stringResource(R.string.title_when),
-            style = MaterialTheme.typography.titleLarge
+        IconSection(
+            selectedIcon = selectedIcon,
+            onIconSelected = { selectedIcon = it },
+            showPicker = { showIconPicker = true }
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        SectionSpace()
 
-        DateTimePickerRow(
-            text = displayDate,
-            onClick = { /* TODO Handle date picker */ },
-            modifier = Modifier
-                .fillMaxWidth()
+        ColorSection(
+            selectedColorIndex = selectedColorIndex,
+            onColorSelected = { selectedColorIndex = it }
+        )
+
+        SectionSpace()
+        // Repeat Section
+        MultiChoiceSection(
+            title = R.string.title_repeat,
+            optionsString = repeatString,
+            selectedOptions = selectedRepeatOptions,
+            onSelectedChanged = { selectedRepeatOptions = it }
+        )
+
+        SectionSpace()
+        // Do It As Section
+        MultiChoiceSection(
+            title = R.string.title_do_it_at,
+            optionsString = periodString,
+            selectedOptions = selectedPeriodOptions,
+            onSelectedChanged = { selectedPeriodOptions = it }
+        )
+
+        SectionSpace()
+
+        ReminderSection(
+            reminderCheck = reminderCheck,
+            onReminderChanged = { reminderCheck = it }
         )
     }
 }
