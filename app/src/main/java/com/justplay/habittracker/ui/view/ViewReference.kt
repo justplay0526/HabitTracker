@@ -11,7 +11,13 @@ val HabitPeriodStringRes = listOf(
     R.string.text_time_of_day_all,
     R.string.text_time_of_day_morning,
     R.string.text_time_of_day_afternoon,
-    R.string.text_time_of_day_evening,
+    R.string.text_time_of_day_evening
+)
+
+val HabitRepeatStringRes = listOf(
+    R.string.text_repeat_freq_daily,
+    R.string.text_repeat_freq_weekly,
+    R.string.text_repeat_freq_monthly,
 )
 
 val IconsRes = listOf(
