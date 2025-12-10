@@ -4,6 +4,13 @@
     <string name="btn_cancel">Cancel</string>
     <string name="btn_ok">OK</string>
     <string name="btn_save">Save</string>
+<!--  Date Text -->
+    <string name="date_pattern">MMMM d, yyyy</string>
+    <string name="date_today">Today,</string>
+    <string name="date_tomorrow">Tomorrow,</string>
+    <string name="date_yesterday">Yesterday,</string>
+<!-- Content Description -->
+    <string name="desc_create_habit">Create Habit</string>
 <!-- Example Content -->
     <string name="ex_habit_list_1">Set Small Goals</string>
     <string name="ex_habit_list_2">Work</string>
@@ -66,6 +73,4 @@
     <string name="title_set_reminder">Set Reminder</string>
     <string name="title_task_name">Task Name</string>
     <string name="title_when">When</string>
-<!-- Content Description -->
-    <string name="desc_create_habit">Create Habit</string>
 </resources>

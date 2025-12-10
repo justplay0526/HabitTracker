@@ -19,10 +19,13 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,7 +34,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.justplay.habittracker.R
+import com.justplay.habittracker.data.formatUniformDate
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
+import java.time.LocalDate
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
@@ -110,12 +115,12 @@ fun CircleColorBox(
 fun DateTimePickerRow(
     text: String,
     onClick: () -> Unit,
-    onAttachClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.outlineVariant)
             .clickable { onClick() }
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -130,7 +135,7 @@ fun DateTimePickerRow(
                 imageVector = Icons.Outlined.DateRange,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier.size(20.dp)
             )
         }
 
@@ -145,17 +150,12 @@ fun DateTimePickerRow(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        IconButton(
-            onClick = onAttachClick,
-            modifier = Modifier.size(24.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Edit,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.scrim,
-                modifier = Modifier.size(18.dp)
-            )
-        }
+        Icon(
+            imageVector = Icons.Outlined.Edit,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.scrim,
+            modifier = Modifier.size(20.dp)
+        )
     }
 }
 
@@ -194,15 +194,16 @@ fun CircleColorBoxPreview(){
 @Preview(showBackground = true)
 @Composable
 fun DateTimePickerRowPreview() {
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+
+    val displayDate = formatUniformDate(selectedDate)
+
     HabitTrackerTheme {
         DateTimePickerRow(
-            text = "Today, December 22, 2024",
+            text = displayDate,
             onClick = {},
-            onAttachClick = {},
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(8.dp))
-                .background(MaterialTheme.colorScheme.outlineVariant)
         )
     }
 }

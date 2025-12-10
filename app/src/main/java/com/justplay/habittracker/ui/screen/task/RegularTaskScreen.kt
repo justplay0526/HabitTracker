@@ -35,13 +35,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.justplay.habittracker.R
+import com.justplay.habittracker.data.formatUniformDate
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.CircleColorBox
 import com.justplay.habittracker.ui.view.ColorResource
+import com.justplay.habittracker.ui.view.DateTimePickerRow
 import com.justplay.habittracker.ui.view.HabitInputField
 import com.justplay.habittracker.ui.view.IconModalBottomSheet
 import com.justplay.habittracker.ui.view.IconsRes
 import com.justplay.habittracker.ui.view.OutlinedIcon
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,6 +58,10 @@ fun RegularTaskScreen() {
         skipPartiallyExpanded = true
     )
     var selectedIndex by remember { mutableIntStateOf(0) }
+
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+
+    val displayDate = formatUniformDate(selectedDate)
 
     if(showIconPicker) {
         IconModalBottomSheet(
@@ -179,6 +186,15 @@ fun RegularTaskScreen() {
         Text(
             text = stringResource(R.string.title_when),
             style = MaterialTheme.typography.titleLarge
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        DateTimePickerRow(
+            text = displayDate,
+            onClick = { /* TODO Handle date picker */ },
+            modifier = Modifier
+                .fillMaxWidth()
         )
     }
 }
