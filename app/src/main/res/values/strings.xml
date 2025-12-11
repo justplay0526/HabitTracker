@@ -52,6 +52,14 @@
     <string name="text_week_one_thu">T</string>
     <string name="text_week_one_fri">F</string>
     <string name="text_week_one_sat">S</string>
+<!-- Day of Week in one alphabet (Start From Sunday) -->
+    <string name="text_week_two_sun">Su</string>
+    <string name="text_week_two_mon">Mo</string>
+    <string name="text_week_two_tue">Tu</string>
+    <string name="text_week_two_wed">We</string>
+    <string name="text_week_two_thu">Th</string>
+    <string name="text_week_two_fri">Fr</string>
+    <string name="text_week_two_sat">Sa</string>
 <!-- Title -->
     <string name="title_color">Color</string>
     <string name="title_create_new_habit">Create New Habit</string>
