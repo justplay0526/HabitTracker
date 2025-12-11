@@ -5,6 +5,7 @@
     <string name="btn_ok">OK</string>
     <string name="btn_save">Save</string>
 <!--  Date Text -->
+    <string name="date_month_pattern">MMMM yyyy</string>
     <string name="date_pattern">MMMM d, yyyy</string>
     <string name="date_today">Today,</string>
     <string name="date_tomorrow">Tomorrow,</string>
