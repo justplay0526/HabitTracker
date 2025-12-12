@@ -15,7 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.justplay.habittracker.R
-import com.justplay.habittracker.ui.view.Greeting
+import com.justplay.habittracker.ui.screen.task.OneTimeTaskScreen
+import com.justplay.habittracker.ui.screen.task.RegularTaskScreen
+import com.justplay.habittracker.ui.view.CustomHorizontalPager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,17 +37,27 @@ fun CreateNewHabitScreen(
             }
         )
     }) { innerPadding ->
-        Greeting(
-            name = stringResource(R.string.title_create_new_habit),
-            modifier = Modifier.padding(innerPadding)
+        val taskTabs = listOf(
+            stringResource(R.string.text_habit_task_regular),
+            stringResource(R.string.text_habit_task_one_time)
+        )
+
+        val taskPages: List<@Composable () -> Unit> = listOf(
+            { RegularTaskScreen() },
+            { OneTimeTaskScreen() }
+        )
+
+        CustomHorizontalPager(
+            tabs = taskTabs,
+            pages = taskPages,
+            modifier = Modifier
+                .padding(innerPadding)
         )
     }
 }
 
 @PreviewScreenSizes
 @Composable
-fun CreateNewHabitScreenPreView(
-
-) {
+fun CreateNewHabitScreenPreView() {
     CreateNewHabitScreen {}
 }

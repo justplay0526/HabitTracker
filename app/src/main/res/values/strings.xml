@@ -4,6 +4,14 @@
     <string name="btn_cancel">Cancel</string>
     <string name="btn_ok">OK</string>
     <string name="btn_save">Save</string>
+<!--  Date Text -->
+    <string name="date_month_pattern">MMMM yyyy</string>
+    <string name="date_pattern">MMMM d, yyyy</string>
+    <string name="date_today">Today,</string>
+    <string name="date_tomorrow">Tomorrow,</string>
+    <string name="date_yesterday">Yesterday,</string>
+<!-- Content Description -->
+    <string name="desc_create_habit">Create Habit</string>
 <!-- Example Content -->
     <string name="ex_habit_list_1">Set Small Goals</string>
     <string name="ex_habit_list_2">Work</string>
@@ -18,6 +26,11 @@
     <string name="hint_habit_name">Habit Name</string>
     <string name="hint_search_icon">Search Icon</string>
     <string name="hint_task_name">Task Name</string>
+<!-- Sentence -->
+    <plurals name="sent_day_per_week">
+        <item quantity="one">%d day per week</item>
+        <item quantity="other">%d days per week</item>
+    </plurals>
 <!-- Text -->
     <string name="text_all_day">All day</string>
     <string name="text_date">Date</string>
@@ -45,7 +58,14 @@
     <string name="text_week_one_thu">T</string>
     <string name="text_week_one_fri">F</string>
     <string name="text_week_one_sat">S</string>
-    <string name="text_when">When</string>
+<!-- Day of Week in one alphabet (Start From Sunday) -->
+    <string name="text_week_two_sun">Su</string>
+    <string name="text_week_two_mon">Mo</string>
+    <string name="text_week_two_tue">Tu</string>
+    <string name="text_week_two_wed">We</string>
+    <string name="text_week_two_thu">Th</string>
+    <string name="text_week_two_fri">Fr</string>
+    <string name="text_week_two_sat">Sa</string>
 <!-- Title -->
     <string name="title_color">Color</string>
     <string name="title_create_new_habit">Create New Habit</string>
@@ -66,6 +86,5 @@
     <string name="title_setting">Setting</string>
     <string name="title_set_reminder">Set Reminder</string>
     <string name="title_task_name">Task Name</string>
-<!-- Content Description -->
-    <string name="desc_create_habit">Create Habit</string>
+    <string name="title_when">When</string>
 </resources>
