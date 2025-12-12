@@ -31,7 +31,9 @@ fun SingleChoiceChipGroup(
     modifier: Modifier = Modifier,
 ) {
     FlowRow(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -40,8 +42,16 @@ fun SingleChoiceChipGroup(
             FilterChip(
                 selected = selected,
                 onClick = { onSelectedChanged(option) },
-                label = { Text(option) },
+                label = {
+                    Text(
+                        text = option,
+                        style = MaterialTheme.typography.titleMedium,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                },
                 shape = CircleShape,
+                modifier = Modifier.weight(1f),
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = MaterialTheme.colorScheme.primary,
                     selectedLabelColor = MaterialTheme.colorScheme.onPrimary
