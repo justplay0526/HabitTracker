@@ -26,6 +26,11 @@
     <string name="hint_habit_name">Habit Name</string>
     <string name="hint_search_icon">Search Icon</string>
     <string name="hint_task_name">Task Name</string>
+<!-- Sentence -->
+    <plurals name="sent_day_per_week">
+        <item quantity="one">%d day per week</item>
+        <item quantity="other">%d days per week</item>
+    </plurals>
 <!-- Text -->
     <string name="text_all_day">All day</string>
     <string name="text_date">Date</string>
