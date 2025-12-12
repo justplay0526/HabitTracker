@@ -228,7 +228,7 @@ fun DateCalendar(
         // 日期格 7 欄 Grid
         LazyVerticalGrid(
             columns = GridCells.Fixed(7),
-            modifier = Modifier.heightIn(min = 240.dp), // 給一個高度，避免無限高度問題
+            modifier = Modifier.heightIn(min = 240.dp, max = 360.dp), // 給一個高度，避免無限高度問題
             userScrollEnabled = false                   // 不需要捲動
         ) {
             items(days) { day ->
@@ -255,26 +255,12 @@ fun DateCalendar(
 @Composable
 fun MonthlyCalendar(
     yearMonth: YearMonth,
-    modifier: Modifier = Modifier,
-    onSelectionChanged: (Set<Int>) -> Unit
+    selectedDays: Set<Int>,
+    onSelectionChanged: (Set<Int>) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val intSetSaver: Saver<Set<Int>, List<Int>> = Saver(
-        save = { it.toList() },
-        restore = { it.toSet() }
-    )
-
-    // 選取結果
-    var selectedDays by rememberSaveable(stateSaver = intSetSaver) {
-        mutableStateOf(emptySet())
-    }
-
     val days = remember(yearMonth, selectedDays) {
         buildMonthDays(yearMonth, selectedDays)
-    }
-
-    // 每次 selectedDays 改變時，對外通知一次（保證外面一定收到最新狀態）
-    LaunchedEffect(selectedDays) {
-        onSelectionChanged(selectedDays)
     }
 
     Column(
@@ -333,7 +319,7 @@ fun MonthlyCalendar(
         // 日期格 7 欄 Grid
         LazyVerticalGrid(
             columns = GridCells.Fixed(7),
-            modifier = Modifier.heightIn(min = 240.dp), // 給一個高度，避免無限高度問題
+            modifier = Modifier.heightIn(min = 240.dp, max = 360.dp), // 給一個高度，避免無限高度問題
             userScrollEnabled = false                   // 不需要捲動
         ) {
             items(days) { day ->
@@ -343,9 +329,13 @@ fun MonthlyCalendar(
                         // 只處理「當月」的格子
                         if (YearMonth.from(day.date) != yearMonth) return@DayCell
                         val d = day.date.dayOfMonth
-                        selectedDays =
-                            if (d in selectedDays) selectedDays - d
-                            else selectedDays + d
+                        val newSet =
+                            if (d in selectedDays)
+                                selectedDays - d
+                            else
+                                selectedDays + d
+
+                        onSelectionChanged(newSet)
                     }
                 )
             }
@@ -422,19 +412,20 @@ fun DateCalendarPreview() {
 @Preview(showBackground = true)
 @Composable
 fun MonthlyCalendarPreview() {
-    var lastChanged by remember { mutableStateOf<Set<Int>>(emptySet()) }
+    var selectedDays by rememberSaveable {
+        mutableStateOf<Set<Int>>(emptySet())
+    }
 
     HabitTrackerTheme {
         Column(modifier = Modifier
             .fillMaxWidth()) {
             MonthlyCalendar(
                 yearMonth = YearMonth.now(),
-                onSelectionChanged = { newSet ->
-                    lastChanged = newSet
-                }
+                selectedDays = selectedDays,
+                onSelectionChanged = { selectedDays = it }
             )
             Text(
-                text = "目前選擇：${lastChanged.sorted().joinToString(", ")}",
+                text = "目前選擇：${selectedDays.sorted().joinToString(", ")}",
                 modifier = Modifier.padding(16.dp)
             )
         }
