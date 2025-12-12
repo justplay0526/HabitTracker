@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -30,14 +31,17 @@ fun RegularTaskScreen() {
     )
     var selectedColorIndex by remember { mutableIntStateOf(0) }
 
-    var selectedRepeatOptions by remember { mutableStateOf(setOf<String>()) }
     val repeatString = HabitRepeatStringRes
         .map { stringResource(it) }
+    var selectedRepeatOption by remember { mutableStateOf<String?>(repeatString.first()) }
 
-    var selectedPeriodOptions by remember { mutableStateOf(setOf<String>()) }
     val periodString = HabitPeriodStringRes
         .filterNot { it == R.string.text_time_of_day_all }
         .map { stringResource(it) }
+    var selectedPeriodOptions by remember { mutableStateOf(setOf(periodString.first())) }
+    var selectedDay by rememberSaveable { mutableStateOf(setOf<Int>()) }
+    var selectedFreq by rememberSaveable { mutableIntStateOf(5) }
+    var selectedDaysOfMonth by rememberSaveable { mutableStateOf<Set<Int>>(emptySet()) }
 
     var reminderCheck by remember { mutableStateOf(false) }
 
@@ -76,11 +80,47 @@ fun RegularTaskScreen() {
 
         SectionSpace()
         // Repeat Section
-        MultiChoiceSection(
+        SingleChoiceSection(
             title = R.string.title_repeat,
             optionsString = repeatString,
-            selectedOptions = selectedRepeatOptions,
-            onSelectedChanged = { selectedRepeatOptions = it }
+            selectedOptions = selectedRepeatOption,
+            onSelectedChanged = { selectedRepeatOption = it },
+            content = when(selectedRepeatOption) {
+                repeatString[0] -> {
+                    {
+                        OnTheseDaySection(
+                            selected = selectedDay,
+                            onToggle = { index ->
+                                selectedDay =
+                                    if (index in selectedDay) selectedDay - index
+                                    else selectedDay + index
+                            },
+                            onSetAll = { checked ->
+                                selectedDay =
+                                    if (checked) (0..6).toSet()
+                                    else emptySet()
+                            }
+                        )
+                    }
+                }
+                repeatString[1] -> {
+                    {
+                        WeeklySection(
+                            selected = selectedFreq,
+                            onSelectedChange = { selectedFreq = it }
+                        )
+                    }
+                }
+                repeatString[2] -> {
+                    {
+                        MonthlySection(
+                            selectedDays = selectedDaysOfMonth,
+                            onSelectionChanged = { selectedDaysOfMonth = it }
+                        )
+                    }
+                }
+                else -> null
+            }
         )
 
         SectionSpace()
@@ -101,7 +141,7 @@ fun RegularTaskScreen() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, locale = "en")
 @Composable
 fun RegularTaskScreenPreview() {
     HabitTrackerTheme {
