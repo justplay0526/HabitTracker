@@ -44,10 +44,11 @@ import com.justplay.habittracker.data.HabitUi
 import com.justplay.habittracker.data.TodayTestUiState
 import com.justplay.habittracker.data.TodayUiState
 import com.justplay.habittracker.ui.theme.AppTypography
+import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.DraggableItemWithActions
 import com.justplay.habittracker.ui.view.HabitListItemHeight
 import com.justplay.habittracker.ui.view.HabitPeriodStringRes
-import com.justplay.habittracker.ui.view.SingleChoiceChipGroup
+import com.justplay.habittracker.ui.view.ScrollSingleChoiceChipGroup
 import com.justplay.habittracker.viewModel.TodayViewModel
 
 @Composable
@@ -67,7 +68,7 @@ fun TodayScreen(
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-        SingleChoiceChipGroup(
+        ScrollSingleChoiceChipGroup(
             options = periodString,
             selectedOption = selectedLabel,
             onSelectedChanged = { newLabel ->
@@ -275,12 +276,14 @@ fun TodayRoute(
 fun TodayScreenPreview() {
     val uiState = TodayTestUiState
 
-    TodayScreen(
-        uiState = uiState,
-        selectedPeriod = HabitPeriod.ALL,
-        onPeriodSelected = {},
-        onComplete = {},
-        onSkip = {}
-    )
+    HabitTrackerTheme {
+        TodayScreen(
+            uiState = uiState,
+            selectedPeriod = HabitPeriod.ALL,
+            onPeriodSelected = {},
+            onComplete = {},
+            onSkip = {}
+        )
+    }
 }
 

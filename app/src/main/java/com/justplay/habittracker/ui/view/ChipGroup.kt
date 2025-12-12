@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -52,6 +55,42 @@ fun SingleChoiceChipGroup(
                 },
                 shape = CircleShape,
                 modifier = Modifier.weight(1f),
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+                )
+            )
+        }
+    }
+}
+
+@Composable
+fun ScrollSingleChoiceChipGroup(
+    options: List<String>,
+    selectedOption: String?,
+    onSelectedChanged: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyRow(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(options) { option ->
+            val selected = option == selectedOption
+            FilterChip(
+                selected = selected,
+                onClick = { onSelectedChanged(option) },
+                label = {
+                    Text(
+                        text = option,
+                        style = MaterialTheme.typography.titleMedium,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.wrapContentWidth()
+                    )
+                },
+                shape = CircleShape,
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = MaterialTheme.colorScheme.primary,
                     selectedLabelColor = MaterialTheme.colorScheme.onPrimary
@@ -111,10 +150,30 @@ fun MultiChoiceChipGroup(
 @Composable
 fun SingleChoicePreview() {
     var selected by remember { mutableStateOf<String?>(null) }
-    val testString = HabitPeriodStringRes.map { stringResource(it) }
+    val testString = HabitPeriodStringRes
+        .filterNot { it == R.string.text_time_of_day_all }
+        .map { stringResource(it) }
 
     HabitTrackerTheme {
         SingleChoiceChipGroup(
+            options = testString,
+            selectedOption = selected,
+            onSelectedChanged = { selected = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ScrollSingleChoicePreview() {
+    var selected by remember { mutableStateOf<String?>(null) }
+    val testString = HabitPeriodStringRes.map { stringResource(it) }
+
+    HabitTrackerTheme {
+        ScrollSingleChoiceChipGroup(
             options = testString,
             selectedOption = selected,
             onSelectedChanged = { selected = it },
