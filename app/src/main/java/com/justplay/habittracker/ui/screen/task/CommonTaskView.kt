@@ -25,6 +25,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -48,10 +49,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.justplay.habittracker.R
+import com.justplay.habittracker.data.formatUniformDate
+import com.justplay.habittracker.data.formatUniformDays
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.CircleColorBox
 import com.justplay.habittracker.ui.view.ColorResource
-import com.justplay.habittracker.ui.view.DateTimePickerRow
+import com.justplay.habittracker.ui.view.DateModalBottomSheet
+import com.justplay.habittracker.ui.view.PickerRow
+import com.justplay.habittracker.ui.view.EndHabitOnStringRes
 import com.justplay.habittracker.ui.view.HabitInputField
 import com.justplay.habittracker.ui.view.IconModalBottomSheet
 import com.justplay.habittracker.ui.view.IconsRes
@@ -59,6 +64,7 @@ import com.justplay.habittracker.ui.view.MonthlyCalendar
 import com.justplay.habittracker.ui.view.MultiChoiceChipGroup
 import com.justplay.habittracker.ui.view.OutlinedIcon
 import com.justplay.habittracker.ui.view.SingleChoiceChipGroup
+import java.time.LocalDate
 import java.time.YearMonth
 
 @Composable
@@ -98,6 +104,88 @@ fun ColorSection(
                     .weight(1f, fill = true)
                     .aspectRatio(1f)
             )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerBottomSheet(
+    show: Boolean,
+    sheetState: SheetState,
+    onDismissRequest: () -> Unit,
+    onDateSelected: (LocalDate?) -> Unit,
+) {
+    if (show) {
+        DateModalBottomSheet(
+            sheetState = sheetState,
+            onDateSelected =  onDateSelected,
+            onCancel = onDismissRequest
+        )
+    }
+}
+
+@Composable
+fun EndHabitOnSection(
+    switchState: Boolean,
+    dateString: String,
+    dayString: String,
+    onSwitchChanged: (Boolean) -> Unit,
+    onDateSelected: () -> Unit,
+    onDaySelected: () -> Unit
+) {
+    val endHabitOnString = EndHabitOnStringRes
+        .map { stringResource(it) }
+    var selectedTypeOption by remember { mutableStateOf<String?>(endHabitOnString.first()) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.title_end_habit_on),
+                style = MaterialTheme.typography.titleLarge
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Switch(
+                checked = switchState,
+                onCheckedChange = { onSwitchChanged(it) }
+            )
+        }
+
+        if (switchState) {
+            SingleChoiceSection(
+                title = null,
+                optionsString = endHabitOnString,
+                selectedOptions = selectedTypeOption,
+                onSelectedChanged = { selectedTypeOption = it }
+            ) {
+                when (selectedTypeOption) {
+                    endHabitOnString[0] -> {
+                        PickerRow(
+                            text = dateString,
+                            onClick = onDateSelected,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        )
+                    } else -> {
+                        PickerRow(
+                            text = dayString,
+                            onClick = onDaySelected,
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            leadingIcon = Icons.Outlined.Refresh
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -377,16 +465,18 @@ fun SectionSpace() {
 
 @Composable
 fun SingleChoiceSection(
-    @StringRes title: Int,
+    @StringRes title: Int? = null,
     optionsString: List<String>,
     selectedOptions: String?,
     onSelectedChanged: (String) -> Unit,
     content: (@Composable () -> Unit)? = null
 ) {
-    Text(
-        text = stringResource(title),
-        style = MaterialTheme.typography.titleLarge
-    )
+    if (title != null) {
+        Text(
+            text = stringResource(title),
+            style = MaterialTheme.typography.titleLarge
+        )
+    }
 
     SingleChoiceChipGroup(
         options = optionsString,
@@ -491,24 +581,32 @@ fun WhenSection(
 
     Spacer(modifier = Modifier.height(8.dp))
 
-    DateTimePickerRow(
+    PickerRow(
         text = dateString,
         onClick = onDateSelected,
         modifier = Modifier
             .fillMaxWidth()
     )
 }
-
-// 在預覽時 plural 也有語系問題
+// Preview Region
 @Preview(showBackground = true, locale = "en")
 @Composable
-fun WeeklySectionPreview() {
-    var selected by rememberSaveable { mutableIntStateOf(5) }
+fun EndHabitOnSectionPreview() {
+    var switchState by remember { mutableStateOf(false) }
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var selectedDay by remember { mutableIntStateOf(1) }
+    val displayDate = formatUniformDate(selectedDate)
+    val displayDay = formatUniformDays(selectedDay)
+
 
     HabitTrackerTheme {
-        WeeklySection(
-            selected = selected,
-            onSelectedChange = { selected = it }
+        EndHabitOnSection(
+            switchState = switchState,
+            onSwitchChanged = { switchState = it },
+            dateString = displayDate,
+            dayString = displayDay,
+            onDateSelected = {},
+            onDaySelected = {}
         )
     }
 }
@@ -531,6 +629,20 @@ fun OnTheseDaySectionPreview(
                     if (checked) (0..6).toSet()
                     else emptySet()
             }
+        )
+    }
+}
+
+// 在預覽時 plural 也有語系問題
+@Preview(showBackground = true, locale = "en")
+@Composable
+fun WeeklySectionPreview() {
+    var selected by rememberSaveable { mutableIntStateOf(5) }
+
+    HabitTrackerTheme {
+        WeeklySection(
+            selected = selected,
+            onSelectedChange = { selected = it }
         )
     }
 }
