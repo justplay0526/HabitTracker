@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -112,10 +113,11 @@ fun CircleColorBox(
 }
 
 @Composable
-fun DateTimePickerRow(
+fun PickerRow(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    leadingIcon: ImageVector = Icons.Outlined.DateRange,
 ) {
     Row(
         modifier = modifier
@@ -132,7 +134,7 @@ fun DateTimePickerRow(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = Icons.Outlined.DateRange,
+                imageVector = leadingIcon,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(20.dp)
@@ -193,13 +195,13 @@ fun CircleColorBoxPreview(){
 
 @Preview(showBackground = true)
 @Composable
-fun DateTimePickerRowPreview() {
+fun PickerRowPreview() {
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
 
     val displayDate = formatUniformDate(selectedDate)
 
     HabitTrackerTheme {
-        DateTimePickerRow(
+        PickerRow(
             text = displayDate,
             onClick = {},
             modifier = Modifier
