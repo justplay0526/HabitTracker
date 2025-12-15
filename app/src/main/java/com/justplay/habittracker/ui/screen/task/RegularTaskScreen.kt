@@ -14,9 +14,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.justplay.habittracker.R
+import com.justplay.habittracker.data.formatUniformDate
+import com.justplay.habittracker.data.formatUniformDays
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.HabitPeriodStringRes
 import com.justplay.habittracker.ui.view.HabitRepeatStringRes
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,6 +29,7 @@ fun RegularTaskScreen() {
 
     var text by remember { mutableStateOf("") }
     var showIconPicker by remember { mutableStateOf(false) }
+    var showDatePicker by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
@@ -40,10 +44,16 @@ fun RegularTaskScreen() {
         .map { stringResource(it) }
     var selectedPeriodOptions by remember { mutableStateOf(setOf(periodString.first())) }
     var selectedDay by rememberSaveable { mutableStateOf(setOf<Int>()) }
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var selectedEndHabitDay by remember { mutableIntStateOf(1) }
     var selectedFreq by rememberSaveable { mutableIntStateOf(5) }
     var selectedDaysOfMonth by rememberSaveable { mutableStateOf<Set<Int>>(emptySet()) }
 
     var reminderCheck by remember { mutableStateOf(false) }
+    var endHabitOnCheck by remember { mutableStateOf(false) }
+
+    val displayDate = formatUniformDate(selectedDate)
+    val displayDay = formatUniformDays(selectedEndHabitDay)
 
     IconPickerBottomSheet(
         show = showIconPicker,
@@ -51,6 +61,16 @@ fun RegularTaskScreen() {
         onDismissRequest = { showIconPicker = false },
         onIconSelected = { icon ->
             Toast.makeText(context, "Selected icon: $icon", Toast.LENGTH_SHORT).show()
+            showIconPicker = false
+        }
+    )
+
+    DatePickerBottomSheet(
+        show = showDatePicker,
+        sheetState = sheetState,
+        onDismissRequest = { showDatePicker = false },
+        onDateSelected = { date ->
+            Toast.makeText(context, "Selected Date: $date", Toast.LENGTH_SHORT).show()
             showIconPicker = false
         }
     )
@@ -130,6 +150,20 @@ fun RegularTaskScreen() {
             optionsString = periodString,
             selectedOptions = selectedPeriodOptions,
             onSelectedChanged = { selectedPeriodOptions = it }
+        )
+
+        SectionSpace()
+
+        EndHabitOnSection(
+            switchState = endHabitOnCheck,
+            onSwitchChanged = { endHabitOnCheck = it },
+            dateString = displayDate,
+            dayString = displayDay,
+            onDateSelected = { showDatePicker = true },
+            onDaySelected = {
+                /* TODO Add Num Picker */
+                Toast.makeText(context, "Selected Day: $selectedEndHabitDay", Toast.LENGTH_SHORT).show()
+            }
         )
 
         SectionSpace()

@@ -30,6 +30,7 @@ fun OneTimeTaskScreen() {
 
     var text by remember { mutableStateOf("") }
     var showIconPicker by remember { mutableStateOf(false) }
+    var showDatePicker by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
@@ -52,6 +53,16 @@ fun OneTimeTaskScreen() {
         onDismissRequest = { showIconPicker = false },
         onIconSelected = { icon ->
             Toast.makeText(context, "Selected icon: $icon", Toast.LENGTH_SHORT).show()
+            showIconPicker = false
+        }
+    )
+
+    DatePickerBottomSheet(
+        show = showDatePicker,
+        sheetState = sheetState,
+        onDismissRequest = { showDatePicker = false },
+        onDateSelected = { date ->
+            selectedDate = date
             showIconPicker = false
         }
     )
@@ -83,7 +94,7 @@ fun OneTimeTaskScreen() {
 
         WhenSection(
             dateString = displayDate,
-            onDateSelected = { /* TODO Handle date picker */ }
+            onDateSelected = { showDatePicker = true }
         )
 
         SectionSpace()
