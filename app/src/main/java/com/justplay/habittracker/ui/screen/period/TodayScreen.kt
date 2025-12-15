@@ -41,7 +41,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.justplay.habittracker.data.DragToActionValue
 import com.justplay.habittracker.data.HabitPeriod
 import com.justplay.habittracker.data.HabitUi
-import com.justplay.habittracker.data.TodayTestUiState
 import com.justplay.habittracker.data.TodayUiState
 import com.justplay.habittracker.ui.theme.AppTypography
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
@@ -271,18 +270,20 @@ fun TodayRoute(
     )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun TodayScreenPreview() {
-    val uiState = TodayTestUiState
+    val viewModel: TodayViewModel = viewModel()
+    val uiState by viewModel.uiState.collectAsState()
+    val selectedPeriod by viewModel.selectedPeriod.collectAsState()
 
     HabitTrackerTheme {
         TodayScreen(
             uiState = uiState,
-            selectedPeriod = HabitPeriod.ALL,
-            onPeriodSelected = {},
-            onComplete = {},
-            onSkip = {}
+            selectedPeriod = selectedPeriod,
+            onPeriodSelected = viewModel::onPeriodSelected,
+            onComplete = viewModel::habitComplete,
+            onSkip = viewModel::habitSkip
         )
     }
 }
