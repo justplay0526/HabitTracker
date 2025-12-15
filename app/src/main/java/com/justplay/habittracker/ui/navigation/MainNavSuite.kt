@@ -27,6 +27,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.window.core.layout.WindowHeightSizeClass
 import com.justplay.habittracker.data.HomeNavDest
 import com.justplay.habittracker.data.MainNavSuiteDest
 import com.justplay.habittracker.ui.screen.CreateNewHabitScreen
@@ -57,6 +58,16 @@ fun MainNavSuite() {
     val shouldShowSuite = currDest?.route in showSuiteRoutes
 
     /**
+     * 基本上只有手機橫版會達到高度為 COMPACT，因此作為手機橫版的判斷
+     *
+     * 除非我想做切割視窗否則這夠用了
+     */
+    val isHeightCompact = (currentWindowAdaptiveInfo()
+        .windowSizeClass.windowHeightSizeClass
+            == WindowHeightSizeClass.COMPACT
+    )
+
+    /**
      * NavigationSuite 的顏色設定
      */
     val itemColors = NavigationSuiteDefaults.itemColors(
@@ -75,6 +86,8 @@ fun MainNavSuite() {
         modifier = Modifier.fillMaxSize(),
         layoutType = if (!shouldShowSuite) {
             NavigationSuiteType.None
+        } else if (isHeightCompact) {
+            NavigationSuiteType.NavigationRail
         } else {
             NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(
                 currentWindowAdaptiveInfo()
