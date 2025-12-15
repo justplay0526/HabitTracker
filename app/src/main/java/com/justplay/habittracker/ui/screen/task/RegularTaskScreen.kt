@@ -24,34 +24,39 @@ import java.time.LocalDate
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegularTaskScreen() {
-    val context = LocalContext.current
-    var selectedIcon by remember { mutableIntStateOf(-1) }
-
-    var text by remember { mutableStateOf("") }
-    var showIconPicker by remember { mutableStateOf(false) }
-    var showDatePicker by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
-    )
-    var selectedColorIndex by remember { mutableIntStateOf(0) }
-
-    val repeatString = HabitRepeatStringRes
-        .map { stringResource(it) }
-    var selectedRepeatOption by remember { mutableStateOf<String?>(repeatString.first()) }
-
+    // String Reference
     val periodString = HabitPeriodStringRes
         .filterNot { it == R.string.text_time_of_day_all }
         .map { stringResource(it) }
-    var selectedPeriodOptions by remember { mutableStateOf(setOf(periodString.first())) }
-    var selectedDay by rememberSaveable { mutableStateOf(setOf<Int>()) }
+    val repeatString = HabitRepeatStringRes
+        .map { stringResource(it) }
+
+    // Var Region
+    var nameText by remember { mutableStateOf("") }
+    // Show Picker Boolean State
+    var showIconPicker by remember { mutableStateOf(false) }
+    var showDatePicker by remember { mutableStateOf(false) }
+
+    // Selected Index
+    var selectedColorIndex by remember { mutableIntStateOf(0) }
+    var selectedIconIndex by remember { mutableIntStateOf(-1) }
+    // Selected State
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var selectedDaySet by rememberSaveable { mutableStateOf(setOf<Int>()) }
+    var selectedDaysOfMonth by rememberSaveable { mutableStateOf<Set<Int>>(emptySet()) }
     var selectedEndHabitDay by remember { mutableIntStateOf(1) }
     var selectedFreq by rememberSaveable { mutableIntStateOf(5) }
-    var selectedDaysOfMonth by rememberSaveable { mutableStateOf<Set<Int>>(emptySet()) }
+    var selectedPeriodOptions by remember { mutableStateOf(setOf(periodString.first())) }
+    var selectedRepeatOption by remember { mutableStateOf<String?>(repeatString.first()) }
+    // Switch State
+    var reminderState by remember { mutableStateOf(false) }
+    var endHabitOnState by remember { mutableStateOf(false) }
 
-    var reminderCheck by remember { mutableStateOf(false) }
-    var endHabitOnCheck by remember { mutableStateOf(false) }
-
+    // Val Region
+    val context = LocalContext.current
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
     val displayDate = formatUniformDate(selectedDate)
     val displayDay = formatUniformDays(selectedEndHabitDay)
 
@@ -79,15 +84,15 @@ fun RegularTaskScreen() {
         NameSection(
             title = R.string.title_habit_name,
             hint = R.string.title_habit_name,
-            textValue = text,
-            onTextChange = { text = it }
+            textValue = nameText,
+            onTextChange = { nameText = it }
         )
 
         SectionSpace()
 
         IconSection(
-            selectedIcon = selectedIcon,
-            onIconSelected = { selectedIcon = it },
+            selectedIcon = selectedIconIndex,
+            onIconSelected = { selectedIconIndex = it },
             showPicker = { showIconPicker = true }
         )
 
@@ -109,14 +114,14 @@ fun RegularTaskScreen() {
                 repeatString[0] -> {
                     {
                         OnTheseDaySection(
-                            selected = selectedDay,
+                            selected = selectedDaySet,
                             onToggle = { index ->
-                                selectedDay =
-                                    if (index in selectedDay) selectedDay - index
-                                    else selectedDay + index
+                                selectedDaySet =
+                                    if (index in selectedDaySet) selectedDaySet - index
+                                    else selectedDaySet + index
                             },
                             onSetAll = { checked ->
-                                selectedDay =
+                                selectedDaySet =
                                     if (checked) (0..6).toSet()
                                     else emptySet()
                             }
@@ -155,8 +160,8 @@ fun RegularTaskScreen() {
         SectionSpace()
 
         EndHabitOnSection(
-            switchState = endHabitOnCheck,
-            onSwitchChanged = { endHabitOnCheck = it },
+            switchState = endHabitOnState,
+            onSwitchChanged = { endHabitOnState = it },
             dateString = displayDate,
             dayString = displayDay,
             onDateSelected = { showDatePicker = true },
@@ -169,8 +174,8 @@ fun RegularTaskScreen() {
         SectionSpace()
 
         ReminderSection(
-            reminderCheck = reminderCheck,
-            onReminderChanged = { reminderCheck = it }
+            reminderCheck = reminderState,
+            onReminderChanged = { reminderState = it }
         )
     }
 }

@@ -25,27 +25,41 @@ import java.time.LocalDate
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OneTimeTaskScreen() {
-    val context = LocalContext.current
-    var selectedIcon by remember { mutableIntStateOf(-1) }
-
-    var text by remember { mutableStateOf("") }
-    var showIconPicker by remember { mutableStateOf(false) }
-    var showDatePicker by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
-    )
-    var selectedColorIndex by remember { mutableIntStateOf(0) }
-
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-
-    val displayDate = formatUniformDate(selectedDate)
-
-    var selectedPeriodOptions by remember { mutableStateOf(setOf<String>()) }
+    // String Reference
     val periodString = HabitPeriodStringRes
         .filterNot { it == R.string.text_time_of_day_all }
         .map { stringResource(it) }
 
-    var reminderCheck by remember { mutableStateOf(false) }
+    // Var Region
+    var nameText by remember { mutableStateOf("") }
+    // Show Picker Boolean State
+    var showIconPicker by remember { mutableStateOf(false) }
+    var showDatePicker by remember { mutableStateOf(false) }
+    // Selected Index
+    var selectedColorIndex by remember { mutableIntStateOf(0) }
+    var selectedIconIndex by remember { mutableIntStateOf(-1) }
+    // Selected State
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var selectedPeriodOptions by remember { mutableStateOf(setOf<String>()) }
+    // Switch State
+    var reminderState by remember { mutableStateOf(false) }
+
+    // Val Region
+    val context = LocalContext.current
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
+    val displayDate = formatUniformDate(selectedDate)
+
+    DatePickerBottomSheet(
+        show = showDatePicker,
+        sheetState = sheetState,
+        onDismissRequest = { showDatePicker = false },
+        onDateSelected = { date ->
+            selectedDate = date
+            showDatePicker = false
+        }
+    )
 
     IconPickerBottomSheet(
         show = showIconPicker,
@@ -57,29 +71,19 @@ fun OneTimeTaskScreen() {
         }
     )
 
-    DatePickerBottomSheet(
-        show = showDatePicker,
-        sheetState = sheetState,
-        onDismissRequest = { showDatePicker = false },
-        onDateSelected = { date ->
-            selectedDate = date
-            showIconPicker = false
-        }
-    )
-
     TaskScaffold {
         NameSection(
             title = R.string.title_task_name,
             hint = R.string.title_task_name,
-            textValue = text,
-            onTextChange = { text = it }
+            textValue = nameText,
+            onTextChange = { nameText = it }
         )
 
         SectionSpace()
 
         IconSection(
-            selectedIcon = selectedIcon,
-            onIconSelected = { selectedIcon = it },
+            selectedIcon = selectedIconIndex,
+            onIconSelected = { selectedIconIndex = it },
             showPicker = { showIconPicker = true }
         )
 
@@ -109,10 +113,9 @@ fun OneTimeTaskScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         ReminderSection(
-            reminderCheck = reminderCheck,
-            onReminderChanged = { reminderCheck = it }
+            reminderCheck = reminderState,
+            onReminderChanged = { reminderState = it }
         )
-
     }
 }
 
