@@ -1,12 +1,13 @@
 package com.justplay.habittracker.data
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import com.justplay.habittracker.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-
+// TODO 之後換個檔案名稱
 @Composable
 fun formatUniformDate(
     date: LocalDate,
@@ -39,4 +40,16 @@ fun formatUniformDate(
             date.format(formatter)
         }
     }
+}
+
+@Composable
+fun formatUniformDays(
+    days: Int
+): String {
+
+    return pluralStringResource(
+        id = R.plurals.sent_after_day,
+        count = days,
+        days
+    )
 }
