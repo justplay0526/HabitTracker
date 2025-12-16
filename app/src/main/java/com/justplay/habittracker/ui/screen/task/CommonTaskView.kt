@@ -43,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -51,11 +52,11 @@ import androidx.compose.ui.unit.dp
 import com.justplay.habittracker.R
 import com.justplay.habittracker.data.formatUniformDate
 import com.justplay.habittracker.data.formatUniformDays
+import com.justplay.habittracker.ui.helper.asPainter
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.CircleColorBox
 import com.justplay.habittracker.ui.view.ColorResource
 import com.justplay.habittracker.ui.view.DateModalBottomSheet
-import com.justplay.habittracker.ui.view.PickerRow
 import com.justplay.habittracker.ui.view.EndHabitOnStringRes
 import com.justplay.habittracker.ui.view.HabitInputField
 import com.justplay.habittracker.ui.view.IconModalBottomSheet
@@ -63,6 +64,7 @@ import com.justplay.habittracker.ui.view.IconsRes
 import com.justplay.habittracker.ui.view.MonthlyCalendar
 import com.justplay.habittracker.ui.view.MultiChoiceChipGroup
 import com.justplay.habittracker.ui.view.OutlinedIcon
+import com.justplay.habittracker.ui.view.PickerRow
 import com.justplay.habittracker.ui.view.SingleChoiceChipGroup
 import java.time.LocalDate
 import java.time.YearMonth
@@ -181,7 +183,7 @@ fun EndHabitOnSection(
                             onClick = onDaySelected,
                             modifier = Modifier
                                 .fillMaxWidth(),
-                            leadingIcon = Icons.Outlined.Refresh
+                            leadingIcon = Icons.Outlined.Refresh.asPainter()
                         )
                     }
                 }
@@ -434,7 +436,9 @@ fun OnTheseDaySection(
 @Composable
 fun ReminderSection(
     reminderCheck: Boolean,
-    onReminderChanged: (Boolean) -> Unit
+    timeString: String,
+    onReminderChanged: (Boolean) -> Unit,
+    onTimeChanged: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -454,7 +458,13 @@ fun ReminderSection(
         )
     }
     if (reminderCheck) {
-        Text(text = true.toString())
+        PickerRow(
+            text = timeString,
+            onClick = onTimeChanged,
+            modifier = Modifier
+                .fillMaxWidth(),
+            leadingIcon = painterResource(R.drawable.round_access_time_24)
+        )
     }
 }
 
@@ -506,7 +516,7 @@ fun TaskScaffold(
         content()
     }
 }
-// TODO Finish WeeklySection View
+
 @Composable
 fun WeeklySection(
     selected: Int,
