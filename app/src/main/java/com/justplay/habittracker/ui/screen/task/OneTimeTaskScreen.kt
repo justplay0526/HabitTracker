@@ -12,10 +12,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.toColorInt
 import com.justplay.habittracker.R
 import com.justplay.habittracker.data.formatReminderTime
 import com.justplay.habittracker.data.formatUniformDate
@@ -34,7 +37,9 @@ fun OneTimeTaskScreen() {
 
     // Var Region
     var nameText by remember { mutableStateOf("") }
+    var customColor by remember { mutableIntStateOf(Color.Red.toArgb()) }
     // Show Picker Boolean State
+    var showColorPicker by remember { mutableStateOf(false) }
     var showIconPicker by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
     // Selected Index
@@ -54,6 +59,16 @@ fun OneTimeTaskScreen() {
     )
     val displayDate = formatUniformDate(selectedDate)
     val displayTime = formatReminderTime(selectedTime)
+
+    ColorPickerBottomSheet(
+        show = showColorPicker,
+        sheetState = sheetState,
+        onDismissRequest = { showColorPicker = false },
+        onColorSelected = {
+            customColor = it.toColorInt()
+            showColorPicker = false
+        }
+    )
 
     DatePickerBottomSheet(
         show = showDatePicker,
@@ -95,8 +110,12 @@ fun OneTimeTaskScreen() {
         SectionSpace()
 
         ColorSection(
+            customColor = customColor,
             selectedColorIndex = selectedColorIndex,
-            onColorSelected = { selectedColorIndex = it }
+            onColorIndexSelected = { selectedColorIndex = it },
+            showPicker = {
+                showColorPicker = true
+            }
         )
 
         SectionSpace()

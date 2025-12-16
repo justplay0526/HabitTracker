@@ -1,5 +1,6 @@
 package com.justplay.habittracker.ui.screen.task
 
+import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
@@ -43,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -55,6 +57,7 @@ import com.justplay.habittracker.data.formatUniformDays
 import com.justplay.habittracker.ui.helper.asPainter
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.CircleColorBox
+import com.justplay.habittracker.ui.view.ColorModalBottomSheet
 import com.justplay.habittracker.ui.view.ColorResource
 import com.justplay.habittracker.ui.view.DateModalBottomSheet
 import com.justplay.habittracker.ui.view.EndHabitOnStringRes
@@ -71,8 +74,10 @@ import java.time.YearMonth
 
 @Composable
 fun ColorSection(
+    @ColorInt customColor: Int,
     selectedColorIndex: Int,
-    onColorSelected: (Int) -> Unit
+    onColorIndexSelected: (Int) -> Unit,
+    showPicker: () -> Unit
 ) {
     Text(
         text = stringResource(R.string.title_color),
@@ -94,19 +99,47 @@ fun ColorSection(
          * TODO handle color picker for last Circle Box
          * TODO connect to ViewModel
          */
-        ColorResource.forEachIndexed {
+        ColorResource.take(14).forEachIndexed {
                 index, colorData ->
             CircleColorBox(
                 color = colorData,
                 selected = selectedColorIndex == index,
                 onClick = {
-                    onColorSelected(index)
+                    onColorIndexSelected(index)
                 },
                 modifier = Modifier
                     .weight(1f, fill = true)
                     .aspectRatio(1f)
             )
         }
+        CircleColorBox(
+            color = Color(customColor),
+            selected = selectedColorIndex == 15,
+            onClick = {
+                onColorIndexSelected(15)
+                showPicker()
+            },
+            modifier = Modifier
+                .weight(1f, fill = true)
+                .aspectRatio(1f)
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ColorPickerBottomSheet(
+    show: Boolean,
+    sheetState: SheetState,
+    onDismissRequest: () -> Unit,
+    onColorSelected: (String) -> Unit,
+) {
+    if (show) {
+        ColorModalBottomSheet(
+            sheetState = sheetState,
+            onColorSelected = onColorSelected,
+            onCancel = onDismissRequest
+        )
     }
 }
 
