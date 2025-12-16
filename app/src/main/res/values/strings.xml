@@ -4,12 +4,6 @@
     <string name="btn_cancel">Cancel</string>
     <string name="btn_ok">OK</string>
     <string name="btn_save">Save</string>
-<!--  Date Text -->
-    <string name="date_month_pattern">MMMM yyyy</string>
-    <string name="date_pattern">MMMM d, yyyy</string>
-    <string name="date_today">Today,</string>
-    <string name="date_tomorrow">Tomorrow,</string>
-    <string name="date_yesterday">Yesterday,</string>
 <!-- Content Description -->
     <string name="desc_create_habit">Create Habit</string>
 <!-- Example Content -->
@@ -26,6 +20,9 @@
     <string name="hint_habit_name">Habit Name</string>
     <string name="hint_search_icon">Search Icon</string>
     <string name="hint_task_name">Task Name</string>
+<!-- Pattern -->
+    <string name="pattern_date_month">MMMM yyyy</string>
+    <string name="pattern_date">MMMM d, yyyy</string>
 <!-- Sentence -->
     <plurals name="sent_day_per_week">
         <item quantity="one">%d day per week</item>
@@ -39,6 +36,10 @@
 <!-- Text -->
     <string name="text_all_day">All day</string>
     <string name="text_date">Date</string>
+<!--  Date Text -->
+    <string name="text_date_today">Today,</string>
+    <string name="text_date_tomorrow">Tomorrow,</string>
+    <string name="text_date_yesterday">Yesterday,</string>
     <string name="text_days">Day</string>
     <string name="text_emoji">Emoji</string>
 <!-- Habit Task Type -->
