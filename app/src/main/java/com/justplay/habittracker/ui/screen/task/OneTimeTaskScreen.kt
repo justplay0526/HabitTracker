@@ -17,10 +17,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.justplay.habittracker.R
+import com.justplay.habittracker.data.formatReminderTime
 import com.justplay.habittracker.data.formatUniformDate
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.HabitPeriodStringRes
 import java.time.LocalDate
+import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,6 +43,7 @@ fun OneTimeTaskScreen() {
     // Selected State
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     var selectedPeriodOptions by remember { mutableStateOf(setOf<String>()) }
+    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
     // Switch State
     var reminderState by remember { mutableStateOf(false) }
 
@@ -50,6 +53,7 @@ fun OneTimeTaskScreen() {
         skipPartiallyExpanded = true
     )
     val displayDate = formatUniformDate(selectedDate)
+    val displayTime = formatReminderTime(selectedTime)
 
     DatePickerBottomSheet(
         show = showDatePicker,
@@ -66,6 +70,7 @@ fun OneTimeTaskScreen() {
         sheetState = sheetState,
         onDismissRequest = { showIconPicker = false },
         onIconSelected = { icon ->
+            // TODO When finish database, show this to lastest
             Toast.makeText(context, "Selected icon: $icon", Toast.LENGTH_SHORT).show()
             showIconPicker = false
         }
@@ -114,7 +119,9 @@ fun OneTimeTaskScreen() {
 
         ReminderSection(
             reminderCheck = reminderState,
-            onReminderChanged = { reminderState = it }
+            timeString = displayTime,
+            onReminderChanged = { reminderState = it },
+            onTimeChanged = { /* TODO Add Time Picker */ }
         )
     }
 }

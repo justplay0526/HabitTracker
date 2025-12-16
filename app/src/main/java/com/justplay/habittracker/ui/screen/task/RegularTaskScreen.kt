@@ -14,12 +14,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.justplay.habittracker.R
+import com.justplay.habittracker.data.formatReminderTime
 import com.justplay.habittracker.data.formatUniformDate
 import com.justplay.habittracker.data.formatUniformDays
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.HabitPeriodStringRes
 import com.justplay.habittracker.ui.view.HabitRepeatStringRes
 import java.time.LocalDate
+import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,6 +50,7 @@ fun RegularTaskScreen() {
     var selectedFreq by rememberSaveable { mutableIntStateOf(5) }
     var selectedPeriodOptions by remember { mutableStateOf(setOf(periodString.first())) }
     var selectedRepeatOption by remember { mutableStateOf<String?>(repeatString.first()) }
+    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
     // Switch State
     var reminderState by remember { mutableStateOf(false) }
     var endHabitOnState by remember { mutableStateOf(false) }
@@ -59,6 +62,7 @@ fun RegularTaskScreen() {
     )
     val displayDate = formatUniformDate(selectedDate)
     val displayDay = formatUniformDays(selectedEndHabitDay)
+    val displayTime = formatReminderTime(selectedTime)
 
     IconPickerBottomSheet(
         show = showIconPicker,
@@ -75,6 +79,7 @@ fun RegularTaskScreen() {
         sheetState = sheetState,
         onDismissRequest = { showDatePicker = false },
         onDateSelected = { date ->
+            // TODO When finish database, show this to lastest
             Toast.makeText(context, "Selected Date: $date", Toast.LENGTH_SHORT).show()
             showIconPicker = false
         }
@@ -175,8 +180,12 @@ fun RegularTaskScreen() {
 
         ReminderSection(
             reminderCheck = reminderState,
-            onReminderChanged = { reminderState = it }
+            timeString = displayTime,
+            onReminderChanged = { reminderState = it },
+            onTimeChanged = { /* TODO Add Time Picker */ }
         )
+
+        SectionSpace()
     }
 }
 
