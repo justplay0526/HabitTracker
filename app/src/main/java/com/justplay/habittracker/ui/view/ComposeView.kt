@@ -30,12 +30,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.justplay.habittracker.R
 import com.justplay.habittracker.data.formatUniformDate
+import com.justplay.habittracker.ui.helper.asPainter
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import java.time.LocalDate
 
@@ -117,7 +118,7 @@ fun PickerRow(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    leadingIcon: ImageVector = Icons.Outlined.DateRange,
+    leadingIcon: Painter = Icons.Outlined.DateRange.asPainter(),
 ) {
     Row(
         modifier = modifier
@@ -134,7 +135,7 @@ fun PickerRow(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = leadingIcon,
+                painter = leadingIcon,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(20.dp)
