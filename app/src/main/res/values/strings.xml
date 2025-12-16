@@ -23,6 +23,7 @@
 <!-- Pattern -->
     <string name="pattern_date_month">MMMM yyyy</string>
     <string name="pattern_date">MMMM d, yyyy</string>
+    <string name="pattern_time_am">hh:mm a</string>
 <!-- Sentence -->
     <plurals name="sent_day_per_week">
         <item quantity="one">%d day per week</item>

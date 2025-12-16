@@ -54,3 +54,16 @@ fun formatUniformDays(
         days
     )
 }
+
+@Composable
+fun formatReminderTime(
+    time: LocalTime,
+    locale: Locale = Locale.US
+): String {
+    val formatter = DateTimeFormatter.ofPattern(
+        stringResource(R.string.pattern_time_am),
+        locale
+    )
+
+    return time.format(formatter)
+}
