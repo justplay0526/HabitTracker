@@ -39,6 +39,7 @@ fun RegularTaskScreen() {
     // Var Region
     var nameText by remember { mutableStateOf("") }
     var customColor by remember { mutableIntStateOf(Color.Red.toArgb()) }
+    var colorSelected by remember { mutableStateOf(false) }
     // Show Picker Boolean State
     var showColorPicker by remember { mutableStateOf(false) }
     var showIconPicker by remember { mutableStateOf(false) }
@@ -75,6 +76,8 @@ fun RegularTaskScreen() {
         onDismissRequest = { showColorPicker = false },
         onColorSelected = {
             customColor = it.toColorInt()
+            selectedColorIndex = 14
+            colorSelected = true
             showColorPicker = false
         }
     )
@@ -120,6 +123,7 @@ fun RegularTaskScreen() {
 
         ColorSection(
             customColor = customColor,
+            colorSelected = colorSelected,
             selectedColorIndex = selectedColorIndex,
             onColorIndexSelected = { selectedColorIndex = it },
             showPicker = {

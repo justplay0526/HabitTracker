@@ -57,6 +57,7 @@ import com.justplay.habittracker.data.formatUniformDays
 import com.justplay.habittracker.ui.helper.asPainter
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.CircleColorBox
+import com.justplay.habittracker.ui.view.CirclePictureBox
 import com.justplay.habittracker.ui.view.ColorModalBottomSheet
 import com.justplay.habittracker.ui.view.ColorResource
 import com.justplay.habittracker.ui.view.DateModalBottomSheet
@@ -75,6 +76,7 @@ import java.time.YearMonth
 @Composable
 fun ColorSection(
     @ColorInt customColor: Int,
+    colorSelected: Boolean,
     selectedColorIndex: Int,
     onColorIndexSelected: (Int) -> Unit,
     showPicker: () -> Unit
@@ -112,17 +114,30 @@ fun ColorSection(
                     .aspectRatio(1f)
             )
         }
-        CircleColorBox(
-            color = Color(customColor),
-            selected = selectedColorIndex == 15,
-            onClick = {
-                onColorIndexSelected(15)
-                showPicker()
-            },
-            modifier = Modifier
-                .weight(1f, fill = true)
-                .aspectRatio(1f)
-        )
+        if (!colorSelected) {
+            CirclePictureBox(
+                painter = painterResource(R.mipmap.hsv_color_palette),
+                selected = selectedColorIndex == 14,
+                onClick = {
+                    showPicker()
+                },
+                modifier = Modifier
+                    .weight(1f, fill = true)
+                    .aspectRatio(1f)
+            )
+        } else {
+            CircleColorBox(
+                color = Color(customColor),
+                selected = selectedColorIndex == 14,
+                onClick = {
+                    onColorIndexSelected(14)
+                    showPicker()
+                },
+                modifier = Modifier
+                    .weight(1f, fill = true)
+                    .aspectRatio(1f)
+            )
+        }
     }
 }
 

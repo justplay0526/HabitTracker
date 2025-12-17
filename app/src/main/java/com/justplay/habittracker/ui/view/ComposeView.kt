@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -99,6 +100,40 @@ fun CircleColorBox(
             .background(color)
             .clickable { onClick(color) },
     ) {
+        if (selected) {
+            Icon(
+                imageVector = Icons.Default.Done,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.scrim,
+                modifier = Modifier
+                    .matchParentSize()
+                    .padding(6.dp)
+                    .align(Alignment.Center)
+            )
+        }
+    }
+}
+
+@Composable
+fun CirclePictureBox(
+    painter: Painter,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .aspectRatio(1f)
+            .clip(CircleShape)
+            .clickable { onClick() },
+    ) {
+        Image(
+            painter = painter,
+            contentDescription = null,
+            contentScale = ContentScale.Crop, // 填滿圓形
+            modifier = Modifier.matchParentSize()
+        )
+
         if (selected) {
             Icon(
                 imageVector = Icons.Default.Done,
