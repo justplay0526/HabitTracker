@@ -75,6 +75,8 @@
     <string name="text_week_two_sat">Sa</string>
 <!-- Title -->
     <string name="title_color">Color</string>
+    <string name="title_choose_color">Choose Color</string>
+    <string name="title_choose_icon">Choose Icon</string>
     <string name="title_create_new_habit">Create New Habit</string>
     <string name="title_do_it_at">Do it at:</string>
     <string name="title_end_habit_on">End Habit On</string>

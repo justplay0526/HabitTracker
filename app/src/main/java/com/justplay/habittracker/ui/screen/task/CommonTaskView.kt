@@ -58,12 +58,12 @@ import com.justplay.habittracker.ui.helper.asPainter
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.CircleColorBox
 import com.justplay.habittracker.ui.view.CirclePictureBox
-import com.justplay.habittracker.ui.view.ColorModalBottomSheet
+import com.justplay.habittracker.ui.view.bottomSheet.ColorModalBottomSheet
 import com.justplay.habittracker.ui.view.ColorResource
-import com.justplay.habittracker.ui.view.DateModalBottomSheet
+import com.justplay.habittracker.ui.view.bottomSheet.DateModalBottomSheet
 import com.justplay.habittracker.ui.view.EndHabitOnStringRes
 import com.justplay.habittracker.ui.view.HabitInputField
-import com.justplay.habittracker.ui.view.IconModalBottomSheet
+import com.justplay.habittracker.ui.view.bottomSheet.IconModalBottomSheet
 import com.justplay.habittracker.ui.view.IconsRes
 import com.justplay.habittracker.ui.view.MonthlyCalendar
 import com.justplay.habittracker.ui.view.MultiChoiceChipGroup
