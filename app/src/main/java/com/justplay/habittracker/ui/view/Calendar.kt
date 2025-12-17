@@ -39,13 +39,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.justplay.habittracker.R
 import com.justplay.habittracker.data.DayUi
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import java.time.LocalDate
@@ -199,15 +197,7 @@ fun DateCalendar(
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f))
 
         // 星期標題列
-        val weekLabels = listOf(
-            stringResource(R.string.text_week_two_sun),
-            stringResource(R.string.text_week_two_mon),
-            stringResource(R.string.text_week_two_tue),
-            stringResource(R.string.text_week_two_wed),
-            stringResource(R.string.text_week_two_thu),
-            stringResource(R.string.text_week_two_fri),
-            stringResource(R.string.text_week_two_sat)
-        )
+        val weekLabels = twoAlphabetWeekLabels()
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -290,15 +280,7 @@ fun MonthlyCalendar(
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f))
 
         // 星期標題列
-        val weekLabels = listOf(
-            stringResource(R.string.text_week_two_sun),
-            stringResource(R.string.text_week_two_mon),
-            stringResource(R.string.text_week_two_tue),
-            stringResource(R.string.text_week_two_wed),
-            stringResource(R.string.text_week_two_thu),
-            stringResource(R.string.text_week_two_fri),
-            stringResource(R.string.text_week_two_sat)
-        )
+        val weekLabels = twoAlphabetWeekLabels()
 
         Row(
             modifier = Modifier.fillMaxWidth(),

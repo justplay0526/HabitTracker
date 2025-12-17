@@ -70,6 +70,7 @@ import com.justplay.habittracker.ui.view.MultiChoiceChipGroup
 import com.justplay.habittracker.ui.view.OutlinedIcon
 import com.justplay.habittracker.ui.view.PickerRow
 import com.justplay.habittracker.ui.view.SingleChoiceChipGroup
+import com.justplay.habittracker.ui.view.oneAlphabetWeekLabels
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -381,15 +382,7 @@ fun OnTheseDaySection(
     /**
      * 星期標題列
      */
-    val weekLabels = listOf(
-        stringResource(R.string.text_week_one_sun),
-        stringResource(R.string.text_week_one_mon),
-        stringResource(R.string.text_week_one_tue),
-        stringResource(R.string.text_week_one_wed),
-        stringResource(R.string.text_week_one_thu),
-        stringResource(R.string.text_week_one_fri),
-        stringResource(R.string.text_week_one_sat)
-    )
+    val weekLabels = oneAlphabetWeekLabels()
     val interaction = remember { MutableInteractionSource() }
 
     val allSelected = selected.size == 7
