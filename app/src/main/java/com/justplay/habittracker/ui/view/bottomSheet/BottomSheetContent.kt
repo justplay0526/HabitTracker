@@ -16,16 +16,20 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +38,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
@@ -59,7 +65,7 @@ fun ColorPickerContent(
     val controller = rememberColorPickerController()
     var colorHex by remember { mutableStateOf("#FFFF0000") }
 
-    PickerScaffold {
+    SheetContentScaffold {
         // Top Title
         PickerTopTitle(
             stringResource(R.string.title_choose_color)
@@ -129,7 +135,7 @@ fun DatePickerContent(
 ) {
     var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
 
-    PickerScaffold {
+    SheetContentScaffold {
         // Top Title
         PickerTopTitle(
             title = stringResource(R.string.title_when)
@@ -163,7 +169,7 @@ fun IconPickerContent(
     val screenHeight = LocalConfiguration.current.screenHeightDp
     var selectedIcon by remember { mutableIntStateOf(-1) }
 
-    PickerScaffold {
+    SheetContentScaffold {
         // Top Title
         PickerTopTitle(
             stringResource(R.string.title_choose_icon)
@@ -199,7 +205,78 @@ fun IconPickerContent(
 }
 
 @Composable
-fun PickerScaffold(
+fun NumberInputContent(
+    initNumber: Int,
+    onNumberEntered: (Int) -> Unit,
+    onDismiss: () -> Unit
+) {
+
+    var text by rememberSaveable { mutableStateOf(initNumber.toString()) }
+
+    val parsed = text.toIntOrNull()
+    val enterRange = 1..500
+    val isValid = parsed != null && parsed in enterRange
+
+    SheetContentScaffold {
+        // Top Title
+        PickerTopTitle(
+            stringResource(R.string.title_enter_number)
+        )
+        // Number Enter Text Field
+        OutlinedTextField(
+            value = text,
+            onValueChange = { input ->
+                if (input.isEmpty() || input.all { it.isDigit() }) {
+                    text = input
+                }
+            },
+            singleLine = true,
+            isError = text.isNotEmpty() && !isValid,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    if (isValid) onNumberEntered(parsed)
+                }
+            ),
+            supportingText = {
+                val msg = when {
+                    text.isEmpty() ->
+                        stringResource(
+                            R.string.sent_warning_text_enter_number_is_null,
+                        enterRange.first, enterRange.last
+                        )
+                    parsed !in enterRange ->
+                        stringResource(
+                        R.string.sent_warning_text_enter_number,
+                        enterRange.first, enterRange.last
+                        )
+                    else -> " "
+                }
+                Text(
+                    text = msg,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+        )
+
+        // Bottom Button
+        PickerBottomButton(
+            onCancel = onDismiss,
+            onOk = {
+                if (isValid) {
+                    onNumberEntered(parsed)
+                    onDismiss()
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun SheetContentScaffold(
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(
@@ -324,6 +401,19 @@ fun IconPickerContentPreview() {
     HabitTrackerTheme {
         IconPickerContent(
             onIconSelected = {},
+            onDismiss = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun NumberInputContentPreview() {
+    var number by rememberSaveable { mutableIntStateOf(1) }
+    HabitTrackerTheme {
+        NumberInputContent(
+            initNumber = number,
+            onNumberEntered = {},
             onDismiss = {}
         )
     }

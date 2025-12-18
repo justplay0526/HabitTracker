@@ -44,6 +44,7 @@ fun RegularTaskScreen() {
     var showColorPicker by remember { mutableStateOf(false) }
     var showIconPicker by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
+    var showNumberSheet by remember { mutableStateOf(false) }
 
     // Selected Index
     var selectedColorIndex by remember { mutableIntStateOf(0) }
@@ -100,6 +101,17 @@ fun RegularTaskScreen() {
             // TODO When finish database, show this to lastest
             selectedDate = date
             showIconPicker = false
+        }
+    )
+
+    NumberInputBottomSheet(
+        show = showNumberSheet,
+        initNumber = selectedEndHabitDay,
+        sheetState = sheetState,
+        onDismissRequest = { showNumberSheet = false },
+        onNumberEntered = {
+            selectedEndHabitDay = it
+            showNumberSheet = false
         }
     )
 
@@ -194,8 +206,7 @@ fun RegularTaskScreen() {
             dayString = displayDay,
             onDateSelected = { showDatePicker = true },
             onDaySelected = {
-                /* TODO Add Num Picker */
-                Toast.makeText(context, "Selected Day: $selectedEndHabitDay", Toast.LENGTH_SHORT).show()
+                showNumberSheet = true
             }
         )
 

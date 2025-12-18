@@ -59,3 +59,23 @@ fun IconModalBottomSheet(
         )
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NumberInputModalBottomSheet(
+    sheetState: SheetState,
+    initNumber: Int,
+    onCancel: () -> Unit,
+    onNumberEntered: (Int) -> Unit
+) {
+    ModalBottomSheet(
+        onDismissRequest = onCancel,
+        sheetState = sheetState,
+    ) {
+        NumberInputContent(
+            initNumber = initNumber,
+            onNumberEntered = onNumberEntered,
+            onDismiss = onCancel
+        )
+    }
+}

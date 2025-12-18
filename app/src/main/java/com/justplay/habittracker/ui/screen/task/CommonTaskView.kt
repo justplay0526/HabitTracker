@@ -70,6 +70,7 @@ import com.justplay.habittracker.ui.view.MultiChoiceChipGroup
 import com.justplay.habittracker.ui.view.OutlinedIcon
 import com.justplay.habittracker.ui.view.PickerRow
 import com.justplay.habittracker.ui.view.SingleChoiceChipGroup
+import com.justplay.habittracker.ui.view.bottomSheet.NumberInputModalBottomSheet
 import com.justplay.habittracker.ui.view.oneAlphabetWeekLabels
 import java.time.LocalDate
 import java.time.YearMonth
@@ -371,6 +372,25 @@ fun NameSection(
         onValueChange = onTextChange,
         placeholder = stringResource(hint)
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NumberInputBottomSheet(
+    show: Boolean,
+    initNumber: Int,
+    sheetState: SheetState,
+    onDismissRequest: () -> Unit,
+    onNumberEntered: (Int) -> Unit,
+) {
+    if (show) {
+        NumberInputModalBottomSheet(
+            initNumber = initNumber,
+            sheetState = sheetState,
+            onNumberEntered = onNumberEntered,
+            onCancel = onDismissRequest
+        )
+    }
 }
 
 @Composable
