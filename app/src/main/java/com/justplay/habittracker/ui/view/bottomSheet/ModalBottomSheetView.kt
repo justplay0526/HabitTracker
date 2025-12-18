@@ -26,28 +26,10 @@ fun ColorModalBottomSheet(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun IconModalBottomSheet(
-    onCancel: () -> Unit,
-    onIconSelected: (Int) -> Unit,
-    sheetState: SheetState
-) {
-    ModalBottomSheet(
-        onDismissRequest = onCancel,
-        sheetState = sheetState,
-    ) {
-        IconPickerContent(
-            onIconSelected = onIconSelected,
-            onDismiss = onCancel
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
 fun DateModalBottomSheet(
+    sheetState: SheetState,
     onCancel: () -> Unit,
-    onDateSelected: (LocalDate?) -> Unit,
-    sheetState: SheetState
+    onDateSelected: (LocalDate?) -> Unit
 ) {
     ModalBottomSheet(
         onDismissRequest = onCancel,
@@ -55,6 +37,24 @@ fun DateModalBottomSheet(
     ) {
         DatePickerContent(
             onDateSelected = onDateSelected,
+            onDismiss = onCancel
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun IconModalBottomSheet(
+    sheetState: SheetState,
+    onCancel: () -> Unit,
+    onIconSelected: (Int) -> Unit
+) {
+    ModalBottomSheet(
+        onDismissRequest = onCancel,
+        sheetState = sheetState,
+    ) {
+        IconPickerContent(
+            onIconSelected = onIconSelected,
             onDismiss = onCancel
         )
     }
