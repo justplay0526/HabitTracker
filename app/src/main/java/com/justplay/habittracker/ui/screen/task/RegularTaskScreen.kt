@@ -98,7 +98,7 @@ fun RegularTaskScreen() {
         onDismissRequest = { showDatePicker = false },
         onDateSelected = { date ->
             // TODO When finish database, show this to lastest
-            Toast.makeText(context, "Selected Date: $date", Toast.LENGTH_SHORT).show()
+            selectedDate = date
             showIconPicker = false
         }
     )
