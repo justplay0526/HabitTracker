@@ -30,6 +30,13 @@
         <item quantity="other">%d days per week</item>
     </plurals>
 
+    <string name="sent_warning_text_enter_number">
+        Range: %d~%d
+    </string>
+    <string name="sent_warning_text_enter_number_is_null">
+        Please enter a number, Range: %d~%d
+    </string>
+
     <plurals name="sent_after_day">
         <item quantity="one">After %d day</item>
         <item quantity="other">After %d days</item>
@@ -80,6 +87,7 @@
     <string name="title_create_new_habit">Create New Habit</string>
     <string name="title_do_it_at">Do it at:</string>
     <string name="title_end_habit_on">End Habit On</string>
+    <string name="title_enter_number">Enter Number</string>
     <string name="title_habit_name">Habit Name</string>
     <string name="title_home">Home</string>
     <string name="title_icon">Icon</string>
