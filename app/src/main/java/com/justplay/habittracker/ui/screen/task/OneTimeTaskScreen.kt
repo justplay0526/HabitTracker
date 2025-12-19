@@ -48,7 +48,7 @@ fun OneTimeTaskScreen() {
     var selectedIconIndex by remember { mutableIntStateOf(-1) }
     // Selected State
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    var selectedPeriodOptions by remember { mutableStateOf(setOf<String>()) }
+    var selectedPeriodOption by remember { mutableStateOf<String?>(null) }
     var selectedTime by remember { mutableStateOf(LocalTime.now()) }
     // Switch State
     var reminderState by remember { mutableStateOf(false) }
@@ -131,11 +131,11 @@ fun OneTimeTaskScreen() {
 
         SectionSpace()
         // Do It As Section
-        MultiChoiceSection(
+        SingleChoiceSection(
             title = R.string.title_do_it_at,
             optionsString = periodString,
-            selectedOptions = selectedPeriodOptions,
-            onSelectedChanged = { selectedPeriodOptions = it }
+            selectedOptions = selectedPeriodOption,
+            onSelectedChanged = { selectedPeriodOption = it }
         )
 
         Spacer(modifier = Modifier.height(16.dp))

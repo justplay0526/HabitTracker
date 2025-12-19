@@ -55,8 +55,8 @@ fun RegularTaskScreen() {
     var selectedDaysOfMonth by rememberSaveable { mutableStateOf<Set<Int>>(emptySet()) }
     var selectedEndHabitDay by remember { mutableIntStateOf(1) }
     var selectedFreq by rememberSaveable { mutableIntStateOf(5) }
-    var selectedPeriodOptions by remember { mutableStateOf(setOf(periodString.first())) }
-    var selectedRepeatOption by remember { mutableStateOf<String?>(repeatString.first()) }
+    var selectedPeriodOption by remember { mutableStateOf<String?>(null) }
+    var selectedRepeatOption by remember { mutableStateOf<String?>(null) }
     var selectedTime by remember { mutableStateOf(LocalTime.now()) }
     // Switch State
     var reminderState by remember { mutableStateOf(false) }
@@ -190,11 +190,11 @@ fun RegularTaskScreen() {
 
         SectionSpace()
         // Do It As Section
-        MultiChoiceSection(
+        SingleChoiceSection(
             title = R.string.title_do_it_at,
             optionsString = periodString,
-            selectedOptions = selectedPeriodOptions,
-            onSelectedChanged = { selectedPeriodOptions = it }
+            selectedOptions = selectedPeriodOption,
+            onSelectedChanged = { selectedPeriodOption = it }
         )
 
         SectionSpace()
