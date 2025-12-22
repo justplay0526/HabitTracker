@@ -1,5 +1,6 @@
 package com.justplay.habittracker.ui.screen.task.model
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.justplay.habittracker.ui.screen.task.event.RegularTaskEvent
 import com.justplay.habittracker.ui.screen.task.state.RegularTaskUiState
@@ -22,6 +23,13 @@ class RegularTaskViewModel: ViewModel() {
 
                 is RegularTaskEvent.ColorSelected ->
                     state.copy(selectedColorIndex = event.index)
+
+                is RegularTaskEvent.ColorIntSelected -> {
+                    Log.d("RegularTaskViewModel",
+                        "SelectedColorInt = ${event.color}"
+                    )
+                    state.copy(selectedColorRes = event.color)
+                }
 
                 is RegularTaskEvent.DateChanged ->
                     state.copy(selectedDate = event.date)

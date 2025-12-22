@@ -10,6 +10,7 @@ sealed interface RegularTaskEvent {
     // Color / Icon
     data class ColorPicked(val color: Int) : RegularTaskEvent
     data class ColorSelected(val index: Int) : RegularTaskEvent
+    data class ColorIntSelected(val color: Int) : RegularTaskEvent
     data class IconPicked(val iconRes: Int) : RegularTaskEvent
     data class IconSelected(val index: Int) : RegularTaskEvent
 

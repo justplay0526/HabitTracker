@@ -49,6 +49,7 @@ fun RegularTaskScreen(
         },
         onColorSelected = {
             onEvent(RegularTaskEvent.ColorPicked(it.toColorInt()))
+            onEvent(RegularTaskEvent.ColorIntSelected(it.toColorInt()))
             onEvent(RegularTaskEvent.ColorSelected(14))
             onEvent(RegularTaskEvent.HideColorPicker)
         }
@@ -121,6 +122,9 @@ fun RegularTaskScreen(
             selectedColorIndex = uiState.selectedColorIndex,
             onColorIndexSelected = {
                 onEvent(RegularTaskEvent.ColorSelected(it))
+            },
+            onColorIntSelected = {
+                onEvent(RegularTaskEvent.ColorIntSelected(it))
             },
             showPicker = {
                 onEvent(RegularTaskEvent.ShowColorPicker)

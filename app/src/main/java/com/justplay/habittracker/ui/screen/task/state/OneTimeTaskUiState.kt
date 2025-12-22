@@ -1,7 +1,9 @@
 package com.justplay.habittracker.ui.screen.task.state
 
+import androidx.annotation.ColorInt
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import com.justplay.habittracker.ui.view.ColorResource
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -12,11 +14,12 @@ data class OneTimeTaskUiState(
     val selectedIconIndex: Int = -1,
     // Color / Icon
     val colorSelected: Boolean = false,
-    val customColor: Int = Color.Red.toArgb(),
+    @param:ColorInt val selectedColorInt: Int = ColorResource.first().toArgb(),
+    @param:ColorInt val customColor: Int = Color.Red.toArgb(),
     // Selected State
-    val selectedDate: LocalDate = LocalDate.now() ,
+    val selectedDate: LocalDate = LocalDate.now(),
     val selectedFreq: Int = 5,
-    val selectedPeriodOption: String? = null ,
+    val selectedPeriodOption: String? = null,
     val selectedTime: LocalTime = LocalTime.now(),
     // Switch State
     val reminderState: Boolean =  false,

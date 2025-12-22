@@ -48,6 +48,7 @@ fun OneTimeTaskScreen(
         },
         onColorSelected = {
             onEvent(OneTimeTaskEvent.ColorPicked(it.toColorInt()))
+            onEvent(OneTimeTaskEvent.ColorIntSelected(it.toColorInt()))
             onEvent(OneTimeTaskEvent.ColorSelected(14))
             onEvent(OneTimeTaskEvent.HideColorPicker)
         }
@@ -108,6 +109,9 @@ fun OneTimeTaskScreen(
             selectedColorIndex = uiState.selectedColorIndex,
             onColorIndexSelected = {
                 onEvent(OneTimeTaskEvent.ColorSelected(it))
+            },
+            onColorIntSelected = {
+                onEvent(OneTimeTaskEvent.ColorIntSelected(it))
             },
             showPicker = {
                 onEvent(OneTimeTaskEvent.ShowColorPicker)
