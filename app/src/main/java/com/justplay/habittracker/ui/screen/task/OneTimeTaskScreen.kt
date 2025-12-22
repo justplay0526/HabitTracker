@@ -1,96 +1,80 @@
 package com.justplay.habittracker.ui.screen.task
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.justplay.habittracker.R
 import com.justplay.habittracker.data.formatReminderTime
 import com.justplay.habittracker.data.formatUniformDate
+import com.justplay.habittracker.ui.screen.task.event.OneTimeTaskEvent
+import com.justplay.habittracker.ui.screen.task.model.OneTimeTaskViewModel
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.HabitPeriodStringRes
-import java.time.LocalDate
-import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OneTimeTaskScreen() {
+fun OneTimeTaskScreen(
+    vm: OneTimeTaskViewModel = viewModel()
+) {
     // String Reference
     val periodString = HabitPeriodStringRes
         .filterNot { it == R.string.text_time_of_day_all }
         .map { stringResource(it) }
 
-    // Var Region
-    var nameText by remember { mutableStateOf("") }
-    var customColor by remember { mutableIntStateOf(Color.Red.toArgb()) }
-    var colorSelected by remember { mutableStateOf(false) }
-    // Show Picker Boolean State
-    var showColorPicker by remember { mutableStateOf(false) }
-    var showIconPicker by remember { mutableStateOf(false) }
-    var showDatePicker by remember { mutableStateOf(false) }
-    // Selected Index
-    var selectedColorIndex by remember { mutableIntStateOf(0) }
-    var selectedIconIndex by remember { mutableIntStateOf(-1) }
-    // Selected State
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    var selectedPeriodOption by remember { mutableStateOf<String?>(null) }
-    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
-    // Switch State
-    var reminderState by remember { mutableStateOf(false) }
+    val uiState by vm.uiState.collectAsStateWithLifecycle()
+    val onEvent = vm::onEvent
 
-    // Val Region
-    val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
-    val displayDate = formatUniformDate(selectedDate)
-    val displayTime = formatReminderTime(selectedTime)
+    val displayDate = formatUniformDate(uiState.selectedDate)
+    val displayTime = formatReminderTime(uiState.selectedTime)
 
     ColorPickerBottomSheet(
-        show = showColorPicker,
+        show = uiState.showColorPicker,
         sheetState = sheetState,
-        onDismissRequest = { showColorPicker = false },
+        onDismissRequest = {
+            onEvent(OneTimeTaskEvent.HideColorPicker)
+        },
         onColorSelected = {
-            customColor = it.toColorInt()
-            selectedColorIndex = 14
-            colorSelected = true
-            showColorPicker = false
+            onEvent(OneTimeTaskEvent.ColorPicked(it.toColorInt()))
+            onEvent(OneTimeTaskEvent.ColorSelected(14))
+            onEvent(OneTimeTaskEvent.HideColorPicker)
         }
     )
 
     DatePickerBottomSheet(
-        show = showDatePicker,
+        show = uiState.showDatePicker,
         sheetState = sheetState,
-        onDismissRequest = { showDatePicker = false },
+        onDismissRequest = {
+            onEvent(OneTimeTaskEvent.HideDatePicker)
+        },
         onDateSelected = { date ->
-            selectedDate = date
-            showDatePicker = false
+            onEvent(OneTimeTaskEvent.DateChanged(date!!))
+            onEvent(OneTimeTaskEvent.HideDatePicker)
         }
     )
 
     IconPickerBottomSheet(
-        show = showIconPicker,
+        show = uiState.showIconPicker,
         sheetState = sheetState,
-        onDismissRequest = { showIconPicker = false },
+        onDismissRequest = {
+            onEvent(OneTimeTaskEvent.HideIconPicker)
+        },
         onIconSelected = { icon ->
             // TODO When finish database, show this to lastest
-            Toast.makeText(context, "Selected icon: $icon", Toast.LENGTH_SHORT).show()
-            showIconPicker = false
+            onEvent(OneTimeTaskEvent.IconPicked(icon))
+            onEvent(OneTimeTaskEvent.HideIconPicker)
         }
     )
 
@@ -98,27 +82,35 @@ fun OneTimeTaskScreen() {
         NameSection(
             title = R.string.title_task_name,
             hint = R.string.title_task_name,
-            textValue = nameText,
-            onTextChange = { nameText = it }
+            textValue = uiState.nameText,
+            onTextChange = {
+                onEvent(OneTimeTaskEvent.NameChanged(it))
+            }
         )
 
         SectionSpace()
 
         IconSection(
-            selectedIcon = selectedIconIndex,
-            onIconSelected = { selectedIconIndex = it },
-            showPicker = { showIconPicker = true }
+            selectedIcon = uiState.selectedIconIndex,
+            onIconSelected = {
+                onEvent(OneTimeTaskEvent.IconSelected(it))
+            },
+            showPicker = {
+                onEvent(OneTimeTaskEvent.ShowIconPicker)
+            }
         )
 
         SectionSpace()
 
         ColorSection(
-            customColor = customColor,
-            colorSelected = colorSelected,
-            selectedColorIndex = selectedColorIndex,
-            onColorIndexSelected = { selectedColorIndex = it },
+            customColor = uiState.customColor,
+            colorSelected = uiState.colorSelected,
+            selectedColorIndex = uiState.selectedColorIndex,
+            onColorIndexSelected = {
+                onEvent(OneTimeTaskEvent.ColorSelected(it))
+            },
             showPicker = {
-                showColorPicker = true
+                onEvent(OneTimeTaskEvent.ShowColorPicker)
             }
         )
 
@@ -126,7 +118,9 @@ fun OneTimeTaskScreen() {
 
         WhenSection(
             dateString = displayDate,
-            onDateSelected = { showDatePicker = true }
+            onDateSelected = {
+                onEvent(OneTimeTaskEvent.ShowDatePicker)
+            }
         )
 
         SectionSpace()
@@ -134,16 +128,20 @@ fun OneTimeTaskScreen() {
         SingleChoiceSection(
             title = R.string.title_do_it_at,
             optionsString = periodString,
-            selectedOptions = selectedPeriodOption,
-            onSelectedChanged = { selectedPeriodOption = it }
+            selectedOptions = uiState.selectedPeriodOption,
+            onSelectedChanged = {
+                onEvent(OneTimeTaskEvent.PeriodOptionChanged(it))
+            }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         ReminderSection(
-            reminderCheck = reminderState,
+            reminderCheck = uiState.reminderState,
             timeString = displayTime,
-            onReminderChanged = { reminderState = it },
+            onReminderChanged = {
+                onEvent(OneTimeTaskEvent.ReminderChanged(it))
+            },
             onTimeChanged = { /* TODO Add Time Picker */ }
         )
     }
