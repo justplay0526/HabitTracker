@@ -1,34 +1,30 @@
 package com.justplay.habittracker.ui.screen.task
 
-import android.widget.Toast
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.graphics.toColorInt
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.justplay.habittracker.R
 import com.justplay.habittracker.data.formatReminderTime
 import com.justplay.habittracker.data.formatUniformDate
 import com.justplay.habittracker.data.formatUniformDays
+import com.justplay.habittracker.ui.screen.task.event.RegularTaskEvent
+import com.justplay.habittracker.ui.screen.task.model.RegularTaskViewModel
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.HabitPeriodStringRes
 import com.justplay.habittracker.ui.view.HabitRepeatStringRes
-import java.time.LocalDate
-import java.time.LocalTime
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegularTaskScreen() {
+fun RegularTaskScreen(
+    vm: RegularTaskViewModel = viewModel()
+) {
     // String Reference
     val periodString = HabitPeriodStringRes
         .filterNot { it == R.string.text_time_of_day_all }
@@ -36,82 +32,62 @@ fun RegularTaskScreen() {
     val repeatString = HabitRepeatStringRes
         .map { stringResource(it) }
 
-    // Var Region
-    var nameText by remember { mutableStateOf("") }
-    var customColor by remember { mutableIntStateOf(Color.Red.toArgb()) }
-    var colorSelected by remember { mutableStateOf(false) }
-    // Show Picker Boolean State
-    var showColorPicker by remember { mutableStateOf(false) }
-    var showIconPicker by remember { mutableStateOf(false) }
-    var showDatePicker by remember { mutableStateOf(false) }
-    var showNumberSheet by remember { mutableStateOf(false) }
-
-    // Selected Index
-    var selectedColorIndex by remember { mutableIntStateOf(0) }
-    var selectedIconIndex by remember { mutableIntStateOf(-1) }
-    // Selected State
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    var selectedDaySet by rememberSaveable { mutableStateOf(setOf<Int>()) }
-    var selectedDaysOfMonth by rememberSaveable { mutableStateOf<Set<Int>>(emptySet()) }
-    var selectedEndHabitDay by remember { mutableIntStateOf(1) }
-    var selectedFreq by rememberSaveable { mutableIntStateOf(5) }
-    var selectedPeriodOption by remember { mutableStateOf<String?>(null) }
-    var selectedRepeatOption by remember { mutableStateOf<String?>(null) }
-    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
-    // Switch State
-    var reminderState by remember { mutableStateOf(false) }
-    var endHabitOnState by remember { mutableStateOf(false) }
-
-    // Val Region
-    val context = LocalContext.current
+    val uiState by vm.uiState.collectAsStateWithLifecycle()
+    val onEvent = vm::onEvent
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
-    val displayDate = formatUniformDate(selectedDate)
-    val displayDay = formatUniformDays(selectedEndHabitDay)
-    val displayTime = formatReminderTime(selectedTime)
+    val displayDate = formatUniformDate(uiState.selectedDate)
+    val displayDay = formatUniformDays(uiState.selectedEndHabitDay)
+    val displayTime = formatReminderTime(uiState.selectedTime)
 
     ColorPickerBottomSheet(
-        show = showColorPicker,
+        show = uiState.showColorPicker,
         sheetState = sheetState,
-        onDismissRequest = { showColorPicker = false },
+        onDismissRequest = {
+            onEvent(RegularTaskEvent.HideColorPicker)
+        },
         onColorSelected = {
-            customColor = it.toColorInt()
-            selectedColorIndex = 14
-            colorSelected = true
-            showColorPicker = false
+            onEvent(RegularTaskEvent.ColorPicked(it.toColorInt()))
+            onEvent(RegularTaskEvent.ColorSelected(14))
+            onEvent(RegularTaskEvent.HideColorPicker)
         }
     )
 
     IconPickerBottomSheet(
-        show = showIconPicker,
+        show = uiState.showIconPicker,
         sheetState = sheetState,
-        onDismissRequest = { showIconPicker = false },
+        onDismissRequest = {
+            onEvent(RegularTaskEvent.HideIconPicker)
+        },
         onIconSelected = { icon ->
-            Toast.makeText(context, "Selected icon: $icon", Toast.LENGTH_SHORT).show()
-            showIconPicker = false
+            onEvent(RegularTaskEvent.IconPicked(icon))
+            onEvent(RegularTaskEvent.HideIconPicker)
         }
     )
 
     DatePickerBottomSheet(
-        show = showDatePicker,
+        show = uiState.showDatePicker,
         sheetState = sheetState,
-        onDismissRequest = { showDatePicker = false },
+        onDismissRequest = {
+            onEvent(RegularTaskEvent.HideDatePicker)
+        },
         onDateSelected = { date ->
-            // TODO When finish database, show this to lastest
-            selectedDate = date
-            showIconPicker = false
+            onEvent(RegularTaskEvent.DateChanged(date!!))
+            onEvent(RegularTaskEvent.HideDatePicker)
         }
     )
 
     NumberInputBottomSheet(
-        show = showNumberSheet,
-        initNumber = selectedEndHabitDay,
+        show = uiState.showNumberSheet,
+        initNumber = uiState.selectedEndHabitDay,
         sheetState = sheetState,
-        onDismissRequest = { showNumberSheet = false },
+        onDismissRequest = {
+            onEvent(RegularTaskEvent.HideNumberPicker)
+        },
         onNumberEntered = {
-            selectedEndHabitDay = it
-            showNumberSheet = false
+            onEvent(RegularTaskEvent.EndHabitOnDaysChanged(it))
+            onEvent(RegularTaskEvent.HideNumberPicker)
         }
     )
 
@@ -119,27 +95,35 @@ fun RegularTaskScreen() {
         NameSection(
             title = R.string.title_habit_name,
             hint = R.string.title_habit_name,
-            textValue = nameText,
-            onTextChange = { nameText = it }
+            textValue = uiState.nameText,
+            onTextChange = {
+                onEvent(RegularTaskEvent.NameChanged(it))
+            }
         )
 
         SectionSpace()
 
         IconSection(
-            selectedIcon = selectedIconIndex,
-            onIconSelected = { selectedIconIndex = it },
-            showPicker = { showIconPicker = true }
+            selectedIcon = uiState.selectedIconIndex,
+            onIconSelected = {
+                onEvent(RegularTaskEvent.IconSelected(it))
+            },
+            showPicker = {
+                onEvent(RegularTaskEvent.ShowIconPicker)
+            }
         )
 
         SectionSpace()
 
         ColorSection(
-            customColor = customColor,
-            colorSelected = colorSelected,
-            selectedColorIndex = selectedColorIndex,
-            onColorIndexSelected = { selectedColorIndex = it },
+            customColor = uiState.customColor,
+            colorSelected = uiState.colorSelected,
+            selectedColorIndex = uiState.selectedColorIndex,
+            onColorIndexSelected = {
+                onEvent(RegularTaskEvent.ColorSelected(it))
+            },
             showPicker = {
-                showColorPicker = true
+                onEvent(RegularTaskEvent.ShowColorPicker)
             }
         )
 
@@ -148,22 +132,20 @@ fun RegularTaskScreen() {
         SingleChoiceSection(
             title = R.string.title_repeat,
             optionsString = repeatString,
-            selectedOptions = selectedRepeatOption,
-            onSelectedChanged = { selectedRepeatOption = it },
-            content = when(selectedRepeatOption) {
+            selectedOptions = uiState.selectedRepeatOption,
+            onSelectedChanged = {
+                onEvent(RegularTaskEvent.RepeatOptionChanged(it))
+            },
+            content = when(uiState.selectedRepeatOption) {
                 repeatString[0] -> {
                     {
                         OnTheseDaySection(
-                            selected = selectedDaySet,
+                            selected = uiState.selectedDaySet,
                             onToggle = { index ->
-                                selectedDaySet =
-                                    if (index in selectedDaySet) selectedDaySet - index
-                                    else selectedDaySet + index
+                                onEvent(RegularTaskEvent.ToggleWeekDay(index))
                             },
                             onSetAll = { checked ->
-                                selectedDaySet =
-                                    if (checked) (0..6).toSet()
-                                    else emptySet()
+                                onEvent(RegularTaskEvent.SetAllWeekDays(checked))
                             }
                         )
                     }
@@ -171,16 +153,20 @@ fun RegularTaskScreen() {
                 repeatString[1] -> {
                     {
                         WeeklySection(
-                            selected = selectedFreq,
-                            onSelectedChange = { selectedFreq = it }
+                            selected = uiState.selectedFreq,
+                            onSelectedChange = {
+                                onEvent(RegularTaskEvent.FrequencyChanged(it))
+                            }
                         )
                     }
                 }
                 repeatString[2] -> {
                     {
                         MonthlySection(
-                            selectedDays = selectedDaysOfMonth,
-                            onSelectionChanged = { selectedDaysOfMonth = it }
+                            selectedDays = uiState.selectedDaysOfMonth,
+                            onSelectionChanged = {
+                                onEvent(RegularTaskEvent.MonthDaysChanged(it))
+                            }
                         )
                     }
                 }
@@ -193,29 +179,37 @@ fun RegularTaskScreen() {
         SingleChoiceSection(
             title = R.string.title_do_it_at,
             optionsString = periodString,
-            selectedOptions = selectedPeriodOption,
-            onSelectedChanged = { selectedPeriodOption = it }
+            selectedOptions = uiState.selectedPeriodOption,
+            onSelectedChanged = {
+                onEvent(RegularTaskEvent.PeriodOptionChanged(it))
+            }
         )
 
         SectionSpace()
 
         EndHabitOnSection(
-            switchState = endHabitOnState,
-            onSwitchChanged = { endHabitOnState = it },
+            switchState = uiState.endHabitOnState,
+            onSwitchChanged = {
+                onEvent(RegularTaskEvent.EndHabitOnChanged(it))
+            },
             dateString = displayDate,
             dayString = displayDay,
-            onDateSelected = { showDatePicker = true },
+            onDateSelected = {
+                onEvent(RegularTaskEvent.ShowDatePicker)
+            },
             onDaySelected = {
-                showNumberSheet = true
+               onEvent(RegularTaskEvent.ShowNumberPicker)
             }
         )
 
         SectionSpace()
 
         ReminderSection(
-            reminderCheck = reminderState,
+            reminderCheck = uiState.reminderState,
             timeString = displayTime,
-            onReminderChanged = { reminderState = it },
+            onReminderChanged = {
+                onEvent(RegularTaskEvent.ReminderChanged(it))
+            },
             onTimeChanged = { /* TODO Add Time Picker */ }
         )
 
