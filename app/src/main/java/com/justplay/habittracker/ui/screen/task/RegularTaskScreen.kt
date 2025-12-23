@@ -36,9 +36,6 @@ fun RegularTaskScreen(
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
-    val displayDate = formatUniformDate(uiState.selectedDate)
-    val displayDay = formatUniformDays(uiState.selectedEndHabitDay)
-    val displayTime = formatReminderTime(uiState.selectedTime)
 
     ColorPickerBottomSheet(
         show = uiState.showColorPicker,
@@ -207,8 +204,8 @@ fun RegularTaskScreen(
             onSwitchChanged = {
                 onEvent(RegularTaskEvent.EndHabitOnChanged(it))
             },
-            dateString = displayDate,
-            dayString = displayDay,
+            dateString = formatUniformDate(uiState.selectedDate),
+            dayString = formatUniformDays(uiState.selectedEndHabitDay),
             onDateSelected = {
                 onEvent(RegularTaskEvent.ShowDatePicker)
             },
@@ -221,7 +218,7 @@ fun RegularTaskScreen(
 
         ReminderSection(
             reminderCheck = uiState.reminderState,
-            timeString = displayTime,
+            timeString = formatReminderTime(uiState.selectedTime),
             onReminderChanged = {
                 onEvent(RegularTaskEvent.ReminderChanged(it))
             },

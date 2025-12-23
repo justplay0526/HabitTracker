@@ -37,8 +37,6 @@ fun OneTimeTaskScreen(
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
-    val displayDate = formatUniformDate(uiState.selectedDate)
-    val displayTime = formatReminderTime(uiState.selectedTime)
 
     ColorPickerBottomSheet(
         show = uiState.showColorPicker,
@@ -133,7 +131,7 @@ fun OneTimeTaskScreen(
         SectionSpace()
 
         WhenSection(
-            dateString = displayDate,
+            dateString = formatUniformDate(uiState.selectedDate),
             onDateSelected = {
                 onEvent(OneTimeTaskEvent.ShowDatePicker)
             }
@@ -154,7 +152,7 @@ fun OneTimeTaskScreen(
 
         ReminderSection(
             reminderCheck = uiState.reminderState,
-            timeString = displayTime,
+            timeString = formatReminderTime(uiState.selectedTime),
             onReminderChanged = {
                 onEvent(OneTimeTaskEvent.ReminderChanged(it))
             },
