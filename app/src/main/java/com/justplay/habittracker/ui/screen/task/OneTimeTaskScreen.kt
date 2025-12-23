@@ -66,6 +66,7 @@ fun OneTimeTaskScreen(
 
     IconPickerBottomSheet(
         show = uiState.showIconPicker,
+        initIcon = uiState.selectedIconRes,
         sheetState = sheetState,
         onDismissRequest = {
             onEvent(OneTimeTaskEvent.HideIconPicker)
@@ -102,7 +103,7 @@ fun OneTimeTaskScreen(
         SectionSpace()
 
         IconSection(
-            selectedIcon = uiState.selectedIconIndex,
+            selectedIcon = uiState.selectedIconRes,
             onIconSelected = {
                 onEvent(OneTimeTaskEvent.IconSelected(it))
             },

@@ -53,6 +53,7 @@ fun RegularTaskScreen(
 
     IconPickerBottomSheet(
         show = uiState.showIconPicker,
+        initIcon = uiState.selectedIconRes,
         sheetState = sheetState,
         onDismissRequest = {
             onEvent(RegularTaskEvent.HideIconPicker)
@@ -113,7 +114,7 @@ fun RegularTaskScreen(
         SectionSpace()
 
         IconSection(
-            selectedIcon = uiState.selectedIconIndex,
+            selectedIcon = uiState.selectedIconRes,
             onIconSelected = {
                 onEvent(RegularTaskEvent.IconSelected(it))
             },

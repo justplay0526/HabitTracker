@@ -59,10 +59,10 @@ class RegularTaskViewModel: ViewModel() {
                     state.copy(showTimePicker = false)
 
                 is RegularTaskEvent.IconPicked ->
-                    state.copy(selectedIconIndex = event.iconRes) // TODO 沒有儲存 Icon ResId 這邊要改
+                    state.copy(selectedIconRes = event.iconRes)
 
                 is RegularTaskEvent.IconSelected ->
-                    state.copy(selectedIconIndex = event.index)
+                    state.copy(selectedIconRes = event.index)
 
                 is RegularTaskEvent.MonthDaysChanged ->
                     state.copy(selectedDaysOfMonth = event.days)

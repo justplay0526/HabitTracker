@@ -256,12 +256,14 @@ fun EndHabitOnSection(
 @Composable
 fun IconPickerBottomSheet(
     show: Boolean,
+    initIcon: Int,
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
     onIconSelected: (Int) -> Unit,
 ) {
     if (show) {
         IconModalBottomSheet(
+            initIcon = initIcon,
             sheetState = sheetState,
             onIconSelected = onIconSelected,
             onCancel = onDismissRequest

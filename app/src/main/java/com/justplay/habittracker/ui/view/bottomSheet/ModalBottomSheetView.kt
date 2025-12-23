@@ -45,6 +45,7 @@ fun DateModalBottomSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IconModalBottomSheet(
+    initIcon: Int,
     sheetState: SheetState,
     onCancel: () -> Unit,
     onIconSelected: (Int) -> Unit
@@ -54,6 +55,7 @@ fun IconModalBottomSheet(
         sheetState = sheetState,
     ) {
         IconPickerContent(
+            initIcon = initIcon,
             onIconSelected = onIconSelected,
             onDismiss = onCancel
         )

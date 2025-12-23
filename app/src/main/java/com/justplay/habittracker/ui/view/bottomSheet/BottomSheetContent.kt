@@ -163,11 +163,12 @@ fun DatePickerContent(
 @SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
 fun IconPickerContent(
+    initIcon: Int = -1,
     onIconSelected: (Int) -> Unit,
     onDismiss: () -> Unit
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp
-    var selectedIcon by remember { mutableIntStateOf(-1) }
+    var selectedIcon by remember { mutableIntStateOf(initIcon) }
 
     SheetContentScaffold {
         // Top Title
