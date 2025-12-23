@@ -27,13 +27,18 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.outlined.Refresh
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -52,6 +57,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.justplay.habittracker.R
 import com.justplay.habittracker.data.formatUniformDate
 import com.justplay.habittracker.data.formatUniformDays
@@ -59,21 +65,22 @@ import com.justplay.habittracker.ui.helper.asPainter
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.CircleColorBox
 import com.justplay.habittracker.ui.view.CirclePictureBox
-import com.justplay.habittracker.ui.view.bottomSheet.ColorModalBottomSheet
 import com.justplay.habittracker.ui.view.ColorResource
-import com.justplay.habittracker.ui.view.bottomSheet.DateModalBottomSheet
 import com.justplay.habittracker.ui.view.EndHabitOnStringRes
 import com.justplay.habittracker.ui.view.HabitInputField
-import com.justplay.habittracker.ui.view.bottomSheet.IconModalBottomSheet
 import com.justplay.habittracker.ui.view.IconsRes
 import com.justplay.habittracker.ui.view.MonthlyCalendar
 import com.justplay.habittracker.ui.view.MultiChoiceChipGroup
 import com.justplay.habittracker.ui.view.OutlinedIcon
 import com.justplay.habittracker.ui.view.PickerRow
 import com.justplay.habittracker.ui.view.SingleChoiceChipGroup
+import com.justplay.habittracker.ui.view.bottomSheet.ColorModalBottomSheet
+import com.justplay.habittracker.ui.view.bottomSheet.DateModalBottomSheet
+import com.justplay.habittracker.ui.view.bottomSheet.IconModalBottomSheet
 import com.justplay.habittracker.ui.view.bottomSheet.NumberInputModalBottomSheet
 import com.justplay.habittracker.ui.view.oneAlphabetWeekLabels
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.YearMonth
 
 @Composable
@@ -581,6 +588,80 @@ fun TaskScaffold(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TimePickerDialog(
+    show: Boolean,
+    initTime: LocalTime,
+    onDismiss: () -> Unit,
+    onConfirm: (LocalTime) -> Unit
+) {
+    if (!show) return
+
+    val timePickerState = rememberTimePickerState(
+        initialHour = initTime.hour,
+        initialMinute = initTime.minute,
+        is24Hour = false
+    )
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+        ) {
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(R.string.title_select_time),
+                    style = MaterialTheme.typography.titleLarge
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+
+                TimePicker(
+                    state = timePickerState
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    OutlinedButton(
+                        modifier = Modifier.weight(1f),
+                        onClick = onDismiss
+                    ) {
+                        Text(
+                            text = "Cancel",
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+
+                    Button(
+                        modifier = Modifier.weight(1f),
+                        onClick = { onConfirm(
+                            LocalTime.of(
+                                timePickerState.hour,
+                                timePickerState.minute)
+                        )
+                        }
+                    ) {
+                        Text(
+                            text = "OK",
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
 @Composable
 fun WeeklySection(
     selected: Int,
@@ -702,6 +783,23 @@ fun OnTheseDaySectionPreview(
                 selected =
                     if (checked) (0..6).toSet()
                     else emptySet()
+            }
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TimePickerDialogPreview() {
+    var localTime by remember { mutableStateOf(LocalTime.now()) }
+
+    HabitTrackerTheme {
+        TimePickerDialog(
+            show = true,
+            initTime = LocalTime.now(),
+            onDismiss = {},
+            onConfirm = {
+                localTime = it
             }
         )
     }

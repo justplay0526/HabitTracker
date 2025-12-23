@@ -102,6 +102,7 @@
     <string name="title_report">Report</string>
     <string name="title_setting">Setting</string>
     <string name="title_set_reminder">Set Reminder</string>
+    <string name="title_select_time">Select Time</string>
     <string name="title_task_name">Task Name</string>
     <string name="title_when">When</string>
 </resources>
