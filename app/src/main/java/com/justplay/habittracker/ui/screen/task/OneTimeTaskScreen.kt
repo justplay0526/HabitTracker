@@ -79,6 +79,18 @@ fun OneTimeTaskScreen(
         }
     )
 
+    TimePickerDialog(
+        show = uiState.showTimePicker,
+        initTime = uiState.selectedTime,
+        onDismiss = {
+            onEvent(OneTimeTaskEvent.HideTimePicker)
+        },
+        onConfirm = {
+            onEvent(OneTimeTaskEvent.TimeChanged(it))
+            onEvent(OneTimeTaskEvent.HideTimePicker)
+        }
+    )
+
     TaskScaffold {
         NameSection(
             title = R.string.title_task_name,
@@ -146,7 +158,9 @@ fun OneTimeTaskScreen(
             onReminderChanged = {
                 onEvent(OneTimeTaskEvent.ReminderChanged(it))
             },
-            onTimeChanged = { /* TODO Add Time Picker */ }
+            onTimeChanged = {
+                onEvent(OneTimeTaskEvent.ShowTimePicker)
+            }
         )
     }
 }

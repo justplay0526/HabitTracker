@@ -43,6 +43,9 @@ class OneTimeTaskViewModel: ViewModel() {
                 is OneTimeTaskEvent.HideIconPicker ->
                     state.copy(showIconPicker = false)
 
+                is OneTimeTaskEvent.HideTimePicker ->
+                    state.copy(showTimePicker = false)
+
                 is OneTimeTaskEvent.IconPicked ->
                     state.copy(selectedIconIndex = event.iconRes)// TODO 沒有儲存 Icon ResId 這邊要改
 
@@ -66,6 +69,9 @@ class OneTimeTaskViewModel: ViewModel() {
 
                 is OneTimeTaskEvent.ShowIconPicker ->
                     state.copy(showIconPicker = true)
+
+                is OneTimeTaskEvent.ShowTimePicker ->
+                    state.copy(showTimePicker = true)
 
                 is OneTimeTaskEvent.TimeChanged ->
                     state.copy(selectedTime = event.time)

@@ -26,5 +26,6 @@ data class OneTimeTaskUiState(
     // Show Picker Boolean State
     val showColorPicker: Boolean = false,
     val showIconPicker: Boolean = false,
-    val showDatePicker: Boolean = false
+    val showDatePicker: Boolean = false,
+    val showTimePicker: Boolean = false
 )

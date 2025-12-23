@@ -31,4 +31,6 @@ sealed interface OneTimeTaskEvent {
     data object HideIconPicker : OneTimeTaskEvent
     data object ShowDatePicker : OneTimeTaskEvent
     data object HideDatePicker : OneTimeTaskEvent
+    data object ShowTimePicker : OneTimeTaskEvent
+    data object HideTimePicker : OneTimeTaskEvent
 }
