@@ -21,9 +21,16 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@PreviewScreenSizes
 @Composable
 fun HabitTrackerApp() {
     MainNavSuite()
+}
+
+@PreviewScreenSizes
+@Composable
+fun HabitTrackerAppPreview() {
+    HabitTrackerTheme {
+        HabitTrackerApp()
+    }
 }
 

@@ -7,6 +7,11 @@ import com.justplay.habittracker.R
 val HabitListItemHeight = 68.dp
 val HabitTextFieldHeight = 52.dp
 
+val EndHabitOnStringRes = listOf(
+    R.string.text_date,
+    R.string.text_days
+)
+
 val HabitPeriodStringRes = listOf(
     R.string.text_time_of_day_all,
     R.string.text_time_of_day_morning,

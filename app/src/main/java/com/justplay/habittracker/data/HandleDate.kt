@@ -1,12 +1,14 @@
 package com.justplay.habittracker.data
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import com.justplay.habittracker.R
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-
+// TODO 之後換個檔案名稱
 @Composable
 fun formatUniformDate(
     date: LocalDate,
@@ -18,25 +20,50 @@ fun formatUniformDate(
      * TODO Add the other language locale
      */
     val formatter = DateTimeFormatter.ofPattern(
-        stringResource(R.string.date_pattern),
+        stringResource(R.string.pattern_date),
         locale
     )
 
     return when (date) {
         today -> {
-            stringResource(R.string.date_today)+ " " + date.format(formatter)
+            stringResource(R.string.text_date_today)+ " " + date.format(formatter)
         }
 
         today.plusDays(1) -> {
-            stringResource(R.string.date_tomorrow)+ " " + date.format(formatter)
+            stringResource(R.string.text_date_tomorrow)+ " " + date.format(formatter)
         }
 
         today.minusDays(1) -> {
-            stringResource(R.string.date_yesterday)+ " " + date.format(formatter)
+            stringResource(R.string.text_date_yesterday)+ " " + date.format(formatter)
         }
 
         else -> {
             date.format(formatter)
         }
     }
+}
+
+@Composable
+fun formatUniformDays(
+    days: Int
+): String {
+
+    return pluralStringResource(
+        id = R.plurals.sent_after_day,
+        count = days,
+        days
+    )
+}
+
+@Composable
+fun formatReminderTime(
+    time: LocalTime,
+    locale: Locale = Locale.US
+): String {
+    val formatter = DateTimeFormatter.ofPattern(
+        stringResource(R.string.pattern_time_am),
+        locale
+    )
+
+    return time.format(formatter)
 }

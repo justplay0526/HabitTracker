@@ -1,5 +1,6 @@
 package com.justplay.habittracker.ui.screen.task
 
+import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
@@ -25,13 +26,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.outlined.Refresh
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -42,29 +49,48 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.justplay.habittracker.R
+import com.justplay.habittracker.data.formatUniformDate
+import com.justplay.habittracker.data.formatUniformDays
+import com.justplay.habittracker.ui.helper.asPainter
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.CircleColorBox
+import com.justplay.habittracker.ui.view.CirclePictureBox
 import com.justplay.habittracker.ui.view.ColorResource
-import com.justplay.habittracker.ui.view.DateTimePickerRow
+import com.justplay.habittracker.ui.view.EndHabitOnStringRes
 import com.justplay.habittracker.ui.view.HabitInputField
-import com.justplay.habittracker.ui.view.IconModalBottomSheet
 import com.justplay.habittracker.ui.view.IconsRes
 import com.justplay.habittracker.ui.view.MonthlyCalendar
 import com.justplay.habittracker.ui.view.MultiChoiceChipGroup
 import com.justplay.habittracker.ui.view.OutlinedIcon
+import com.justplay.habittracker.ui.view.PickerRow
 import com.justplay.habittracker.ui.view.SingleChoiceChipGroup
+import com.justplay.habittracker.ui.view.bottomSheet.ColorModalBottomSheet
+import com.justplay.habittracker.ui.view.bottomSheet.DateModalBottomSheet
+import com.justplay.habittracker.ui.view.bottomSheet.IconModalBottomSheet
+import com.justplay.habittracker.ui.view.bottomSheet.NumberInputModalBottomSheet
+import com.justplay.habittracker.ui.view.oneAlphabetWeekLabels
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.YearMonth
 
 @Composable
 fun ColorSection(
+    @ColorInt customColor: Int,
+    colorSelected: Boolean,
     selectedColorIndex: Int,
-    onColorSelected: (Int) -> Unit
+    onColorIndexSelected: (Int) -> Unit,
+    onColorIntSelected:(Int) -> Unit,
+    showPicker: () -> Unit
 ) {
     Text(
         text = stringResource(R.string.title_color),
@@ -86,13 +112,38 @@ fun ColorSection(
          * TODO handle color picker for last Circle Box
          * TODO connect to ViewModel
          */
-        ColorResource.forEachIndexed {
+        ColorResource.take(14).forEachIndexed {
                 index, colorData ->
             CircleColorBox(
                 color = colorData,
                 selected = selectedColorIndex == index,
                 onClick = {
-                    onColorSelected(index)
+                    onColorIndexSelected(index)
+                    onColorIntSelected(colorData.toArgb())
+                },
+                modifier = Modifier
+                    .weight(1f, fill = true)
+                    .aspectRatio(1f)
+            )
+        }
+        if (!colorSelected) {
+            CirclePictureBox(
+                painter = painterResource(R.mipmap.hsv_color_palette),
+                selected = selectedColorIndex == 14,
+                onClick = {
+                    showPicker()
+                },
+                modifier = Modifier
+                    .weight(1f, fill = true)
+                    .aspectRatio(1f)
+            )
+        } else {
+            CircleColorBox(
+                color = Color(customColor),
+                selected = selectedColorIndex == 14,
+                onClick = {
+                    onColorIndexSelected(14)
+                    showPicker()
                 },
                 modifier = Modifier
                     .weight(1f, fill = true)
@@ -104,14 +155,115 @@ fun ColorSection(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+fun ColorPickerBottomSheet(
+    show: Boolean,
+    sheetState: SheetState,
+    onDismissRequest: () -> Unit,
+    onColorSelected: (String) -> Unit,
+) {
+    if (show) {
+        ColorModalBottomSheet(
+            sheetState = sheetState,
+            onColorSelected = onColorSelected,
+            onCancel = onDismissRequest
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerBottomSheet(
+    show: Boolean,
+    sheetState: SheetState,
+    onDismissRequest: () -> Unit,
+    onDateSelected: (LocalDate?) -> Unit,
+) {
+    if (show) {
+        DateModalBottomSheet(
+            sheetState = sheetState,
+            onDateSelected =  onDateSelected,
+            onCancel = onDismissRequest
+        )
+    }
+}
+
+@Composable
+fun EndHabitOnSection(
+    switchState: Boolean,
+    dateString: String,
+    dayString: String,
+    onSwitchChanged: (Boolean) -> Unit,
+    onDateSelected: () -> Unit,
+    onDaySelected: () -> Unit
+) {
+    val endHabitOnString = EndHabitOnStringRes
+        .map { stringResource(it) }
+    var selectedTypeOption by remember { mutableStateOf<String?>(endHabitOnString.first()) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.title_end_habit_on),
+                style = MaterialTheme.typography.titleLarge
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Switch(
+                checked = switchState,
+                onCheckedChange = { onSwitchChanged(it) }
+            )
+        }
+
+        if (switchState) {
+            SingleChoiceSection(
+                title = null,
+                optionsString = endHabitOnString,
+                selectedOptions = selectedTypeOption,
+                onSelectedChanged = { selectedTypeOption = it }
+            ) {
+                when (selectedTypeOption) {
+                    endHabitOnString[0] -> {
+                        PickerRow(
+                            text = dateString,
+                            onClick = onDateSelected,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        )
+                    } else -> {
+                        PickerRow(
+                            text = dayString,
+                            onClick = onDaySelected,
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            leadingIcon = Icons.Outlined.Refresh.asPainter()
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun IconPickerBottomSheet(
     show: Boolean,
+    initIcon: Int,
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
     onIconSelected: (Int) -> Unit,
 ) {
     if (show) {
         IconModalBottomSheet(
+            initIcon = initIcon,
             sheetState = sheetState,
             onIconSelected = onIconSelected,
             onCancel = onDismissRequest
@@ -234,6 +386,25 @@ fun NameSection(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NumberInputBottomSheet(
+    show: Boolean,
+    initNumber: Int,
+    sheetState: SheetState,
+    onDismissRequest: () -> Unit,
+    onNumberEntered: (Int) -> Unit,
+) {
+    if (show) {
+        NumberInputModalBottomSheet(
+            initNumber = initNumber,
+            sheetState = sheetState,
+            onNumberEntered = onNumberEntered,
+            onCancel = onDismissRequest
+        )
+    }
+}
+
 @Composable
 fun OnTheseDaySection(
     selected: Set<Int>, // 0..6 代表哪幾個被選
@@ -243,15 +414,7 @@ fun OnTheseDaySection(
     /**
      * 星期標題列
      */
-    val weekLabels = listOf(
-        stringResource(R.string.text_week_one_sun),
-        stringResource(R.string.text_week_one_mon),
-        stringResource(R.string.text_week_one_tue),
-        stringResource(R.string.text_week_one_wed),
-        stringResource(R.string.text_week_one_thu),
-        stringResource(R.string.text_week_one_fri),
-        stringResource(R.string.text_week_one_sat)
-    )
+    val weekLabels = oneAlphabetWeekLabels()
     val interaction = remember { MutableInteractionSource() }
 
     val allSelected = selected.size == 7
@@ -346,7 +509,9 @@ fun OnTheseDaySection(
 @Composable
 fun ReminderSection(
     reminderCheck: Boolean,
-    onReminderChanged: (Boolean) -> Unit
+    timeString: String,
+    onReminderChanged: (Boolean) -> Unit,
+    onTimeChanged: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -366,7 +531,13 @@ fun ReminderSection(
         )
     }
     if (reminderCheck) {
-        Text(text = true.toString())
+        PickerRow(
+            text = timeString,
+            onClick = onTimeChanged,
+            modifier = Modifier
+                .fillMaxWidth(),
+            leadingIcon = painterResource(R.drawable.round_access_time_24)
+        )
     }
 }
 
@@ -377,16 +548,18 @@ fun SectionSpace() {
 
 @Composable
 fun SingleChoiceSection(
-    @StringRes title: Int,
+    @StringRes title: Int? = null,
     optionsString: List<String>,
     selectedOptions: String?,
     onSelectedChanged: (String) -> Unit,
     content: (@Composable () -> Unit)? = null
 ) {
-    Text(
-        text = stringResource(title),
-        style = MaterialTheme.typography.titleLarge
-    )
+    if (title != null) {
+        Text(
+            text = stringResource(title),
+            style = MaterialTheme.typography.titleLarge
+        )
+    }
 
     SingleChoiceChipGroup(
         options = optionsString,
@@ -416,7 +589,81 @@ fun TaskScaffold(
         content()
     }
 }
-// TODO Finish WeeklySection View
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TimePickerDialog(
+    show: Boolean,
+    initTime: LocalTime,
+    onDismiss: () -> Unit,
+    onConfirm: (LocalTime) -> Unit
+) {
+    if (!show) return
+
+    val timePickerState = rememberTimePickerState(
+        initialHour = initTime.hour,
+        initialMinute = initTime.minute,
+        is24Hour = false
+    )
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+        ) {
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(R.string.title_select_time),
+                    style = MaterialTheme.typography.titleLarge
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+
+                TimePicker(
+                    state = timePickerState
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    OutlinedButton(
+                        modifier = Modifier.weight(1f),
+                        onClick = onDismiss
+                    ) {
+                        Text(
+                            text = "Cancel",
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+
+                    Button(
+                        modifier = Modifier.weight(1f),
+                        onClick = { onConfirm(
+                            LocalTime.of(
+                                timePickerState.hour,
+                                timePickerState.minute)
+                        )
+                        }
+                    ) {
+                        Text(
+                            text = "OK",
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
 @Composable
 fun WeeklySection(
     selected: Int,
@@ -491,24 +738,32 @@ fun WhenSection(
 
     Spacer(modifier = Modifier.height(8.dp))
 
-    DateTimePickerRow(
+    PickerRow(
         text = dateString,
         onClick = onDateSelected,
         modifier = Modifier
             .fillMaxWidth()
     )
 }
-
-// 在預覽時 plural 也有語系問題
+// Preview Region
 @Preview(showBackground = true, locale = "en")
 @Composable
-fun WeeklySectionPreview() {
-    var selected by rememberSaveable { mutableIntStateOf(5) }
+fun EndHabitOnSectionPreview() {
+    var switchState by remember { mutableStateOf(false) }
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var selectedDay by remember { mutableIntStateOf(1) }
+    val displayDate = formatUniformDate(selectedDate)
+    val displayDay = formatUniformDays(selectedDay)
+
 
     HabitTrackerTheme {
-        WeeklySection(
-            selected = selected,
-            onSelectedChange = { selected = it }
+        EndHabitOnSection(
+            switchState = switchState,
+            onSwitchChanged = { switchState = it },
+            dateString = displayDate,
+            dayString = displayDay,
+            onDateSelected = {},
+            onDaySelected = {}
         )
     }
 }
@@ -531,6 +786,37 @@ fun OnTheseDaySectionPreview(
                     if (checked) (0..6).toSet()
                     else emptySet()
             }
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TimePickerDialogPreview() {
+    var localTime by remember { mutableStateOf(LocalTime.now()) }
+
+    HabitTrackerTheme {
+        TimePickerDialog(
+            show = true,
+            initTime = LocalTime.now(),
+            onDismiss = {},
+            onConfirm = {
+                localTime = it
+            }
+        )
+    }
+}
+
+// 在預覽時 plural 也有語系問題
+@Preview(showBackground = true, locale = "en")
+@Composable
+fun WeeklySectionPreview() {
+    var selected by rememberSaveable { mutableIntStateOf(5) }
+
+    HabitTrackerTheme {
+        WeeklySection(
+            selected = selected,
+            onSelectedChange = { selected = it }
         )
     }
 }

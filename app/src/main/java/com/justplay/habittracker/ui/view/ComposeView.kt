@@ -30,11 +30,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.justplay.habittracker.R
 import com.justplay.habittracker.data.formatUniformDate
+import com.justplay.habittracker.ui.helper.asPainter
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import java.time.LocalDate
 
@@ -112,10 +115,45 @@ fun CircleColorBox(
 }
 
 @Composable
-fun DateTimePickerRow(
-    text: String,
+fun CirclePictureBox(
+    painter: Painter,
+    selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .aspectRatio(1f)
+            .clip(CircleShape)
+            .clickable { onClick() },
+    ) {
+        Image(
+            painter = painter,
+            contentDescription = null,
+            contentScale = ContentScale.Crop, // 填滿圓形
+            modifier = Modifier.matchParentSize()
+        )
+
+        if (selected) {
+            Icon(
+                imageVector = Icons.Default.Done,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.scrim,
+                modifier = Modifier
+                    .matchParentSize()
+                    .padding(6.dp)
+                    .align(Alignment.Center)
+            )
+        }
+    }
+}
+
+@Composable
+fun PickerRow(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    leadingIcon: Painter = Icons.Outlined.DateRange.asPainter(),
 ) {
     Row(
         modifier = modifier
@@ -132,7 +170,7 @@ fun DateTimePickerRow(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = Icons.Outlined.DateRange,
+                painter = leadingIcon,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(20.dp)
@@ -193,13 +231,13 @@ fun CircleColorBoxPreview(){
 
 @Preview(showBackground = true)
 @Composable
-fun DateTimePickerRowPreview() {
+fun PickerRowPreview() {
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
 
     val displayDate = formatUniformDate(selectedDate)
 
     HabitTrackerTheme {
-        DateTimePickerRow(
+        PickerRow(
             text = displayDate,
             onClick = {},
             modifier = Modifier

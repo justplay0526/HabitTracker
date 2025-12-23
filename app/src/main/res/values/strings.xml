@@ -4,12 +4,6 @@
     <string name="btn_cancel">Cancel</string>
     <string name="btn_ok">OK</string>
     <string name="btn_save">Save</string>
-<!--  Date Text -->
-    <string name="date_month_pattern">MMMM yyyy</string>
-    <string name="date_pattern">MMMM d, yyyy</string>
-    <string name="date_today">Today,</string>
-    <string name="date_tomorrow">Tomorrow,</string>
-    <string name="date_yesterday">Yesterday,</string>
 <!-- Content Description -->
     <string name="desc_create_habit">Create Habit</string>
 <!-- Example Content -->
@@ -26,14 +20,34 @@
     <string name="hint_habit_name">Habit Name</string>
     <string name="hint_search_icon">Search Icon</string>
     <string name="hint_task_name">Task Name</string>
+<!-- Pattern -->
+    <string name="pattern_date_month">MMMM yyyy</string>
+    <string name="pattern_date">MMMM d, yyyy</string>
+    <string name="pattern_time_am">hh:mm a</string>
 <!-- Sentence -->
     <plurals name="sent_day_per_week">
         <item quantity="one">%d day per week</item>
         <item quantity="other">%d days per week</item>
     </plurals>
+
+    <string name="sent_warning_text_enter_number">
+        Range: %d~%d
+    </string>
+    <string name="sent_warning_text_enter_number_is_null">
+        Please enter a number, Range: %d~%d
+    </string>
+
+    <plurals name="sent_after_day">
+        <item quantity="one">After %d day</item>
+        <item quantity="other">After %d days</item>
+    </plurals>
 <!-- Text -->
     <string name="text_all_day">All day</string>
     <string name="text_date">Date</string>
+<!--  Date Text -->
+    <string name="text_date_today">Today,</string>
+    <string name="text_date_tomorrow">Tomorrow,</string>
+    <string name="text_date_yesterday">Yesterday,</string>
     <string name="text_days">Day</string>
     <string name="text_emoji">Emoji</string>
 <!-- Habit Task Type -->
@@ -68,9 +82,12 @@
     <string name="text_week_two_sat">Sa</string>
 <!-- Title -->
     <string name="title_color">Color</string>
+    <string name="title_choose_color">Choose Color</string>
+    <string name="title_choose_icon">Choose Icon</string>
     <string name="title_create_new_habit">Create New Habit</string>
     <string name="title_do_it_at">Do it at:</string>
     <string name="title_end_habit_on">End Habit On</string>
+    <string name="title_enter_number">Enter Number</string>
     <string name="title_habit_name">Habit Name</string>
     <string name="title_home">Home</string>
     <string name="title_icon">Icon</string>
@@ -85,6 +102,7 @@
     <string name="title_report">Report</string>
     <string name="title_setting">Setting</string>
     <string name="title_set_reminder">Set Reminder</string>
+    <string name="title_select_time">Select Time</string>
     <string name="title_task_name">Task Name</string>
     <string name="title_when">When</string>
 </resources>
