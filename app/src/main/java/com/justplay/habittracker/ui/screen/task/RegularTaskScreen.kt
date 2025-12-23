@@ -18,8 +18,6 @@ import com.justplay.habittracker.ui.screen.task.model.RegularTaskViewModel
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.HabitPeriodStringRes
 import com.justplay.habittracker.ui.view.HabitRepeatStringRes
-import java.time.LocalTime
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -95,7 +93,7 @@ fun RegularTaskScreen(
 
     TimePickerDialog(
         show = uiState.showTimePicker,
-        initTime = LocalTime.now(),
+        initTime = uiState.selectedTime,
         onDismiss = {
             onEvent(RegularTaskEvent.HideTimePicker)
         },
