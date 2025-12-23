@@ -40,4 +40,6 @@ sealed interface RegularTaskEvent {
     data object HideDatePicker : RegularTaskEvent
     data object ShowNumberPicker : RegularTaskEvent
     data object HideNumberPicker : RegularTaskEvent
+    data object ShowTimePicker : RegularTaskEvent
+    data object HideTimePicker : RegularTaskEvent
 }

@@ -18,6 +18,7 @@ import com.justplay.habittracker.ui.screen.task.model.RegularTaskViewModel
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.HabitPeriodStringRes
 import com.justplay.habittracker.ui.view.HabitRepeatStringRes
+import java.time.LocalTime
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -89,6 +90,18 @@ fun RegularTaskScreen(
         onNumberEntered = {
             onEvent(RegularTaskEvent.EndHabitOnDaysChanged(it))
             onEvent(RegularTaskEvent.HideNumberPicker)
+        }
+    )
+
+    TimePickerDialog(
+        show = uiState.showTimePicker,
+        initTime = LocalTime.now(),
+        onDismiss = {
+            onEvent(RegularTaskEvent.HideTimePicker)
+        },
+        onConfirm = {
+            onEvent(RegularTaskEvent.TimeChanged(it))
+            onEvent(RegularTaskEvent.HideTimePicker)
         }
     )
 
@@ -214,7 +227,9 @@ fun RegularTaskScreen(
             onReminderChanged = {
                 onEvent(RegularTaskEvent.ReminderChanged(it))
             },
-            onTimeChanged = { /* TODO Add Time Picker */ }
+            onTimeChanged = {
+                onEvent(RegularTaskEvent.ShowTimePicker)
+            }
         )
 
         SectionSpace()

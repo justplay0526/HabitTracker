@@ -55,6 +55,9 @@ class RegularTaskViewModel: ViewModel() {
                 is RegularTaskEvent.HideNumberPicker ->
                     state.copy(showNumberSheet = false)
 
+                is RegularTaskEvent.HideTimePicker ->
+                    state.copy(showTimePicker = false)
+
                 is RegularTaskEvent.IconPicked ->
                     state.copy(selectedIconIndex = event.iconRes) // TODO 沒有儲存 Icon ResId 這邊要改
 
@@ -94,6 +97,9 @@ class RegularTaskViewModel: ViewModel() {
 
                 is RegularTaskEvent.ShowNumberPicker ->
                     state.copy(showNumberSheet = true)
+
+                is RegularTaskEvent.ShowTimePicker ->
+                    state.copy(showTimePicker = true)
 
                 is RegularTaskEvent.TimeChanged ->
                     state.copy(selectedTime = event.time)

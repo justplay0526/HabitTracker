@@ -32,5 +32,6 @@ data class RegularTaskUiState(
     val showColorPicker: Boolean = false,
     val showIconPicker: Boolean = false,
     val showDatePicker: Boolean = false,
-    val showNumberSheet: Boolean = false
+    val showNumberSheet: Boolean = false,
+    val showTimePicker: Boolean = false
 )
