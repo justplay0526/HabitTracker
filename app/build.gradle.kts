@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.bundles.third.party)
     implementation(libs.timber)
     implementation(libs.hilt.android)
+    implementation(libs.hilt.navigation.compose)
     ksp(libs.bundles.ksp)
 
     implementation(project(":data"))
