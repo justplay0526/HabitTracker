@@ -7,8 +7,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.graphics.toColorInt
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.justplay.habittracker.R
 import com.justplay.habittracker.data.formatReminderTime
 import com.justplay.habittracker.data.formatUniformDate
@@ -22,7 +22,7 @@ import com.justplay.habittracker.ui.view.HabitRepeatStringRes
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegularTaskScreen(
-    vm: RegularTaskViewModel = viewModel()
+    vm: RegularTaskViewModel = hiltViewModel()
 ) {
     // String Reference
     val periodString = HabitPeriodStringRes

@@ -37,6 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.justplay.habittracker.data.DragToActionValue
 import com.justplay.habittracker.data.HabitPeriod
@@ -256,7 +257,7 @@ fun SectionHeader(
 
 @Composable
 fun TodayRoute(
-    viewModel: TodayViewModel = viewModel()
+    viewModel: TodayViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val selectedPeriod by viewModel.selectedPeriod.collectAsState()
