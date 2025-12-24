@@ -13,6 +13,7 @@ composeBom = "2024.09.00"
 colorpicker = "1.1.2"
 appcompat = "1.6.1" # This Update need to update agp and kotlin version
 room = "2.7.2"
+hilt = "2.57.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -36,6 +37,8 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room_ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -65,7 +68,8 @@ base-androidx = [
 ]
 
 ksp = [
-    "room-compiler"
+    "room-compiler",
+    "hilt-compiler"
 ]
 
 third-party = [

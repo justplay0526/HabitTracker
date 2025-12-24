@@ -37,6 +37,7 @@ android {
 dependencies {
     implementation(libs.bundles.base.androidx)
     implementation(libs.bundles.room)
+    implementation(libs.hilt.android)
     ksp(libs.bundles.ksp)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
