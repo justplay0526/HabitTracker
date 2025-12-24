@@ -7,14 +7,19 @@ import com.justplay.habittracker.data.HabitPeriod
 import com.justplay.habittracker.data.HabitUi
 import com.justplay.habittracker.data.TodayTestUiState
 import com.justplay.habittracker.data.TodayUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
-class TodayViewModel: ViewModel() {
+@HiltViewModel
+class TodayViewModel @Inject constructor(
+    // TODO add repo
+): ViewModel() {
     /**
      * 選擇要過濾的時段
      */

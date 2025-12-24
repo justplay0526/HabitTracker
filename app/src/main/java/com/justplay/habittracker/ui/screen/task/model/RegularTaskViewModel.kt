@@ -1,14 +1,17 @@
 package com.justplay.habittracker.ui.screen.task.model
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.justplay.habittracker.ui.screen.task.event.RegularTaskEvent
 import com.justplay.habittracker.ui.screen.task.state.RegularTaskUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import timber.log.Timber
+import javax.inject.Inject
 
-class RegularTaskViewModel: ViewModel() {
+class RegularTaskViewModel @Inject constructor(
+    // TODO add repo
+): ViewModel() {
     private val _uiState = MutableStateFlow(RegularTaskUiState())
     val uiState = _uiState.asStateFlow()
 
@@ -25,9 +28,10 @@ class RegularTaskViewModel: ViewModel() {
                     state.copy(selectedColorIndex = event.index)
 
                 is RegularTaskEvent.ColorIntSelected -> {
-                    Log.d("RegularTaskViewModel",
-                        "SelectedColorInt = ${event.color}"
-                    )
+                    Timber
+                        .tag("RegularTaskViewModel")
+                        .d("SelectedColorInt = ${event.color}")
+
                     state.copy(selectedColorRes = event.color)
                 }
 

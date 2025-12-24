@@ -8,7 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.justplay.habittracker.ui.navigation.MainNavSuite
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
