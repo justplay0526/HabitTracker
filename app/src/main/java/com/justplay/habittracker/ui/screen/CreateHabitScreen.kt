@@ -71,7 +71,8 @@ fun CreateNewHabitScreen(
             tabs = taskTabs,
             pages = taskPages,
             modifier = Modifier
-                .padding(innerPadding)
+                .padding(innerPadding),
+            onPageChanged = { currentPage = it }
         )
     }
 }
