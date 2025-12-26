@@ -6,30 +6,30 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.justplay.data.db.classPkg.PeriodOption
 import com.justplay.habittracker.R
 import com.justplay.habittracker.data.formatReminderTime
 import com.justplay.habittracker.data.formatUniformDate
+import com.justplay.habittracker.ui.helper.toLabelRes
 import com.justplay.habittracker.ui.screen.task.event.OneTimeTaskEvent
 import com.justplay.habittracker.ui.screen.task.model.OneTimeTaskViewModel
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
-import com.justplay.habittracker.ui.view.HabitPeriodStringRes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OneTimeTaskScreen(
     vm: OneTimeTaskViewModel = hiltViewModel()
 ) {
-    // String Reference
-    val periodString = HabitPeriodStringRes
-        .filterNot { it == R.string.text_time_of_day_all }
-        .map { stringResource(it) }
+    val periodOptions = remember {
+        PeriodOption.entries.filterNot { it == PeriodOption.ALL }.toList()
+    }
 
     val uiState by vm.uiState.collectAsStateWithLifecycle()
     val onEvent = vm::onEvent
@@ -142,8 +142,9 @@ fun OneTimeTaskScreen(
         // Do It As Section
         SingleChoiceSection(
             title = R.string.title_do_it_at,
-            optionsString = periodString,
-            selectedOptions = uiState.selectedPeriodOption,
+            options = periodOptions,
+            selectedOption = uiState.selectedPeriodOption,
+            labelRes = { it.toLabelRes() },
             onSelectedChanged = {
                 onEvent(OneTimeTaskEvent.PeriodOptionChanged(it))
             }

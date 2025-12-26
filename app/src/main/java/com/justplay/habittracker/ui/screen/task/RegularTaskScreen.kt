@@ -4,32 +4,32 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.res.stringResource
+import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.graphics.toColorInt
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.justplay.data.db.classPkg.PeriodOption
+import com.justplay.data.db.classPkg.RepeatOption
 import com.justplay.habittracker.R
 import com.justplay.habittracker.data.formatReminderTime
 import com.justplay.habittracker.data.formatUniformDate
 import com.justplay.habittracker.data.formatUniformDays
+import com.justplay.habittracker.ui.helper.toLabelRes
 import com.justplay.habittracker.ui.screen.task.event.RegularTaskEvent
 import com.justplay.habittracker.ui.screen.task.model.RegularTaskViewModel
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
-import com.justplay.habittracker.ui.view.HabitPeriodStringRes
-import com.justplay.habittracker.ui.view.HabitRepeatStringRes
+import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegularTaskScreen(
     vm: RegularTaskViewModel = hiltViewModel()
 ) {
-    // String Reference
-    val periodString = HabitPeriodStringRes
-        .filterNot { it == R.string.text_time_of_day_all }
-        .map { stringResource(it) }
-    val repeatString = HabitRepeatStringRes
-        .map { stringResource(it) }
+    val periodOptions = remember {
+        PeriodOption.entries.filterNot { it == PeriodOption.ALL }.toList()
+    }
+    val repeatOptions = remember { RepeatOption.entries.toList() }
 
     val uiState by vm.uiState.collectAsStateWithLifecycle()
     val onEvent = vm::onEvent
@@ -144,13 +144,14 @@ fun RegularTaskScreen(
         // Repeat Section
         SingleChoiceSection(
             title = R.string.title_repeat,
-            optionsString = repeatString,
-            selectedOptions = uiState.selectedRepeatOption,
+            options = repeatOptions,
+            selectedOption = uiState.selectedRepeatOption,
+            labelRes = { it.toLabelRes() },
             onSelectedChanged = {
                 onEvent(RegularTaskEvent.RepeatOptionChanged(it))
             },
             content = when(uiState.selectedRepeatOption) {
-                repeatString[0] -> {
+                RepeatOption.DAILY -> {
                     {
                         OnTheseDaySection(
                             selected = uiState.selectedDaySet,
@@ -163,7 +164,7 @@ fun RegularTaskScreen(
                         )
                     }
                 }
-                repeatString[1] -> {
+                RepeatOption.WEEKLY -> {
                     {
                         WeeklySection(
                             selected = uiState.selectedFreq,
@@ -173,11 +174,12 @@ fun RegularTaskScreen(
                         )
                     }
                 }
-                repeatString[2] -> {
+                RepeatOption.MONTHLY -> {
                     {
                         MonthlySection(
                             selectedDays = uiState.selectedDaysOfMonth,
                             onSelectionChanged = {
+                                Timber.tag("Regular").d(it.toString())
                                 onEvent(RegularTaskEvent.MonthDaysChanged(it))
                             }
                         )
@@ -191,8 +193,9 @@ fun RegularTaskScreen(
         // Do It As Section
         SingleChoiceSection(
             title = R.string.title_do_it_at,
-            optionsString = periodString,
-            selectedOptions = uiState.selectedPeriodOption,
+            options = periodOptions,
+            selectedOption = uiState.selectedPeriodOption,
+            labelRes = { it.toLabelRes() },
             onSelectedChanged = {
                 onEvent(RegularTaskEvent.PeriodOptionChanged(it))
             }
@@ -207,6 +210,9 @@ fun RegularTaskScreen(
             },
             dateString = formatUniformDate(uiState.selectedDate),
             dayString = formatUniformDays(uiState.selectedEndHabitDay),
+            onTypeSelected = {
+                onEvent(RegularTaskEvent.EndHabitTyped(it))
+            },
             onDateSelected = {
                 onEvent(RegularTaskEvent.ShowDatePicker)
             },
