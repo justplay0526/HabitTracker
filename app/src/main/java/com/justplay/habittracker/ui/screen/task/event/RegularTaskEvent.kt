@@ -30,6 +30,8 @@ sealed interface RegularTaskEvent {
     data class DateChanged(val date: LocalDate) : RegularTaskEvent
     data class TimeChanged(val time: LocalTime) : RegularTaskEvent
 
+    data class EndHabitTyped(val type: EndHabitDayType) : RegularTaskEvent
+
     // Switch
     data class ReminderChanged(val enabled: Boolean) : RegularTaskEvent
     data class EndHabitOnChanged(val enabled: Boolean) : RegularTaskEvent
