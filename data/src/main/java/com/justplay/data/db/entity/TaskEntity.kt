@@ -5,6 +5,7 @@ import androidx.annotation.DrawableRes
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.justplay.data.TASK_TABLE
+import com.justplay.data.db.classPkg.PeriodOption
 import com.justplay.data.db.classPkg.RepeatOption
 import com.justplay.data.db.classPkg.TaskType
 import java.time.LocalDate
@@ -25,7 +26,7 @@ data class TaskEntity(
     /**
      * periodOption: morning / afternoon / evening
      */
-    val periodOption: String?,
+    val periodOption: PeriodOption?,
 
     /**
      * 是否啟用提醒
@@ -72,8 +73,13 @@ data class TaskEntity(
      * 你原 RegularTaskEntity 有的欄位
      */
     val freq: Int? = null,
-    val endHabitOn: Boolean? = null,
-    val endHabitDay: Int? = null,
+    val endHabitOn: Boolean = false,
+    val endHabitDate: LocalDate? = null,
 
+    /**
+     * 軟刪除, = true 時不顯示出來
+     *
+     * 避免歷史紀錄變成無頭騎士
+     */
     val isArchived: Boolean = false
 )
