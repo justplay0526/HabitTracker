@@ -7,24 +7,6 @@ import com.justplay.habittracker.R
 val HabitListItemHeight = 68.dp
 val HabitTextFieldHeight = 52.dp
 
-val EndHabitOnStringRes = listOf(
-    R.string.text_date,
-    R.string.text_days
-)
-
-val HabitPeriodStringRes = listOf(
-    R.string.text_time_of_day_all,
-    R.string.text_time_of_day_morning,
-    R.string.text_time_of_day_afternoon,
-    R.string.text_time_of_day_evening
-)
-
-val HabitRepeatStringRes = listOf(
-    R.string.text_repeat_freq_daily,
-    R.string.text_repeat_freq_weekly,
-    R.string.text_repeat_freq_monthly,
-)
-
 val IconsRes = listOf(
     R.mipmap.emoji_01_smile_sunglasses, R.mipmap.emoji_02_slightly_smile,
     R.mipmap.emoji_03_smile_heart_eyes, R.mipmap.emoji_04_kiss_close_eyes,
