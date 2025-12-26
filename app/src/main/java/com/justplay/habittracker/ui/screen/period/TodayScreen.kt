@@ -131,7 +131,7 @@ fun TodayScreen(
                 ) { habit ->
                     TodayHabitsListItem(
                         color = habit.color,
-                        textRes = habit.title,
+                        text = habit.title,
                         iconRes = habit.icon,
                         state = DragToActionValue.COMPLETE
                     )
@@ -152,7 +152,7 @@ fun TodayScreen(
                 ) { habit ->
                     TodayHabitsListItem(
                         color = habit.color,
-                        textRes = habit.title,
+                        text = habit.title,
                         iconRes = habit.icon,
                         state = DragToActionValue.SKIP
                     )
@@ -165,8 +165,8 @@ fun TodayScreen(
 
 @Composable
 fun TodayHabitsListItem(
-    color: Color,
-    @StringRes textRes: Int,
+    @ColorInt color: Int,
+    text: String,
     @DrawableRes iconRes: Int,
     state: DragToActionValue,
     modifier: Modifier = Modifier
@@ -176,11 +176,11 @@ fun TodayHabitsListItem(
             .clip(RoundedCornerShape(8.dp))
             .height(HabitListItemHeight),
         colors = ListItemDefaults.colors(
-            containerColor = color
+            containerColor = Color(color)
         ),
         headlineContent = {
             Text(
-                text = stringResource(textRes),
+                text = text,
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.scrim
             )

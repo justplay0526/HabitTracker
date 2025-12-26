@@ -1,14 +1,17 @@
 package com.justplay.habittracker.data
 
-import androidx.compose.ui.graphics.Color
+import androidx.annotation.ColorInt
+import com.justplay.data.db.classPkg.PeriodOption
 import java.time.LocalDate
 
 data class HabitUi(
-    val color: Color,
-    val title: Int,
+    val id: Long,
+    @param:ColorInt val color: Int,
+    val title: String,
     val icon: Int,
     val state: DragToActionValue = DragToActionValue.Settle,
-    val period: HabitPeriod = HabitPeriod.ALL
+    val period: PeriodOption = PeriodOption.ALL,
+    val streak: Int? = null
 )
 
 data class DayUi(
