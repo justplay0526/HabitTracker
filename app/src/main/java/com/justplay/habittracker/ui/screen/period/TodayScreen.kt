@@ -1,7 +1,7 @@
 package com.justplay.habittracker.ui.screen.period
 
+import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -34,34 +34,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.justplay.data.db.classPkg.PeriodOption
 import com.justplay.habittracker.data.DragToActionValue
-import com.justplay.habittracker.data.HabitPeriod
 import com.justplay.habittracker.data.HabitUi
 import com.justplay.habittracker.data.TodayUiState
+import com.justplay.habittracker.ui.helper.toLabelRes
 import com.justplay.habittracker.ui.theme.AppTypography
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.DraggableItemWithActions
 import com.justplay.habittracker.ui.view.HabitListItemHeight
-import com.justplay.habittracker.ui.view.HabitPeriodStringRes
 import com.justplay.habittracker.ui.view.ScrollSingleChoiceChipGroup
 import com.justplay.habittracker.viewModel.TodayViewModel
 
 @Composable
 fun TodayScreen(
     uiState: TodayUiState,
-    selectedPeriod: HabitPeriod,
-    onPeriodSelected: (HabitPeriod) -> Unit,
+    selectedPeriod: PeriodOption,
+    onPeriodSelected: (PeriodOption) -> Unit,
     onComplete: (HabitUi) -> Unit = {},
     onSkip: (HabitUi) -> Unit = {}
 ) {
-    val periodEnums = remember { HabitPeriod.entries }
-    val periodString = HabitPeriodStringRes.map { stringResource(it) }
-    val selectedLabel = periodString[periodEnums.indexOf(selectedPeriod)]
+    val periodOptions = remember { PeriodOption.entries }
 
     Column(
         modifier = Modifier
@@ -69,14 +66,15 @@ fun TodayScreen(
             .padding(horizontal = 16.dp)
     ) {
         ScrollSingleChoiceChipGroup(
-            options = periodString,
-            selectedOption = selectedLabel,
+            options = periodOptions,
+            selectedOption = selectedPeriod,
             onSelectedChanged = { newLabel ->
-                val index = periodString.indexOf(newLabel)
+                val index = periodOptions.indexOf(newLabel)
                 if (index != -1) {
-                    onPeriodSelected(periodEnums[index])
+                    onPeriodSelected(periodOptions[index])
                 }
             },
+            labelRes = { it.toLabelRes() },
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
