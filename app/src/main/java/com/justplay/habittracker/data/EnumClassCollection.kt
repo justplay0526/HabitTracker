@@ -24,10 +24,3 @@ enum class DragToActionValue {
     COMPLETE,
     SKIP
 }
-
-enum class HabitPeriod {
-    ALL,
-    MORNING,
-    AFTERNOON,
-    EVENING
-}
