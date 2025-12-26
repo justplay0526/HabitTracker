@@ -13,21 +13,37 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.justplay.habittracker.R
 import com.justplay.habittracker.ui.screen.task.OneTimeTaskScreen
 import com.justplay.habittracker.ui.screen.task.RegularTaskScreen
+import com.justplay.habittracker.ui.screen.task.model.OneTimeTaskViewModel
+import com.justplay.habittracker.ui.screen.task.model.RegularTaskViewModel
 import com.justplay.habittracker.ui.view.CustomHorizontalPager
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateNewHabitScreen(
     onBackClick: () -> Unit
 ) {
+    val regularVm: RegularTaskViewModel = hiltViewModel()
+    val oneTimeVm: OneTimeTaskViewModel = hiltViewModel()
+
+    var currentPage by rememberSaveable { mutableIntStateOf(0) }
+
+    val scope = rememberCoroutineScope()
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -45,7 +61,15 @@ fun CreateNewHabitScreen(
     },
         bottomBar = {
             Button(
-                onClick = onBackClick,
+                onClick = {
+                    scope.launch {
+                        when (currentPage) {
+                            0 -> regularVm.save()
+                            1 -> oneTimeVm.save()
+                        }
+                    }
+                    onBackClick()
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(all = 16.dp)
@@ -63,8 +87,8 @@ fun CreateNewHabitScreen(
         )
 
         val taskPages: List<@Composable () -> Unit> = listOf(
-            { RegularTaskScreen() },
-            { OneTimeTaskScreen() }
+            { RegularTaskScreen(regularVm) },
+            { OneTimeTaskScreen(oneTimeVm) }
         )
 
         CustomHorizontalPager(
@@ -80,5 +104,7 @@ fun CreateNewHabitScreen(
 @PreviewScreenSizes
 @Composable
 fun CreateNewHabitScreenPreView() {
-    CreateNewHabitScreen {}
+    CreateNewHabitScreen(
+        onBackClick = {}
+    )
 }
