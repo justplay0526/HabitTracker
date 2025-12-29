@@ -354,7 +354,9 @@ fun NameSection(
     @StringRes title: Int,
     @StringRes hint: Int,
     textValue: String,
-    onTextChange: (String) -> Unit
+    onTextChange: (String) -> Unit,
+    isError: Boolean = false,
+    errorMsg: String = ""
 ) {
     Text(
         text = stringResource(title),
@@ -366,7 +368,9 @@ fun NameSection(
     HabitInputField(
         value = textValue,
         onValueChange = onTextChange,
-        placeholder = stringResource(hint)
+        placeholder = stringResource(hint),
+        isError = isError,
+        errorMessage = errorMsg
     )
 }
 
