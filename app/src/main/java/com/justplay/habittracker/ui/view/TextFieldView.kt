@@ -3,6 +3,7 @@ package com.justplay.habittracker.ui.view
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
@@ -31,7 +32,9 @@ fun HabitInputField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    placeholder: String = ""
+    placeholder: String = "",
+    isError: Boolean = false,
+    errorMessage: String = ""
 ) {
     TextField(
         value = value,
@@ -47,6 +50,14 @@ fun HabitInputField(
             .fillMaxWidth()
             .height(HabitTextFieldHeight)
             .clip(RoundedCornerShape(16.dp)),
+        isError = isError,
+        supportingText = {
+            if (isError) {
+                Text(
+                    text = errorMessage
+                )
+            }
+        },
         colors = TextFieldDefaults.colors(
             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
             focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -54,6 +65,8 @@ fun HabitInputField(
             unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
+            errorIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
             cursorColor = MaterialTheme.colorScheme.primary,
         ),
         textStyle = MaterialTheme.typography.bodyLarge
@@ -124,7 +137,9 @@ fun HabitInputFieldPreView() {
     HabitInputField(
         value = text,
         onValueChange = { text = it }, // Cause I need to try in Interactive mode
-        placeholder = stringResource(R.string.title_habit_name)
+        placeholder = stringResource(R.string.title_habit_name),
+        isError = text.isEmpty(),
+        errorMessage = stringResource(R.string.sent_warning_text_enter_habit_name)
     )
 }
 
