@@ -40,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -58,19 +59,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.justplay.data.db.classPkg.EndHabitDayType
 import com.justplay.habittracker.R
 import com.justplay.habittracker.data.formatUniformDate
 import com.justplay.habittracker.data.formatUniformDays
 import com.justplay.habittracker.ui.helper.asPainter
+import com.justplay.habittracker.ui.helper.toLabelRes
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.CircleColorBox
 import com.justplay.habittracker.ui.view.CirclePictureBox
 import com.justplay.habittracker.ui.view.ColorResource
-import com.justplay.habittracker.ui.view.EndHabitOnStringRes
 import com.justplay.habittracker.ui.view.HabitInputField
 import com.justplay.habittracker.ui.view.IconsRes
 import com.justplay.habittracker.ui.view.MonthlyCalendar
-import com.justplay.habittracker.ui.view.MultiChoiceChipGroup
 import com.justplay.habittracker.ui.view.OutlinedIcon
 import com.justplay.habittracker.ui.view.PickerRow
 import com.justplay.habittracker.ui.view.SingleChoiceChipGroup
@@ -193,12 +194,16 @@ fun EndHabitOnSection(
     dateString: String,
     dayString: String,
     onSwitchChanged: (Boolean) -> Unit,
+    onTypeSelected: (EndHabitDayType) -> Unit,
     onDateSelected: () -> Unit,
     onDaySelected: () -> Unit
 ) {
-    val endHabitOnString = EndHabitOnStringRes
-        .map { stringResource(it) }
-    var selectedTypeOption by remember { mutableStateOf<String?>(endHabitOnString.first()) }
+    val endHabitOnOptions = EndHabitDayType.entries
+    var selectedTypeOption by remember { mutableStateOf(endHabitOnOptions.first()) }
+
+    LaunchedEffect(selectedTypeOption) {
+        onTypeSelected(selectedTypeOption)
+    }
 
     Column(
         modifier = Modifier
@@ -225,12 +230,13 @@ fun EndHabitOnSection(
         if (switchState) {
             SingleChoiceSection(
                 title = null,
-                optionsString = endHabitOnString,
-                selectedOptions = selectedTypeOption,
+                options = endHabitOnOptions,
+                selectedOption = selectedTypeOption,
+                labelRes = { it.toLabelRes() },
                 onSelectedChanged = { selectedTypeOption = it }
             ) {
                 when (selectedTypeOption) {
-                    endHabitOnString[0] -> {
+                    endHabitOnOptions.first() -> {
                         PickerRow(
                             text = dateString,
                             onClick = onDateSelected,
@@ -340,28 +346,6 @@ fun MonthlySection(
         selectedDays = selectedDays,
         onSelectionChanged = onSelectionChanged,
         modifier = modifier
-    )
-}
-
-@Composable
-fun MultiChoiceSection(
-    @StringRes title: Int,
-    optionsString: List<String>,
-    selectedOptions: Set<String>,
-    onSelectedChanged: (Set<String>) -> Unit
-) {
-    Text(
-        text = stringResource(title),
-        style = MaterialTheme.typography.titleLarge
-    )
-
-    MultiChoiceChipGroup(
-        options = optionsString,
-        selectedOptions = selectedOptions,
-        onSelectedChanged = { onSelectedChanged(it) },
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
     )
 }
 
@@ -547,11 +531,13 @@ fun SectionSpace() {
 }
 
 @Composable
-fun SingleChoiceSection(
+fun <T> SingleChoiceSection(
+    options: List<T>,
+    selectedOption: T?,
+    labelRes: (T) -> Int,          // @StringRes
+    onSelectedChanged: (T) -> Unit,
+    modifier: Modifier = Modifier,
     @StringRes title: Int? = null,
-    optionsString: List<String>,
-    selectedOptions: String?,
-    onSelectedChanged: (String) -> Unit,
     content: (@Composable () -> Unit)? = null
 ) {
     if (title != null) {
@@ -562,17 +548,18 @@ fun SingleChoiceSection(
     }
 
     SingleChoiceChipGroup(
-        options = optionsString,
-        selectedOption = selectedOptions,
-        onSelectedChanged = { onSelectedChanged(it) },
-        modifier = Modifier
+        options = options,
+        selectedOption = selectedOption,
+        labelRes = labelRes,
+        onSelectedChanged = onSelectedChanged,
+        modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
     )
 
-    if (content != null) {
+    content?.let {
         Spacer(modifier = Modifier.height(8.dp))
-        content()
+        it()
     }
 }
 
@@ -755,13 +742,13 @@ fun EndHabitOnSectionPreview() {
     val displayDate = formatUniformDate(selectedDate)
     val displayDay = formatUniformDays(selectedDay)
 
-
     HabitTrackerTheme {
         EndHabitOnSection(
             switchState = switchState,
             onSwitchChanged = { switchState = it },
             dateString = displayDate,
             dayString = displayDay,
+            onTypeSelected = {},
             onDateSelected = {},
             onDaySelected = {}
         )

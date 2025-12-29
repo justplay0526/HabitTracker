@@ -23,7 +23,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.justplay.habittracker.R
+import com.justplay.data.db.classPkg.PeriodOption
+import com.justplay.habittracker.ui.helper.toLabelRes
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 
 @Composable
@@ -65,46 +66,11 @@ fun SingleChoiceChipGroup(
 }
 
 @Composable
-fun ScrollSingleChoiceChipGroup(
-    options: List<String>,
-    selectedOption: String?,
-    onSelectedChanged: (String) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    LazyRow(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(options) { option ->
-            val selected = option == selectedOption
-            FilterChip(
-                selected = selected,
-                onClick = { onSelectedChanged(option) },
-                label = {
-                    Text(
-                        text = option,
-                        style = MaterialTheme.typography.titleMedium,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.wrapContentWidth()
-                    )
-                },
-                shape = CircleShape,
-                colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = MaterialTheme.colorScheme.primary,
-                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary
-                )
-            )
-        }
-    }
-}
-
-@Composable
-fun MultiChoiceChipGroup(
-    options: List<String>,
-    selectedOptions: Set<String>,
-    onSelectedChanged: (Set<String>) -> Unit,
+fun <T> SingleChoiceChipGroup(
+    options: List<T>,
+    selectedOption: T?,
+    labelRes: (T) -> Int,          // @StringRes
+    onSelectedChanged: (T) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     FlowRow(
@@ -115,21 +81,14 @@ fun MultiChoiceChipGroup(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         options.forEach { option ->
-            val selected = option in selectedOptions
+            val selected = option == selectedOption
 
             FilterChip(
                 selected = selected,
-                onClick = {
-                    val newSet = if (selected) {
-                        selectedOptions - option     // remove
-                    } else {
-                        selectedOptions + option     // add
-                    }
-                    onSelectedChanged(newSet)
-                },
+                onClick = { onSelectedChanged(option) },
                 label = {
                     Text(
-                        text = option,
+                        text = stringResource(labelRes(option)),
                         style = MaterialTheme.typography.titleMedium,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
@@ -146,19 +105,57 @@ fun MultiChoiceChipGroup(
     }
 }
 
+@Composable
+fun <T> ScrollSingleChoiceChipGroup(
+    options: List<T>,
+    selectedOption: T?,
+    onSelectedChanged: (T) -> Unit,
+    labelRes: (T) -> Int,
+    modifier: Modifier = Modifier,
+) {
+    LazyRow(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(options) { option ->
+            val selected = option == selectedOption
+            FilterChip(
+                selected = selected,
+                onClick = { onSelectedChanged(option) },
+                label = {
+                    Text(
+                        text = stringResource(labelRes(option)),
+                        style = MaterialTheme.typography.titleMedium,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.wrapContentWidth()
+                    )
+                },
+                shape = CircleShape,
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+                )
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun SingleChoicePreview() {
-    var selected by remember { mutableStateOf<String?>(null) }
-    val testString = HabitPeriodStringRes
-        .filterNot { it == R.string.text_time_of_day_all }
-        .map { stringResource(it) }
+    var selected by remember { mutableStateOf<PeriodOption?>(null) }
+    val periodOptions = remember {
+        PeriodOption.entries.filterNot { it == PeriodOption.ALL }.toList()
+    }
 
     HabitTrackerTheme {
         SingleChoiceChipGroup(
-            options = testString,
+            options = periodOptions,
             selectedOption = selected,
             onSelectedChanged = { selected = it },
+            labelRes = { it.toLabelRes() },
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
@@ -169,34 +166,15 @@ fun SingleChoicePreview() {
 @Preview(showBackground = true)
 @Composable
 fun ScrollSingleChoicePreview() {
-    var selected by remember { mutableStateOf<String?>(null) }
-    val testString = HabitPeriodStringRes.map { stringResource(it) }
+    var selected by remember { mutableStateOf<PeriodOption?>(null) }
+    val periodOptions = remember { PeriodOption.entries }
 
     HabitTrackerTheme {
         ScrollSingleChoiceChipGroup(
-            options = testString,
+            options = periodOptions,
             selectedOption = selected,
             onSelectedChanged = { selected = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun MultiChoicePreview() {
-    var selectedOptions by remember { mutableStateOf(setOf<String>()) }
-    val testString = HabitPeriodStringRes
-        .filterNot { it == R.string.text_time_of_day_all }
-        .map { stringResource(it) }
-
-    HabitTrackerTheme {
-        MultiChoiceChipGroup(
-            options = testString,
-            selectedOptions = selectedOptions,
-            onSelectedChanged = { selectedOptions = it },
+            labelRes = { it.toLabelRes() },
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()

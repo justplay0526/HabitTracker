@@ -1,0 +1,78 @@
+package com.justplay.habittracker.ui.helper
+
+import com.justplay.data.db.classPkg.EndHabitDayType
+import com.justplay.data.db.classPkg.RepeatOption
+import com.justplay.data.db.classPkg.TaskType
+import com.justplay.data.db.entity.TaskEntity
+import com.justplay.habittracker.ui.screen.task.state.OneTimeTaskUiState
+import com.justplay.habittracker.ui.screen.task.state.RegularTaskUiState
+import java.time.LocalDate
+
+fun RegularTaskUiState.toTaskEntity(): TaskEntity {
+    val color = if (colorSelected) customColor else selectedColorRes
+    val time = if (reminderState) selectedTime else null
+    val endHabitDate = if (endHabitOnState) {
+        when (endHabitType) {
+            EndHabitDayType.DATE -> {
+                selectedDate
+            }
+            EndHabitDayType.Day -> {
+                LocalDate.now()
+                    .plusDays((selectedEndHabitDay - 1).toLong())
+            }
+        }
+    } else {
+        null
+    }
+    val freq = if (selectedRepeatOption == RepeatOption.WEEKLY) selectedFreq else null
+
+
+    return TaskEntity(
+        type = TaskType.REGULAR,
+        name = nameText.trim(),
+        colorInt = color,
+        iconRes = selectedIconRes,
+        periodOption = selectedPeriodOption,
+        reminderEnabled = reminderState,
+        time = time,
+
+        startDate = LocalDate.now(),
+        oneTimeDate = null,
+
+        repeatOption = selectedRepeatOption,
+        selectedDaySet = selectedDaySet,
+        selectedDaysOfMonth = selectedDaysOfMonth,
+
+        freq = freq,
+        endHabitOn = endHabitOnState,
+        endHabitDate = endHabitDate,
+        isArchived = false
+    )
+}
+
+fun OneTimeTaskUiState.toTaskEntity(): TaskEntity {
+    val color = if (colorSelected) customColor else selectedColorInt
+    val time = if (reminderState) selectedTime else null
+
+    return TaskEntity(
+        type = TaskType.ONE_TIME,
+        name = nameText.trim(),
+        colorInt = color,
+        iconRes = selectedIconRes,
+        periodOption = selectedPeriodOption,
+        reminderEnabled = reminderState,
+        time = time,
+
+        startDate = null,
+        oneTimeDate = selectedDate,
+
+        // OneTime 不用 repeat
+        repeatOption = null,
+        selectedDaySet = emptySet(),
+        selectedDaysOfMonth = emptySet(),
+        freq = null,
+        endHabitOn = false,
+        endHabitDate = null,
+        isArchived = false
+    )
+}

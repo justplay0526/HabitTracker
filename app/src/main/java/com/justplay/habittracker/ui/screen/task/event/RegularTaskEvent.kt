@@ -1,5 +1,8 @@
 package com.justplay.habittracker.ui.screen.task.event
 
+import com.justplay.data.db.classPkg.EndHabitDayType
+import com.justplay.data.db.classPkg.PeriodOption
+import com.justplay.data.db.classPkg.RepeatOption
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -15,8 +18,8 @@ sealed interface RegularTaskEvent {
     data class IconSelected(val index: Int) : RegularTaskEvent
 
     // Repeat
-    data class PeriodOptionChanged(val option: String) : RegularTaskEvent
-    data class RepeatOptionChanged(val option: String) : RegularTaskEvent
+    data class PeriodOptionChanged(val option: PeriodOption) : RegularTaskEvent
+    data class RepeatOptionChanged(val option: RepeatOption) : RegularTaskEvent
     data class ToggleWeekDay(val index: Int) : RegularTaskEvent
     data class SetAllWeekDays(val enabled: Boolean) : RegularTaskEvent
     data class EndHabitOnDaysChanged(val value: Int) : RegularTaskEvent
@@ -26,6 +29,8 @@ sealed interface RegularTaskEvent {
     // Date / Time
     data class DateChanged(val date: LocalDate) : RegularTaskEvent
     data class TimeChanged(val time: LocalTime) : RegularTaskEvent
+
+    data class EndHabitTyped(val type: EndHabitDayType) : RegularTaskEvent
 
     // Switch
     data class ReminderChanged(val enabled: Boolean) : RegularTaskEvent

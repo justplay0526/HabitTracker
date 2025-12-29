@@ -1,5 +1,6 @@
 package com.justplay.habittracker.ui.screen.task.event
 
+import com.justplay.data.db.classPkg.PeriodOption
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -15,7 +16,7 @@ sealed interface OneTimeTaskEvent {
     data class IconSelected(val index: Int) : OneTimeTaskEvent
 
     // Repeat
-    data class PeriodOptionChanged(val option: String) : OneTimeTaskEvent
+    data class PeriodOptionChanged(val option: PeriodOption) : OneTimeTaskEvent
 
     // Date / Time
     data class DateChanged(val date: LocalDate) : OneTimeTaskEvent

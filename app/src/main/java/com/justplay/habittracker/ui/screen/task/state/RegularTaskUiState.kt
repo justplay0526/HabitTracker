@@ -4,6 +4,9 @@ import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import com.justplay.data.db.classPkg.EndHabitDayType
+import com.justplay.data.db.classPkg.PeriodOption
+import com.justplay.data.db.classPkg.RepeatOption
 import com.justplay.habittracker.ui.view.ColorResource
 import com.justplay.habittracker.ui.view.IconsRes
 import java.time.LocalDate
@@ -27,8 +30,9 @@ data class RegularTaskUiState(
      * 被選擇的 Icon 資源 ID
      */
     @param:DrawableRes val selectedIconRes: Int = IconsRes.first(),
-    val selectedPeriodOption: String? = null,
-    val selectedRepeatOption: String? = null,
+    val selectedPeriodOption: PeriodOption? = null,
+    val selectedRepeatOption: RepeatOption? = null,
+    val endHabitType: EndHabitDayType = EndHabitDayType.DATE,
     val selectedTime: LocalTime = LocalTime.now(),
     // Switch State
     val reminderState: Boolean =  false,

@@ -1,16 +1,21 @@
 package com.justplay.habittracker.ui.screen.task.model
 
 import androidx.lifecycle.ViewModel
+import com.justplay.data.db.repo.TaskRepo
+import com.justplay.habittracker.ui.helper.toTaskEntity
 import com.justplay.habittracker.ui.screen.task.event.RegularTaskEvent
 import com.justplay.habittracker.ui.screen.task.state.RegularTaskUiState
+import com.justplay.habittracker.ui.screen.task.valid.validate
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import timber.log.Timber
 import javax.inject.Inject
 
+@HiltViewModel
 class RegularTaskViewModel @Inject constructor(
-    // TODO add repo
+    private val repo: TaskRepo
 ): ViewModel() {
     private val _uiState = MutableStateFlow(RegularTaskUiState())
     val uiState = _uiState.asStateFlow()
@@ -37,6 +42,9 @@ class RegularTaskViewModel @Inject constructor(
 
                 is RegularTaskEvent.DateChanged ->
                     state.copy(selectedDate = event.date)
+
+                is RegularTaskEvent.EndHabitTyped ->
+                    state.copy(endHabitType = event.type)
 
                 is RegularTaskEvent.EndHabitOnChanged ->
                     state.copy(endHabitOnState = event.enabled)
@@ -120,4 +128,6 @@ class RegularTaskViewModel @Inject constructor(
             }
         }
     }
+    // TODO DO WARNING UI EVENT
+    suspend fun save() = repo.upsertTask(uiState.value.toTaskEntity().validate())
 }

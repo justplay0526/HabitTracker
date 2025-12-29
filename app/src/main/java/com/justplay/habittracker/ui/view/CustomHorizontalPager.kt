@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,7 +34,8 @@ import kotlinx.coroutines.launch
 fun CustomHorizontalPager(
     tabs: List<String>,
     pages: List<@Composable () -> Unit>,
-    modifier: Modifier
+    modifier: Modifier,
+    onPageChanged: (Int) -> Unit = {}
 ) {
     // 警告用
     require(tabs.size == pages.size) {
@@ -44,6 +46,10 @@ fun CustomHorizontalPager(
         initialPage = 0,
         pageCount = { tabs.size }
     )
+
+    LaunchedEffect(pagerState.currentPage) {
+        onPageChanged(pagerState.currentPage)
+    }
 
     val scope = rememberCoroutineScope()
 
