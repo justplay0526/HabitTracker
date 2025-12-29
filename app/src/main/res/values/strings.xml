@@ -30,8 +30,12 @@
         <item quantity="other">%d days per week</item>
     </plurals>
 
+    <string name="sent_warning_text_choose_day_of_week">Please Choose at least one Day Of Week</string>
+    <string name="sent_warning_text_choose_day_of_month">Please Choose at least one Day Of Month</string>
     <string name="sent_warning_text_enter_habit_name">Please Enter A Habit Name</string>
     <string name="sent_warning_text_enter_task_name">Please Enter A Task Name</string>
+    <string name="sent_warning_text_select_repeat_type">Please Select A Repeat Type</string>
+    <string name="sent_warning_text_select_period_type">Please Select A Time Of Day</string>
 
     <string name="sent_warning_text_enter_number">
         Range: %d~%d
