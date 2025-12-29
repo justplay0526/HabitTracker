@@ -61,8 +61,12 @@ class OneTimeTaskViewModel @Inject constructor(
                 is OneTimeTaskEvent.IconSelected ->
                     state.copy(selectedIconRes = event.index)
 
-                is OneTimeTaskEvent.NameChanged ->
-                    state.copy(nameText = event.value)
+                is OneTimeTaskEvent.NameChanged -> {
+                    state.copy(
+                        nameText = event.value,
+                        nameTextEdited = true
+                    )
+                }
 
                 is OneTimeTaskEvent.PeriodOptionChanged ->
                     state.copy(selectedPeriodOption = event.option)

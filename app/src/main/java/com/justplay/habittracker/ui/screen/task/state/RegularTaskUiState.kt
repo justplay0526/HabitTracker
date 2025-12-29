@@ -14,6 +14,7 @@ import java.time.LocalTime
 
 data class RegularTaskUiState(
     val nameText: String = "",
+    val nameTextEdited: Boolean = false,
     // Selected Index
     val selectedColorIndex: Int = 0,
     // Color / Icon

@@ -80,7 +80,10 @@ class RegularTaskViewModel @Inject constructor(
                     state.copy(selectedDaysOfMonth = event.days)
 
                 is RegularTaskEvent.NameChanged ->
-                    state.copy(nameText = event.value)
+                    state.copy(
+                        nameText = event.value,
+                        nameTextEdited = true
+                    )
 
                 is RegularTaskEvent.PeriodOptionChanged ->
                     state.copy(selectedPeriodOption = event.option)

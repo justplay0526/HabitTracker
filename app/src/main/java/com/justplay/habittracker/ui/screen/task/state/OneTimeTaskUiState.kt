@@ -12,6 +12,7 @@ import java.time.LocalTime
 
 data class OneTimeTaskUiState(
     val nameText: String = "",
+    val nameTextEdited: Boolean = false,
     // Selected Index
     val selectedColorIndex: Int = 0,
     // Color / Icon
