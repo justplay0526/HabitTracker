@@ -48,8 +48,8 @@ fun HabitInputField(
         singleLine = true,
         modifier = modifier
             .fillMaxWidth()
-            .height(HabitTextFieldHeight)
-            .clip(RoundedCornerShape(16.dp)),
+            .wrapContentHeight(),
+        shape = RoundedCornerShape(16.dp),
         isError = isError,
         supportingText = {
             if (isError) {
