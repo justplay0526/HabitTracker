@@ -36,6 +36,7 @@
     <string name="sent_warning_text_enter_task_name">Please Enter A Task Name</string>
     <string name="sent_warning_text_select_repeat_type">Please Select A Repeat Type</string>
     <string name="sent_warning_text_select_period_type">Please Select A Time Of Day</string>
+    <string name="sent_warning_text_select_time">Please select a time range of at least 60 minutes</string>
 
     <string name="sent_warning_text_enter_number">
         Range: %d~%d
