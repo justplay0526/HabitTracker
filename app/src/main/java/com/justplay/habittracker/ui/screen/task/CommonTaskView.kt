@@ -499,7 +499,8 @@ fun ReminderSection(
     reminderCheck: Boolean,
     timeString: String,
     onReminderChanged: (Boolean) -> Unit,
-    onTimeChanged: () -> Unit
+    onTimeChanged: () -> Unit,
+    isError: Boolean
 ) {
     Row(
         modifier = Modifier
@@ -524,8 +525,17 @@ fun ReminderSection(
             onClick = onTimeChanged,
             modifier = Modifier
                 .fillMaxWidth(),
-            leadingIcon = painterResource(R.drawable.round_access_time_24)
+            leadingIcon = painterResource(R.drawable.round_access_time_24),
+            isError = isError
         )
+        if (isError) {
+            Text(
+                text = stringResource(R.string.sent_warning_text_select_time),
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+            )
+        }
     }
 }
 

@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -154,11 +155,17 @@ fun PickerRow(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     leadingIcon: Painter = Icons.Outlined.DateRange.asPainter(),
+    isError: Boolean = false
 ) {
+    val bgColor = if (isError)
+        MaterialTheme.colorScheme.errorContainer
+    else
+        MaterialTheme.colorScheme.outlineVariant
+
     Row(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
-            .background(MaterialTheme.colorScheme.outlineVariant)
+            .background(bgColor)
             .clickable { onClick() }
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -188,12 +195,21 @@ fun PickerRow(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Icon(
-            imageVector = Icons.Outlined.Edit,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.scrim,
-            modifier = Modifier.size(20.dp)
-        )
+        if (isError) {
+            Icon(
+                imageVector = Icons.Rounded.Close,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.error,
+                modifier = Modifier.size(20.dp)
+            )
+        } else {
+            Icon(
+                imageVector = Icons.Outlined.Edit,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.scrim,
+                modifier = Modifier.size(20.dp)
+            )
+        }
     }
 }
 
