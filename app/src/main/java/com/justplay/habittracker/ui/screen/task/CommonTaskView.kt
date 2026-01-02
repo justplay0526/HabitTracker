@@ -339,7 +339,8 @@ fun IconSection(
 fun MonthlySection(
     selectedDays: Set<Int>,
     onSelectionChanged: (Set<Int>) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isError: Boolean = false
 ) {
     MonthlyCalendar(
         yearMonth = YearMonth.now(),
@@ -347,6 +348,15 @@ fun MonthlySection(
         onSelectionChanged = onSelectionChanged,
         modifier = modifier
     )
+
+    if (isError) {
+        Text(
+            text = stringResource(R.string.sent_warning_text_choose_day_of_month),
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+        )
+    }
 }
 
 @Composable
@@ -397,7 +407,8 @@ fun NumberInputBottomSheet(
 fun OnTheseDaySection(
     selected: Set<Int>, // 0..6 代表哪幾個被選
     onToggle: (Int) -> Unit,
-    onSetAll: (Boolean) -> Unit
+    onSetAll: (Boolean) -> Unit,
+    isError: Boolean = false
 ) {
     /**
      * 星期標題列
@@ -490,6 +501,14 @@ fun OnTheseDaySection(
                     )
                 }
             }
+        }
+        if (isError) {
+            Text(
+                text = stringResource(R.string.sent_warning_text_choose_day_of_week),
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+            )
         }
     }
 }
