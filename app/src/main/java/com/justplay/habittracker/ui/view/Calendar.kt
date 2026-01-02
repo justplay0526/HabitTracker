@@ -56,11 +56,13 @@ import java.util.Locale
  */
 fun buildMonthDays(
     yearMonth: YearMonth,
+    disableByDate: Boolean,
     selectedDaysOfMonth: Set<Int>
 ): List<DayUi> {
     val firstOfMonth = yearMonth.atDay(1)
     val firstDayOfWeek = firstOfMonth.dayOfWeek
     val daysInMonth = yearMonth.lengthOfMonth()
+    val today = LocalDate.now()
 
     /**
      * 這個月第一天是星期幾（以 Sunday=0 ... Saturday=6）
@@ -83,18 +85,19 @@ fun buildMonthDays(
         val date = prevMonth.atDay(day)
         days += DayUi(
             date = date,
-            inCurrentMonth = false,
-            selected = false
+            selected = false,
+            enabled = false
         )
     }
 
     // 本月
     for (day in 1..daysInMonth) {
         val date = yearMonth.atDay(day)
+        val enabled = !date.isBefore(today)
         days += DayUi(
             date = date,
-            inCurrentMonth = true,
-            selected = day in selectedDaysOfMonth
+            selected = day in selectedDaysOfMonth,
+            enabled = if (!disableByDate) true else enabled
         )
     }
 
@@ -104,8 +107,8 @@ fun buildMonthDays(
     while (days.size < totalCells) {
         days += DayUi(
             date = nextMonth.atDay(nextDay++),
-            inCurrentMonth = false,
-            selected = false
+            selected = false,
+            enabled = false
         )
     }
 
@@ -140,7 +143,11 @@ fun DateCalendar(
 
     val days = remember(currentMonth, selectedDate) {
         val selectedSet = selectedDate?.let { setOf(it) } ?: emptySet()
-        buildMonthDays(currentMonth, selectedSet)
+        buildMonthDays(
+            yearMonth = currentMonth,
+            disableByDate = true,
+            selectedDaysOfMonth = selectedSet
+        )
     }
 
     // 選取改變就對外通知，用 currentMonth 組 LocalDate
@@ -250,7 +257,11 @@ fun MonthlyCalendar(
     modifier: Modifier = Modifier
 ) {
     val days = remember(yearMonth, selectedDays) {
-        buildMonthDays(yearMonth, selectedDays)
+        buildMonthDays(
+            yearMonth = yearMonth,
+            disableByDate = false,
+            selectedDaysOfMonth = selectedDays
+        )
     }
 
     Column(
@@ -333,7 +344,7 @@ fun DayCell(
 ) {
     val textColor = when {
         day.selected -> MaterialTheme.colorScheme.onPrimary
-        day.inCurrentMonth -> MaterialTheme.colorScheme.onSurface
+        day.enabled -> MaterialTheme.colorScheme.onSurface
         else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
     }
 
@@ -348,7 +359,7 @@ fun DayCell(
                 .size(32.dp)
                 .clip(CircleShape)
                 .clickable(
-                    enabled = day.inCurrentMonth
+                    enabled = day.enabled
                 ) {
                     onClick()
                 }
