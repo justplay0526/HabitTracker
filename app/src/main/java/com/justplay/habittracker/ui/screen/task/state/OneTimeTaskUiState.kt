@@ -26,7 +26,7 @@ data class OneTimeTaskUiState(
      * 被選擇的 Icon 資源 ID
      */
     @param:DrawableRes val selectedIconRes: Int = IconsRes.first(),
-    val selectedPeriodOption: PeriodOption? = null,
+    val selectedPeriodOption: PeriodOption = PeriodOption.MORNING,
     val selectedTime: LocalTime = LocalTime.now(),
     // Switch State
     val reminderState: Boolean =  false,
@@ -34,5 +34,8 @@ data class OneTimeTaskUiState(
     val showColorPicker: Boolean = false,
     val showIconPicker: Boolean = false,
     val showDatePicker: Boolean = false,
-    val showTimePicker: Boolean = false
+    val showTimePicker: Boolean = false,
+    // Error State
+    val nameError: Boolean = false,
+    val timeError: Boolean = false
 )
