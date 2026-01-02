@@ -5,12 +5,15 @@ import com.justplay.data.db.repo.TaskRepo
 import com.justplay.habittracker.ui.helper.toTaskEntity
 import com.justplay.habittracker.ui.screen.task.event.OneTimeTaskEvent
 import com.justplay.habittracker.ui.screen.task.state.OneTimeTaskUiState
-import com.justplay.habittracker.ui.screen.task.valid.validate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import timber.log.Timber
+import java.time.Duration
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -61,8 +64,14 @@ class OneTimeTaskViewModel @Inject constructor(
                 is OneTimeTaskEvent.IconSelected ->
                     state.copy(selectedIconRes = event.index)
 
-                is OneTimeTaskEvent.NameChanged ->
-                    state.copy(nameText = event.value)
+                is OneTimeTaskEvent.NameChanged -> {
+                    state.copy(
+                        nameText = event.value,
+                        nameTextEdited = true,
+                        nameError = (event.value.isBlank() &&
+                                state.nameTextEdited)
+                    )
+                }
 
                 is OneTimeTaskEvent.PeriodOptionChanged ->
                     state.copy(selectedPeriodOption = event.option)
@@ -82,11 +91,51 @@ class OneTimeTaskViewModel @Inject constructor(
                 is OneTimeTaskEvent.ShowTimePicker ->
                     state.copy(showTimePicker = true)
 
-                is OneTimeTaskEvent.TimeChanged ->
-                    state.copy(selectedTime = event.time)
+                is OneTimeTaskEvent.TimeChanged -> {
+                    state.copy(
+                        selectedTime = event.time,
+                        timeError = isTimeNotValid(
+                            state.selectedDate,
+                            event.time
+                        )
+                    )
+                }
             }
         }
     }
     // TODO DO WARNING UI EVENT
-    suspend fun save() = repo.upsertTask(uiState.value.toTaskEntity().validate())
+    suspend fun save(): Boolean {
+        if (checkValid()) return false
+
+        repo.upsertTask(_uiState.value.toTaskEntity())
+        return true
+    }
+
+    private fun checkValid(): Boolean {
+        with(_uiState.value) {
+            if (nameText.isBlank()) {
+                _uiState.update { state ->
+                    state.copy(nameError = true)
+                }
+            }
+            if (reminderState && isTimeNotValid(selectedDate, selectedTime)) {
+                _uiState.update { state ->
+                    state.copy(timeError = true)
+                }
+            }
+        }
+        return with(_uiState.value) { nameError || timeError }
+    }
+
+    private fun isTimeNotValid(
+        date: LocalDate,
+        time: LocalTime
+    ): Boolean {
+        val now = LocalDateTime.now()
+        val targetDateTime = LocalDateTime.of(date, time)
+        val diffMinutes = Duration.between(now, targetDateTime).toMinutes()
+
+        // 未來時間且 >= 60 分鐘 → false
+        return diffMinutes < 60
+    }
 }

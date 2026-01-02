@@ -16,8 +16,8 @@ data class HabitUi(
 
 data class DayUi(
     val date: LocalDate,
-    val inCurrentMonth: Boolean,
-    val selected: Boolean
+    val selected: Boolean,
+    val enabled: Boolean
 )
 
 data class TodayUiState(

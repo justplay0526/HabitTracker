@@ -1,11 +1,11 @@
 package com.justplay.habittracker.ui.screen.task.model
 
 import androidx.lifecycle.ViewModel
+import com.justplay.data.db.classPkg.RepeatOption
 import com.justplay.data.db.repo.TaskRepo
 import com.justplay.habittracker.ui.helper.toTaskEntity
 import com.justplay.habittracker.ui.screen.task.event.RegularTaskEvent
 import com.justplay.habittracker.ui.screen.task.state.RegularTaskUiState
-import com.justplay.habittracker.ui.screen.task.valid.validate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -77,10 +77,21 @@ class RegularTaskViewModel @Inject constructor(
                     state.copy(selectedIconRes = event.index)
 
                 is RegularTaskEvent.MonthDaysChanged ->
-                    state.copy(selectedDaysOfMonth = event.days)
+                    state.copy(
+                        selectedDaysOfMonth = event.days,
+                        selectedDaysOfMonthEdited = true,
+                        selectedDaysOfMonthError = (
+                                event.days.isEmpty() &&
+                                state.selectedDaysOfMonthEdited)
+                    )
 
                 is RegularTaskEvent.NameChanged ->
-                    state.copy(nameText = event.value)
+                    state.copy(
+                        nameText = event.value,
+                        nameTextEdited = true,
+                        nameError = (event.value.isBlank() &&
+                                state.nameTextEdited)
+                    )
 
                 is RegularTaskEvent.PeriodOptionChanged ->
                     state.copy(selectedPeriodOption = event.option)
@@ -91,12 +102,15 @@ class RegularTaskViewModel @Inject constructor(
                 is RegularTaskEvent.RepeatOptionChanged ->
                     state.copy(selectedRepeatOption = event.option)
 
-                is RegularTaskEvent.SetAllWeekDays ->
+                is RegularTaskEvent.SetAllWeekDays -> {
                     state.copy(
                         selectedDaySet = if (event.enabled)
-                                (0..6).toSet()
-                        else emptySet()
+                            (0..6).toSet()
+                        else emptySet(),
+                        selectedDaySetError = !event.enabled
                     )
+                }
+
 
                 is RegularTaskEvent.ShowColorPicker ->
                     state.copy(showColorPicker = true)
@@ -122,12 +136,58 @@ class RegularTaskViewModel @Inject constructor(
                             state.selectedDaySet - event.index
                         else
                             state.selectedDaySet + event.index
+                    val isError = newSet.isEmpty()
 
-                    state.copy(selectedDaySet = newSet)
+                    state.copy(
+                        selectedDaySet = newSet,
+                        selectedDaySetEdited = true,
+                        selectedDaySetError = isError && state.selectedDaySetEdited
+                    )
                 }
             }
         }
     }
     // TODO DO WARNING UI EVENT
-    suspend fun save() = repo.upsertTask(uiState.value.toTaskEntity().validate())
+    suspend fun save(): Boolean {
+        if (checkValid()) return false
+        repo.upsertTask(uiState.value.toTaskEntity())
+        return true
+    }
+
+    private fun checkValid(): Boolean {
+        with(_uiState.value) {
+            if (nameText.isBlank()) {
+                _uiState.update { state ->
+                    state.copy(nameError = true)
+                }
+            }
+            if (selectedDaySet.isEmpty()) {
+                _uiState.update { state ->
+                    state.copy(
+                        selectedDaySetEdited = true,
+                        selectedDaySetError = true
+                    )
+                }
+            }
+
+            if (selectedDaysOfMonth.isEmpty()) {
+                _uiState.update { state ->
+                    state.copy(
+                        selectedDaysOfMonthEdited = true,
+                        selectedDaysOfMonthError = true
+                    )
+                }
+            }
+        }
+
+        val repeatError = with(_uiState.value) {
+            when(selectedRepeatOption) {
+                RepeatOption.DAILY -> selectedDaySetError
+                RepeatOption.WEEKLY -> false
+                RepeatOption.MONTHLY -> selectedDaysOfMonthError
+            }
+        }
+
+        return with(_uiState.value) { nameError || repeatError }
+    }
 }

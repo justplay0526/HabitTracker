@@ -14,6 +14,7 @@ import java.time.LocalTime
 
 data class RegularTaskUiState(
     val nameText: String = "",
+    val nameTextEdited: Boolean = false,
     // Selected Index
     val selectedColorIndex: Int = 0,
     // Color / Icon
@@ -23,15 +24,19 @@ data class RegularTaskUiState(
     // Selected State
     val selectedDate: LocalDate = LocalDate.now(),
     val selectedDaySet: Set<Int> = emptySet(),
+    val selectedDaySetEdited: Boolean = false,
+    val selectedDaySetError: Boolean = false,
     val selectedDaysOfMonth: Set<Int> = emptySet(),
+    val selectedDaysOfMonthEdited: Boolean = false,
+    val selectedDaysOfMonthError: Boolean = false,
     val selectedEndHabitDay: Int = 1,
     val selectedFreq: Int = 5,
     /**
      * 被選擇的 Icon 資源 ID
      */
     @param:DrawableRes val selectedIconRes: Int = IconsRes.first(),
-    val selectedPeriodOption: PeriodOption? = null,
-    val selectedRepeatOption: RepeatOption? = null,
+    val selectedPeriodOption: PeriodOption = PeriodOption.MORNING,
+    val selectedRepeatOption: RepeatOption = RepeatOption.DAILY,
     val endHabitType: EndHabitDayType = EndHabitDayType.DATE,
     val selectedTime: LocalTime = LocalTime.now(),
     // Switch State
@@ -42,5 +47,7 @@ data class RegularTaskUiState(
     val showIconPicker: Boolean = false,
     val showDatePicker: Boolean = false,
     val showNumberSheet: Boolean = false,
-    val showTimePicker: Boolean = false
+    val showTimePicker: Boolean = false,
+    // Error State
+    val nameError: Boolean = false
 )

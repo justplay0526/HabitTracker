@@ -63,12 +63,14 @@ fun CreateNewHabitScreen(
             Button(
                 onClick = {
                     scope.launch {
-                        when (currentPage) {
+                        val success = when (currentPage) {
                             0 -> regularVm.save()
                             1 -> oneTimeVm.save()
+                            else -> false
                         }
+                        if (success ) onBackClick()
                     }
-                    onBackClick()
+
                 },
                 modifier = Modifier
                     .fillMaxWidth()

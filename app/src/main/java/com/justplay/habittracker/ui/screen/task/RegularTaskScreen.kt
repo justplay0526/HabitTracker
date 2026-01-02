@@ -5,6 +5,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.graphics.toColorInt
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -108,7 +109,9 @@ fun RegularTaskScreen(
             textValue = uiState.nameText,
             onTextChange = {
                 onEvent(RegularTaskEvent.NameChanged(it))
-            }
+            },
+            isError = uiState.nameError,
+            errorMsg = stringResource(R.string.sent_warning_text_enter_habit_name)
         )
 
         SectionSpace()
@@ -160,7 +163,8 @@ fun RegularTaskScreen(
                             },
                             onSetAll = { checked ->
                                 onEvent(RegularTaskEvent.SetAllWeekDays(checked))
-                            }
+                            },
+                            isError = uiState.selectedDaySetError
                         )
                     }
                 }
@@ -181,11 +185,11 @@ fun RegularTaskScreen(
                             onSelectionChanged = {
                                 Timber.tag("Regular").d(it.toString())
                                 onEvent(RegularTaskEvent.MonthDaysChanged(it))
-                            }
+                            },
+                            isError = uiState.selectedDaysOfMonthError
                         )
                     }
                 }
-                else -> null
             }
         )
 
@@ -231,7 +235,8 @@ fun RegularTaskScreen(
             },
             onTimeChanged = {
                 onEvent(RegularTaskEvent.ShowTimePicker)
-            }
+            },
+            isError = false
         )
 
         SectionSpace()
