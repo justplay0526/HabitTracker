@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "HabitTracker"
 include(":app")
- 
+include(":data")
