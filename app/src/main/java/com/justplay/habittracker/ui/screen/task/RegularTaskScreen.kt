@@ -110,7 +110,7 @@ fun RegularTaskScreen(
             onTextChange = {
                 onEvent(RegularTaskEvent.NameChanged(it))
             },
-            isError = uiState.nameText.isBlank() && uiState.nameTextEdited,
+            isError = uiState.nameError,
             errorMsg = stringResource(R.string.sent_warning_text_enter_habit_name)
         )
 
@@ -163,7 +163,8 @@ fun RegularTaskScreen(
                             },
                             onSetAll = { checked ->
                                 onEvent(RegularTaskEvent.SetAllWeekDays(checked))
-                            }
+                            },
+                            isError = uiState.selectedDaySetError
                         )
                     }
                 }
@@ -184,11 +185,11 @@ fun RegularTaskScreen(
                             onSelectionChanged = {
                                 Timber.tag("Regular").d(it.toString())
                                 onEvent(RegularTaskEvent.MonthDaysChanged(it))
-                            }
+                            },
+                            isError = uiState.selectedDaysOfMonthError
                         )
                     }
                 }
-                else -> null
             }
         )
 
@@ -234,7 +235,8 @@ fun RegularTaskScreen(
             },
             onTimeChanged = {
                 onEvent(RegularTaskEvent.ShowTimePicker)
-            }
+            },
+            isError = false
         )
 
         SectionSpace()

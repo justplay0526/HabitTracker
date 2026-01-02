@@ -99,7 +99,7 @@ fun OneTimeTaskScreen(
             onTextChange = {
                 onEvent(OneTimeTaskEvent.NameChanged(it))
             },
-            isError = uiState.nameText.isEmpty() && uiState.nameTextEdited,
+            isError = uiState.nameError,
             errorMsg = stringResource(R.string.sent_warning_text_enter_task_name)
         )
 
@@ -163,7 +163,8 @@ fun OneTimeTaskScreen(
             },
             onTimeChanged = {
                 onEvent(OneTimeTaskEvent.ShowTimePicker)
-            }
+            },
+            isError = uiState.timeError
         )
     }
 }
