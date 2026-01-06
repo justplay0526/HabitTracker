@@ -20,9 +20,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.justplay.habittracker.R
-import com.justplay.habittracker.ui.screen.taskEdit.OneTimeTaskEditScreen
-import com.justplay.habittracker.ui.screen.taskEdit.RegularTaskEditScreen
+import com.justplay.habittracker.ui.screen.taskEditList.OneTimeEditListScreen
+import com.justplay.habittracker.ui.screen.taskEditList.RegularEditListScreen
+import com.justplay.habittracker.ui.screen.taskEditList.viewModel.OneTimeEditListViewModel
+import com.justplay.habittracker.ui.screen.taskEditList.viewModel.RegularEditListViewModel
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.CustomHorizontalPager
 
@@ -30,6 +33,9 @@ import com.justplay.habittracker.ui.view.CustomHorizontalPager
 @Composable
 fun MyHabitsScreen(
 ) {
+    val regularVm: RegularEditListViewModel = hiltViewModel()
+    val oneTimeVm: OneTimeEditListViewModel = hiltViewModel()
+
     var currentPage by rememberSaveable { mutableIntStateOf(0) }
 
     Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
@@ -54,8 +60,8 @@ fun MyHabitsScreen(
         )
 
         val taskPages: List<@Composable () -> Unit> = listOf(
-            { RegularTaskEditScreen() },
-            { OneTimeTaskEditScreen() }
+            { RegularEditListScreen(vm = regularVm) },
+            { OneTimeEditListScreen(vm = oneTimeVm) }
         )
 
         CustomHorizontalPager(
