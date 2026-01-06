@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.justplay.data.db.classPkg.TaskType
 import com.justplay.data.db.entity.TaskEntity
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
@@ -46,6 +47,14 @@ interface TaskDao {
         ORDER BY id DESC
     """)
     fun observeActiveTasks(): Flow<List<TaskEntity>>
+
+    @Query("""
+        SELECT * FROM task
+        WHERE type = :type
+          AND isArchived = 0
+        ORDER BY id DESC
+    """)
+    fun observeTasksByType(type: TaskType): Flow<List<TaskEntity>>
 
     /**
      * 所有任務（包含 archived）

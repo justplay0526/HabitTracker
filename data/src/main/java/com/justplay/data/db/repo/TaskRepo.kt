@@ -2,6 +2,7 @@ package com.justplay.data.db.repo
 
 import com.justplay.data.db.classPkg.RepeatOption
 import com.justplay.data.db.classPkg.TaskStatus
+import com.justplay.data.db.classPkg.TaskType
 import com.justplay.data.db.classPkg.TodayTaskItem
 import com.justplay.data.db.dao.TaskDao
 import com.justplay.data.db.dao.TaskLogDao
@@ -24,6 +25,8 @@ import javax.inject.Singleton
 interface TaskRepo {
 
     fun observeActiveTasks(): Flow<List<TaskEntity>>
+
+    fun observeTasksByType(type: TaskType): Flow<List<TaskEntity>>
 
     fun observeTodayItems(today: LocalDate): Flow<List<TodayTaskItem>>
 
@@ -71,6 +74,9 @@ class TaskRepoImpl @Inject constructor(
 ): TaskRepo {
     override fun observeActiveTasks(): Flow<List<TaskEntity>>
     = taskDao.observeActiveTasks()
+
+    override fun observeTasksByType(type: TaskType): Flow<List<TaskEntity>>
+    = taskDao.observeTasksByType(type)
 
     override fun observeTodayItems(today: LocalDate): Flow<List<TodayTaskItem>> =
         taskDao.observeActiveTasks()
