@@ -78,3 +78,10 @@ fun TaskEntity.previousScheduledDate(
     }
     return null
 }
+
+fun baseSortOrder(
+    type: TaskType
+): Long = when (type) {
+    TaskType.REGULAR -> 0L
+    TaskType.ONE_TIME -> 100000L
+}
