@@ -43,6 +43,8 @@ interface TaskRepo {
 
     suspend fun upsertTask(entity: TaskEntity): Long
 
+    suspend fun getMaxSortOrderByType(type: TaskType): Long?
+
     /**
      * 讀 [date] 狀態（null = NONE）
      */
@@ -163,6 +165,9 @@ class TaskRepoImpl @Inject constructor(
             }
 
     override suspend fun upsertTask(entity: TaskEntity): Long = taskDao.upsert(entity)
+
+    override suspend fun getMaxSortOrderByType(type: TaskType): Long?
+    = taskDao.getMaxSortOrderByType(type)
 
     override suspend fun getStatus(
         taskId: Long, date: LocalDate): TaskStatus?

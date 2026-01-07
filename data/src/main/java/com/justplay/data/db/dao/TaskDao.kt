@@ -35,6 +35,12 @@ interface TaskDao {
     @Query("SELECT * FROM task WHERE id = :id LIMIT 1")
     suspend fun getById(id: Long): TaskEntity?
 
+    @Query("""
+    SELECT MAX(sortOrder) FROM task
+    WHERE type = :type AND isArchived = 0
+""")
+    suspend fun getMaxSortOrderByType(type: TaskType): Long?
+
     // ---------- Read (Observe) ----------
 
     /**
@@ -44,7 +50,7 @@ interface TaskDao {
     @Query("""
         SELECT * FROM task
         WHERE isArchived = 0
-        ORDER BY id DESC
+        ORDER BY sortOrder DESC
     """)
     fun observeActiveTasks(): Flow<List<TaskEntity>>
 
@@ -52,7 +58,7 @@ interface TaskDao {
         SELECT * FROM task
         WHERE type = :type
           AND isArchived = 0
-        ORDER BY id DESC
+        ORDER BY sortOrder DESC
     """)
     fun observeTasksByType(type: TaskType): Flow<List<TaskEntity>>
 
@@ -62,7 +68,7 @@ interface TaskDao {
      */
     @Query("""
         SELECT * FROM task
-        ORDER BY isArchived ASC, id DESC
+        ORDER BY isArchived ASC, sortOrder DESC
     """)
     fun observeAllTasks(): Flow<List<TaskEntity>>
 
