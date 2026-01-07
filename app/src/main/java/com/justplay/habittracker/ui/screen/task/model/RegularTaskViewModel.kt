@@ -2,6 +2,8 @@ package com.justplay.habittracker.ui.screen.task.model
 
 import androidx.lifecycle.ViewModel
 import com.justplay.data.db.classPkg.RepeatOption
+import com.justplay.data.db.classPkg.TaskType
+import com.justplay.data.db.entityHelper.baseSortOrder
 import com.justplay.data.db.repo.TaskRepo
 import com.justplay.habittracker.ui.helper.toTaskEntity
 import com.justplay.habittracker.ui.screen.task.event.RegularTaskEvent
@@ -150,7 +152,14 @@ class RegularTaskViewModel @Inject constructor(
     // TODO DO WARNING UI EVENT
     suspend fun save(): Boolean {
         if (checkValid()) return false
-        repo.upsertTask(uiState.value.toTaskEntity())
+        val max = repo.getMaxSortOrderByType(TaskType.REGULAR)
+        val base = baseSortOrder(TaskType.REGULAR)
+        val order = when {
+            max == null -> base
+            max < base -> base
+            else -> max + 1
+        }
+        repo.upsertTask(uiState.value.toTaskEntity(order))
         return true
     }
 

@@ -8,7 +8,9 @@ import com.justplay.habittracker.ui.screen.task.state.OneTimeTaskUiState
 import com.justplay.habittracker.ui.screen.task.state.RegularTaskUiState
 import java.time.LocalDate
 
-fun RegularTaskUiState.toTaskEntity(): TaskEntity {
+fun RegularTaskUiState.toTaskEntity(
+    order: Long
+): TaskEntity {
     val color = if (colorSelected) customColor else selectedColorRes
     val time = if (reminderState) selectedTime else null
     val endHabitDate = if (endHabitOnState) {
@@ -46,11 +48,14 @@ fun RegularTaskUiState.toTaskEntity(): TaskEntity {
         freq = freq,
         endHabitOn = endHabitOnState,
         endHabitDate = endHabitDate,
+        sortOrder = order,
         isArchived = false
     )
 }
 
-fun OneTimeTaskUiState.toTaskEntity(): TaskEntity {
+fun OneTimeTaskUiState.toTaskEntity(
+    order: Long
+): TaskEntity {
     val color = if (colorSelected) customColor else selectedColorInt
     val time = if (reminderState) selectedTime else null
 
@@ -73,6 +78,7 @@ fun OneTimeTaskUiState.toTaskEntity(): TaskEntity {
         freq = null,
         endHabitOn = false,
         endHabitDate = null,
+        sortOrder = order,
         isArchived = false
     )
 }
