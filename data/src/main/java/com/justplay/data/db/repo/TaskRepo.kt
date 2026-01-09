@@ -44,6 +44,8 @@ interface TaskRepo {
 
     suspend fun upsertTask(entity: TaskEntity): Long
 
+    suspend fun getTaskById(id: Long): TaskEntity?
+
     suspend fun getTasksByType(type: TaskType): List<TaskEntity>
 
     suspend fun getMaxSortOrderByType(type: TaskType): Long?
@@ -172,6 +174,8 @@ class TaskRepoImpl @Inject constructor(
             }
 
     override suspend fun upsertTask(entity: TaskEntity): Long = taskDao.upsert(entity)
+
+    override suspend fun getTaskById(id: Long): TaskEntity? = taskDao.getById(id)
 
     override suspend fun getTasksByType(type: TaskType): List<TaskEntity>
     = taskDao.getTasksByType(type)
