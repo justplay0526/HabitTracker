@@ -12,3 +12,8 @@ data class TaskWeeklyCount(
     val taskId: Long,
     val cnt: Int
 )
+
+data class SortOrderUpdate(
+    val id: Long,
+    val sortOrder: Long
+)

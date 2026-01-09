@@ -5,7 +5,9 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
+import com.justplay.data.db.classPkg.SortOrderUpdate
 import com.justplay.data.db.classPkg.TaskType
 import com.justplay.data.db.entity.TaskEntity
 import kotlinx.coroutines.flow.Flow
@@ -34,6 +36,14 @@ interface TaskDao {
 
     @Query("SELECT * FROM task WHERE id = :id LIMIT 1")
     suspend fun getById(id: Long): TaskEntity?
+
+    @Query("""
+        SELECT * FROM task
+        WHERE type = :type
+          AND isArchived = 0
+        ORDER BY sortOrder DESC
+    """)
+    suspend fun getTasksByType(type: TaskType): List<TaskEntity>
 
     @Query("""
     SELECT MAX(sortOrder) FROM task
@@ -98,4 +108,18 @@ interface TaskDao {
           )
     """)
     suspend fun getTasksBefore(date: LocalDate): List<TaskEntity>
+
+    @Query("""
+        UPDATE task
+        SET sortOrder = :sortOrder
+        WHERE id = :id
+    """)
+    suspend fun updateSortOrder(id: Long, sortOrder: Long): Int
+
+    @Transaction
+    suspend fun updateSortOrders(updates: List<SortOrderUpdate>) {
+        updates.forEach { u ->
+            updateSortOrder(u.id, u.sortOrder)
+        }
+    }
 }

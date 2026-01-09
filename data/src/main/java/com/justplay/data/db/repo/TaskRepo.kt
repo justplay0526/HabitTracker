@@ -1,6 +1,7 @@
 package com.justplay.data.db.repo
 
 import com.justplay.data.db.classPkg.RepeatOption
+import com.justplay.data.db.classPkg.SortOrderUpdate
 import com.justplay.data.db.classPkg.TaskStatus
 import com.justplay.data.db.classPkg.TaskType
 import com.justplay.data.db.classPkg.TodayTaskItem
@@ -43,6 +44,8 @@ interface TaskRepo {
 
     suspend fun upsertTask(entity: TaskEntity): Long
 
+    suspend fun getTasksByType(type: TaskType): List<TaskEntity>
+
     suspend fun getMaxSortOrderByType(type: TaskType): Long?
 
     /**
@@ -66,6 +69,10 @@ interface TaskRepo {
      */
     suspend fun getStatusMapForStreak(
         taskId: Long, fromDate: LocalDate): Map<LocalDate, TaskStatus>
+
+    suspend fun updateSortOrder(id: Long, sortOrder: Long): Int
+
+    suspend fun updateSortOrders(updates: List<Pair<Long, Long>>)
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -166,6 +173,9 @@ class TaskRepoImpl @Inject constructor(
 
     override suspend fun upsertTask(entity: TaskEntity): Long = taskDao.upsert(entity)
 
+    override suspend fun getTasksByType(type: TaskType): List<TaskEntity>
+    = taskDao.getTasksByType(type)
+
     override suspend fun getMaxSortOrderByType(type: TaskType): Long?
     = taskDao.getMaxSortOrderByType(type)
 
@@ -194,4 +204,10 @@ class TaskRepoImpl @Inject constructor(
     = logDao.getLogsFrom(taskId, fromDate).associate {
         it.date to it.status
     }
+
+    override suspend fun updateSortOrder(id: Long, sortOrder: Long): Int
+    = taskDao.updateSortOrder(id, sortOrder)
+
+    override suspend fun updateSortOrders(updates: List<Pair<Long, Long>>)
+    = taskDao.updateSortOrders(updates.map { (id, order) -> SortOrderUpdate(id, order) })
 }
