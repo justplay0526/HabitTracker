@@ -19,6 +19,11 @@ enum class HomeNavDest(
     CREATE_NEW_HABIT
 }
 
+enum class MyHabitsNavDest(
+) {
+    EDIT_ONE_TIME_TASK
+}
+
 enum class DragToActionValue {
     Settle,
     COMPLETE,

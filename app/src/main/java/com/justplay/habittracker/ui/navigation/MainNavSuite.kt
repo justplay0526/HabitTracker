@@ -23,14 +23,18 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import androidx.window.core.layout.WindowHeightSizeClass
 import com.justplay.habittracker.data.HomeNavDest
 import com.justplay.habittracker.data.MainNavSuiteDest
+import com.justplay.habittracker.data.MyHabitsNavDest
 import com.justplay.habittracker.ui.screen.CreateNewHabitScreen
+import com.justplay.habittracker.ui.screen.taskEdit.OneTimeTaskEditScreen
 import com.justplay.habittracker.ui.screen.HomeScreen
 import com.justplay.habittracker.ui.screen.MoodStatScreen
 import com.justplay.habittracker.ui.screen.MyHabitsScreen
@@ -114,7 +118,11 @@ fun MainNavHost(
                     )
                     MainNavSuiteDest.MOOD_STAT -> MoodStatScreen()
                     MainNavSuiteDest.REPORT -> ReportScreen()
-                    MainNavSuiteDest.MY_HABITS -> MyHabitsScreen()
+                    MainNavSuiteDest.MY_HABITS -> MyHabitsScreen(
+                        onEditOneTimeTask = { taskId ->
+                            navHost.navigate("${MyHabitsNavDest.EDIT_ONE_TIME_TASK.name}/$taskId")
+                        }
+                    )
                 }
             }
         }
@@ -126,6 +134,19 @@ fun MainNavHost(
                     )
                 }
             }
+        }
+        composable(
+            route = MyHabitsNavDest.EDIT_ONE_TIME_TASK.name + "/{taskId}",
+            arguments = listOf(
+                navArgument("taskId") { type = NavType.LongType }
+            )
+        ) { backStackEntry ->
+            val taskId = backStackEntry.arguments!!.getLong("taskId")
+
+            OneTimeTaskEditScreen(
+                taskId = taskId,
+                onBackClick = { navHost.popBackStack() }
+            )
         }
     }
 }

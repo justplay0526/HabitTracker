@@ -32,6 +32,7 @@ import com.justplay.habittracker.ui.view.CustomHorizontalPager
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyHabitsScreen(
+    onEditOneTimeTask: (Long) -> Unit
 ) {
     val regularVm: RegularEditListViewModel = hiltViewModel()
     val oneTimeVm: OneTimeEditListViewModel = hiltViewModel()
@@ -61,7 +62,10 @@ fun MyHabitsScreen(
 
         val taskPages: List<@Composable () -> Unit> = listOf(
             { RegularEditListScreen(vm = regularVm) },
-            { OneTimeEditListScreen(vm = oneTimeVm) }
+            { OneTimeEditListScreen(
+                vm = oneTimeVm,
+                onEditOneTimeTask = onEditOneTimeTask)
+            }
         )
 
         CustomHorizontalPager(
@@ -78,6 +82,6 @@ fun MyHabitsScreen(
 @Preview
 fun MyHabitsScreenPreview() {
     HabitTrackerTheme {
-        MyHabitsScreen()
+        MyHabitsScreen {}
     }
 }
