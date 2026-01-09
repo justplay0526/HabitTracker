@@ -3,6 +3,7 @@ package com.justplay.habittracker.ui.screen.taskEditList.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.justplay.data.db.classPkg.TaskType
+import com.justplay.data.db.entityHelper.baseSortOrder
 import com.justplay.data.db.repo.TaskRepo
 import com.justplay.habittracker.data.HabitEditUi
 import com.justplay.habittracker.ui.screen.taskEditList.uiMapper.toHabitEditUi
@@ -11,12 +12,13 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class RegularEditListViewModel @Inject constructor(
-    repo: TaskRepo
+    private val repo: TaskRepo
 ): ViewModel() {
     private val _listItems = repo.observeTasksByType(TaskType.REGULAR)
 
@@ -37,6 +39,17 @@ class RegularEditListViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         Timber.tag(TAG).d("OnCleared")
+    }
+
+    fun commitOrder(orderedIds: List<Long>) = viewModelScope.launch {
+        val base = baseSortOrder(TaskType.REGULAR)
+        /**
+         * 因為sortOrder方向是 desc 所以要反著輸出
+         */
+        val updates = orderedIds.mapIndexed { index, id ->
+            id to (base + (orderedIds.size - 1 - index).toLong())
+        }
+        repo.updateSortOrders(updates)
     }
 
     companion object {
