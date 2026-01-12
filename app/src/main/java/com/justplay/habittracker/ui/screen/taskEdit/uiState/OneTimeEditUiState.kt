@@ -37,5 +37,6 @@ data class OneTimeEditUiState(
     val showTimePicker: Boolean = false,
     // Error State
     val nameError: Boolean = false,
+    val dateError: Boolean = false,
     val timeError: Boolean = false
 )
