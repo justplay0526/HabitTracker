@@ -37,6 +37,7 @@
     <string name="sent_warning_text_select_repeat_type">Please Select A Repeat Type</string>
     <string name="sent_warning_text_select_period_type">Please Select A Time Of Day</string>
     <string name="sent_warning_text_select_time">Please select a time range of at least 60 minutes</string>
+    <string name="sent_warning_text_select_new_date">Please select a new date</string>
 
     <string name="sent_warning_text_enter_number">
         Range: %d~%d
