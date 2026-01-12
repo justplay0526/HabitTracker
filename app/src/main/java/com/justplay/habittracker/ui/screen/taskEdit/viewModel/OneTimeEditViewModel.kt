@@ -8,12 +8,14 @@ import com.justplay.data.db.entity.TaskEntity
 import com.justplay.data.db.repo.TaskRepo
 import com.justplay.habittracker.ui.screen.taskEdit.uiState.OneTimeEditUiState
 import com.justplay.habittracker.ui.view.ColorResource
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class OneTimeEditViewModel @Inject constructor(
     private val repo: TaskRepo,
 ) : ViewModel() {
