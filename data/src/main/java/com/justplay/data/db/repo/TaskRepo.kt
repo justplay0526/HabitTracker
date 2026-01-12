@@ -72,6 +72,8 @@ interface TaskRepo {
     suspend fun getStatusMapForStreak(
         taskId: Long, fromDate: LocalDate): Map<LocalDate, TaskStatus>
 
+    suspend fun updateTask(entity: TaskEntity)
+
     suspend fun updateSortOrder(id: Long, sortOrder: Long): Int
 
     suspend fun updateSortOrders(updates: List<Pair<Long, Long>>)
@@ -208,6 +210,8 @@ class TaskRepoImpl @Inject constructor(
     = logDao.getLogsFrom(taskId, fromDate).associate {
         it.date to it.status
     }
+
+    override suspend fun updateTask(entity: TaskEntity) = taskDao.update(entity)
 
     override suspend fun updateSortOrder(id: Long, sortOrder: Long): Int
     = taskDao.updateSortOrder(id, sortOrder)
