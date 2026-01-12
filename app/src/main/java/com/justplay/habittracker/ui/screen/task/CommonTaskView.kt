@@ -598,10 +598,11 @@ fun <T> SingleChoiceSection(
 
 @Composable
 fun TaskScaffold(
+    modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp)
@@ -749,7 +750,8 @@ fun WeeklySection(
 @Composable
 fun WhenSection(
     dateString: String,
-    onDateSelected: () -> Unit
+    onDateSelected: () -> Unit,
+    isError: Boolean = false
 ) {
     Text(
         text = stringResource(R.string.title_when),
@@ -764,6 +766,15 @@ fun WhenSection(
         modifier = Modifier
             .fillMaxWidth()
     )
+
+    if (isError) {
+        Text(
+            text = stringResource(R.string.sent_warning_text_select_new_date),
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+        )
+    }
 }
 // Preview Region
 @Preview(showBackground = true, locale = "en")
