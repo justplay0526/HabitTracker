@@ -4,15 +4,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.justplay.data.db.classPkg.TaskType
 import com.justplay.data.db.entity.TaskEntity
+import com.justplay.data.db.entityHelper.baseSortOrder
 import com.justplay.data.db.repo.TaskRepo
+import com.justplay.habittracker.ui.screen.task.event.OneTimeTaskEvent
 import com.justplay.habittracker.ui.screen.taskEdit.uiState.OneTimeEditUiState
 import com.justplay.habittracker.ui.view.ColorResource
+import com.justplay.habittracker.ui.view.LastColorCircleIndex
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
+import java.time.Duration
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,19 +51,162 @@ class OneTimeEditViewModel @Inject constructor(
         }
     }
 
+    fun onEvent(event: OneTimeTaskEvent) {
+        _uiState.update { state ->
+            when(event) {
+                is OneTimeTaskEvent.ColorPicked ->
+                    state.copy(
+                        customColor = event.color,
+                        colorSelected = true
+                    )
+
+                is OneTimeTaskEvent.ColorSelected -> {
+                    state.copy(selectedColorIndex = event.index)
+                }
+
+                is OneTimeTaskEvent.ColorIntSelected -> {
+                    Timber
+                        .tag("OneTimeTaskViewModel")
+                        .d("SelectedColorInt = ${event.color}")
+
+                    state.copy(selectedColorInt = event.color)
+                }
+
+                is OneTimeTaskEvent.DateChanged ->
+                    state.copy(
+                        selectedDate = event.date,
+                        dateError = false)
+
+                is OneTimeTaskEvent.HideColorPicker ->
+                    state.copy(showColorPicker = false)
+
+                is OneTimeTaskEvent.HideDatePicker ->
+                    state.copy(showDatePicker = false)
+
+                is OneTimeTaskEvent.HideIconPicker ->
+                    state.copy(showIconPicker = false)
+
+                is OneTimeTaskEvent.HideTimePicker ->
+                    state.copy(showTimePicker = false)
+
+                is OneTimeTaskEvent.IconPicked ->
+                    state.copy(selectedIconRes = event.iconRes)
+
+                is OneTimeTaskEvent.IconSelected ->
+                    state.copy(selectedIconRes = event.index)
+
+                is OneTimeTaskEvent.NameChanged -> {
+                    state.copy(
+                        nameText = event.value,
+                        nameError = event.value.isBlank()
+                    )
+                }
+
+                is OneTimeTaskEvent.PeriodOptionChanged ->
+                    state.copy(selectedPeriodOption = event.option)
+
+                is OneTimeTaskEvent.ReminderChanged ->
+                    state.copy(reminderState = event.enabled)
+
+                is OneTimeTaskEvent.ShowColorPicker ->
+                    state.copy(showColorPicker = true)
+
+                is OneTimeTaskEvent.ShowDatePicker ->
+                    state.copy(showDatePicker = true)
+
+                is OneTimeTaskEvent.ShowIconPicker ->
+                    state.copy(showIconPicker = true)
+
+                is OneTimeTaskEvent.ShowTimePicker ->
+                    state.copy(showTimePicker = true)
+
+                is OneTimeTaskEvent.TimeChanged -> {
+                    state.copy(
+                        selectedTime = event.time,
+                        timeError = isTimeNotValid(
+                            state.selectedDate,
+                            event.time
+                        )
+                    )
+                }
+            }
+        }
+    }
+    // TODO DO WARNING UI EVENT
+    suspend fun save(): Boolean {
+        if (checkValid()) return false
+        val max = repo.getMaxSortOrderByType(TaskType.ONE_TIME)
+        val base = baseSortOrder(TaskType.ONE_TIME)
+        val order = when {
+            max == null -> base
+            max < base -> base
+            else -> max + 1
+        }
+        repo.updateTask(_uiState.value.toTaskEntity(order))
+        return true
+    }
+
+    private fun checkValid(): Boolean {
+        with(_uiState.value) {
+            if (nameText.isBlank()) {
+                _uiState.update { state ->
+                    state.copy(nameError = true)
+                }
+            }
+            if (isDateNotValid(selectedDate)) {
+                _uiState.update { state ->
+                    state.copy(dateError = true)
+                }
+            }
+            if (reminderState && isTimeNotValid(selectedDate, selectedTime)) {
+                _uiState.update { state ->
+                    state.copy(timeError = true)
+                }
+            }
+        }
+        return with(_uiState.value) { nameError || dateError || timeError }
+    }
+
+    private fun isDateNotValid(
+        date: LocalDate
+    ): Boolean {
+        val now = LocalDate.now()
+        return date.isBefore(now)
+    }
+
+    private fun isTimeNotValid(
+        date: LocalDate,
+        time: LocalTime
+    ): Boolean {
+        val now = LocalDateTime.now()
+        val targetDateTime = LocalDateTime.of(date, time)
+        val diffMinutes = Duration.between(now, targetDateTime).toMinutes()
+
+        // 未來時間且 >= 60 分鐘 → false
+        return diffMinutes < 60
+    }
+
     fun TaskEntity.toOneTimeEditUiState(): OneTimeEditUiState {
+        val isCustomColorSelected = !ColorResource.any { it.toArgb() == colorInt }
         return OneTimeEditUiState(
             taskId = id,
             isLoading = false,
             nameText = name,
-            selectedColorIndex = ColorResource.indexOfFirst { it.toArgb() == colorInt },
-            colorSelected = false, // TODO 增加是否為自選色
+            selectedColorIndex =
+                if (!isCustomColorSelected) {
+                    ColorResource.indexOfFirst { it.toArgb() == colorInt }
+                } else LastColorCircleIndex,
+            colorSelected = isCustomColorSelected,
             selectedColorInt = colorInt,
-            customColor = Color.Red.toArgb(), // TODO 增加是否為自選色
+            customColor = if (isCustomColorSelected) {
+                colorInt
+            } else {
+                Color.Red.toArgb()
+            },
             selectedDate = oneTimeDate!!,
             selectedIconRes = iconRes,
             selectedPeriodOption = periodOption!!,
-            selectedTime = time!!,
+            selectedTime = if (time == null) LocalTime.now() else time!!,
             reminderState = reminderEnabled,
             showColorPicker = false,
             showIconPicker = false,
@@ -62,6 +214,34 @@ class OneTimeEditViewModel @Inject constructor(
             showTimePicker = false,
             nameError = false,
             timeError = false
+        )
+    }
+
+    fun OneTimeEditUiState.toTaskEntity(
+        order: Long
+    ): TaskEntity {
+        val color = if (selectedColorIndex == LastColorCircleIndex) customColor else selectedColorInt
+        val time = if (reminderState) selectedTime else null
+
+        return TaskEntity(
+            id = taskId, // 很重要， Update 時依賴這個主鍵進行更新
+            type = TaskType.ONE_TIME,
+            name = nameText.trim(),
+            colorInt = color,
+            iconRes = selectedIconRes,
+            periodOption = selectedPeriodOption,
+            reminderEnabled = reminderState,
+            time = time,
+            startDate = null,
+            oneTimeDate = selectedDate,
+            repeatOption = null,
+            selectedDaySet = emptySet(),
+            selectedDaysOfMonth = emptySet(),
+            freq = null,
+            endHabitOn = false,
+            endHabitDate = null,
+            sortOrder = order,
+            isArchived = false
         )
     }
 }
