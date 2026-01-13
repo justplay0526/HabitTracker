@@ -71,6 +71,7 @@ import com.justplay.habittracker.ui.view.CirclePictureBox
 import com.justplay.habittracker.ui.view.ColorResource
 import com.justplay.habittracker.ui.view.HabitInputField
 import com.justplay.habittracker.ui.view.IconsRes
+import com.justplay.habittracker.ui.view.LastColorCircleIndex
 import com.justplay.habittracker.ui.view.MonthlyCalendar
 import com.justplay.habittracker.ui.view.OutlinedIcon
 import com.justplay.habittracker.ui.view.PickerRow
@@ -113,7 +114,7 @@ fun ColorSection(
          * TODO handle color picker for last Circle Box
          * TODO connect to ViewModel
          */
-        ColorResource.take(14).forEachIndexed {
+        ColorResource.take(LastColorCircleIndex).forEachIndexed {
                 index, colorData ->
             CircleColorBox(
                 color = colorData,
@@ -130,7 +131,7 @@ fun ColorSection(
         if (!colorSelected) {
             CirclePictureBox(
                 painter = painterResource(R.mipmap.hsv_color_palette),
-                selected = selectedColorIndex == 14,
+                selected = selectedColorIndex == LastColorCircleIndex,
                 onClick = {
                     showPicker()
                 },
@@ -141,9 +142,9 @@ fun ColorSection(
         } else {
             CircleColorBox(
                 color = Color(customColor),
-                selected = selectedColorIndex == 14,
+                selected = selectedColorIndex == LastColorCircleIndex,
                 onClick = {
-                    onColorIndexSelected(14)
+                    onColorIndexSelected(LastColorCircleIndex)
                     showPicker()
                 },
                 modifier = Modifier
