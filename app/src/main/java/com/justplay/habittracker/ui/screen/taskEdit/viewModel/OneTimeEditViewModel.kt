@@ -8,7 +8,7 @@ import com.justplay.data.db.classPkg.TaskType
 import com.justplay.data.db.entity.TaskEntity
 import com.justplay.data.db.entityHelper.baseSortOrder
 import com.justplay.data.db.repo.TaskRepo
-import com.justplay.habittracker.ui.screen.task.event.OneTimeTaskEvent
+import com.justplay.habittracker.ui.screen.taskEdit.OneTimeEditEvent
 import com.justplay.habittracker.ui.screen.taskEdit.uiState.OneTimeEditUiState
 import com.justplay.habittracker.ui.view.ColorResource
 import com.justplay.habittracker.ui.view.LastColorCircleIndex
@@ -51,20 +51,20 @@ class OneTimeEditViewModel @Inject constructor(
         }
     }
 
-    fun onEvent(event: OneTimeTaskEvent) {
+    fun onEvent(event: OneTimeEditEvent) {
         _uiState.update { state ->
             when(event) {
-                is OneTimeTaskEvent.ColorPicked ->
+                is OneTimeEditEvent.ColorPicked ->
                     state.copy(
                         customColor = event.color,
                         colorSelected = true
                     )
 
-                is OneTimeTaskEvent.ColorSelected -> {
+                is OneTimeEditEvent.ColorSelected -> {
                     state.copy(selectedColorIndex = event.index)
                 }
 
-                is OneTimeTaskEvent.ColorIntSelected -> {
+                is OneTimeEditEvent.ColorIntSelected -> {
                     Timber
                         .tag("OneTimeTaskViewModel")
                         .d("SelectedColorInt = ${event.color}")
@@ -72,55 +72,61 @@ class OneTimeEditViewModel @Inject constructor(
                     state.copy(selectedColorInt = event.color)
                 }
 
-                is OneTimeTaskEvent.DateChanged ->
+                is OneTimeEditEvent.DateChanged ->
                     state.copy(
                         selectedDate = event.date,
                         dateError = false)
 
-                is OneTimeTaskEvent.HideColorPicker ->
+                is OneTimeEditEvent.HideColorPicker ->
                     state.copy(showColorPicker = false)
 
-                is OneTimeTaskEvent.HideDatePicker ->
+                is OneTimeEditEvent.HideDatePicker ->
                     state.copy(showDatePicker = false)
 
-                is OneTimeTaskEvent.HideIconPicker ->
+                is OneTimeEditEvent.HideDeleteHabit ->
+                    state.copy(showDeleteHabit = false)
+
+                is OneTimeEditEvent.HideIconPicker ->
                     state.copy(showIconPicker = false)
 
-                is OneTimeTaskEvent.HideTimePicker ->
+                is OneTimeEditEvent.HideTimePicker ->
                     state.copy(showTimePicker = false)
 
-                is OneTimeTaskEvent.IconPicked ->
+                is OneTimeEditEvent.IconPicked ->
                     state.copy(selectedIconRes = event.iconRes)
 
-                is OneTimeTaskEvent.IconSelected ->
+                is OneTimeEditEvent.IconSelected ->
                     state.copy(selectedIconRes = event.index)
 
-                is OneTimeTaskEvent.NameChanged -> {
+                is OneTimeEditEvent.NameChanged -> {
                     state.copy(
                         nameText = event.value,
                         nameError = event.value.isBlank()
                     )
                 }
 
-                is OneTimeTaskEvent.PeriodOptionChanged ->
+                is OneTimeEditEvent.PeriodOptionChanged ->
                     state.copy(selectedPeriodOption = event.option)
 
-                is OneTimeTaskEvent.ReminderChanged ->
+                is OneTimeEditEvent.ReminderChanged ->
                     state.copy(reminderState = event.enabled)
 
-                is OneTimeTaskEvent.ShowColorPicker ->
+                is OneTimeEditEvent.ShowColorPicker ->
                     state.copy(showColorPicker = true)
 
-                is OneTimeTaskEvent.ShowDatePicker ->
+                is OneTimeEditEvent.ShowDatePicker ->
                     state.copy(showDatePicker = true)
+                
+                is OneTimeEditEvent.ShowDeleteHabit ->
+                    state.copy(showDeleteHabit = true)
 
-                is OneTimeTaskEvent.ShowIconPicker ->
+                is OneTimeEditEvent.ShowIconPicker ->
                     state.copy(showIconPicker = true)
 
-                is OneTimeTaskEvent.ShowTimePicker ->
+                is OneTimeEditEvent.ShowTimePicker ->
                     state.copy(showTimePicker = true)
 
-                is OneTimeTaskEvent.TimeChanged -> {
+                is OneTimeEditEvent.TimeChanged -> {
                     state.copy(
                         selectedTime = event.time,
                         timeError = isTimeNotValid(
