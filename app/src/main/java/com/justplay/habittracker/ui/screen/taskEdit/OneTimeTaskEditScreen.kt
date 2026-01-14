@@ -39,6 +39,7 @@ import com.justplay.habittracker.ui.helper.toLabelRes
 import com.justplay.habittracker.ui.screen.task.ColorPickerBottomSheet
 import com.justplay.habittracker.ui.screen.task.ColorSection
 import com.justplay.habittracker.ui.screen.task.DatePickerBottomSheet
+import com.justplay.habittracker.ui.screen.task.DeleteHabitBottomSheet
 import com.justplay.habittracker.ui.screen.task.IconPickerBottomSheet
 import com.justplay.habittracker.ui.screen.task.IconSection
 import com.justplay.habittracker.ui.screen.task.NameSection
@@ -48,7 +49,6 @@ import com.justplay.habittracker.ui.screen.task.SingleChoiceSection
 import com.justplay.habittracker.ui.screen.task.TaskScaffold
 import com.justplay.habittracker.ui.screen.task.TimePickerDialog
 import com.justplay.habittracker.ui.screen.task.WhenSection
-import com.justplay.habittracker.ui.screen.task.event.OneTimeTaskEvent
 import com.justplay.habittracker.ui.screen.taskEdit.uiState.OneTimeEditUiState
 import com.justplay.habittracker.ui.screen.taskEdit.viewModel.OneTimeEditViewModel
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
@@ -61,7 +61,7 @@ import timber.log.Timber
 fun OneTimeTaskEditScreen(
     onBackClick: () -> Unit,
     uiState: OneTimeEditUiState,
-    onEvent: (OneTimeTaskEvent) -> Unit,
+    onEvent: (OneTimeEditEvent) -> Unit,
     onSaved: suspend () -> Boolean
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
@@ -79,13 +79,13 @@ fun OneTimeTaskEditScreen(
         show = uiState.showColorPicker,
         sheetState = sheetState,
         onDismissRequest = {
-            onEvent(OneTimeTaskEvent.HideColorPicker)
+            onEvent(OneTimeEditEvent.HideColorPicker)
         },
         onColorSelected = {
-            onEvent(OneTimeTaskEvent.ColorPicked(it.toColorInt()))
-            onEvent(OneTimeTaskEvent.ColorIntSelected(it.toColorInt()))
-            onEvent(OneTimeTaskEvent.ColorSelected(LastColorCircleIndex))
-            onEvent(OneTimeTaskEvent.HideColorPicker)
+            onEvent(OneTimeEditEvent.ColorPicked(it.toColorInt()))
+            onEvent(OneTimeEditEvent.ColorIntSelected(it.toColorInt()))
+            onEvent(OneTimeEditEvent.ColorSelected(LastColorCircleIndex))
+            onEvent(OneTimeEditEvent.HideColorPicker)
         }
     )
 
@@ -93,11 +93,25 @@ fun OneTimeTaskEditScreen(
         show = uiState.showDatePicker,
         sheetState = sheetState,
         onDismissRequest = {
-            onEvent(OneTimeTaskEvent.HideDatePicker)
+            onEvent(OneTimeEditEvent.HideDatePicker)
         },
         onDateSelected = { date ->
-            onEvent(OneTimeTaskEvent.DateChanged(date!!))
-            onEvent(OneTimeTaskEvent.HideDatePicker)
+            onEvent(OneTimeEditEvent.DateChanged(date!!))
+            onEvent(OneTimeEditEvent.HideDatePicker)
+        }
+    )
+
+    DeleteHabitBottomSheet(
+        show = uiState.showDeleteHabit,
+        sheetState = sheetState,
+        onDismissRequest = {
+            onEvent(OneTimeEditEvent.HideDeleteHabit)
+        },
+        onDeleteKeepHistory = {
+            // TODO call archive function
+        },
+        onDeleteClearHistory = {
+            // TODO call delete Task & log function
         }
     )
 
@@ -106,12 +120,12 @@ fun OneTimeTaskEditScreen(
         initIcon = uiState.selectedIconRes,
         sheetState = sheetState,
         onDismissRequest = {
-            onEvent(OneTimeTaskEvent.HideIconPicker)
+            onEvent(OneTimeEditEvent.HideIconPicker)
         },
         onIconSelected = { icon ->
             // TODO When finish database, show this to lastest
-            onEvent(OneTimeTaskEvent.IconPicked(icon))
-            onEvent(OneTimeTaskEvent.HideIconPicker)
+            onEvent(OneTimeEditEvent.IconPicked(icon))
+            onEvent(OneTimeEditEvent.HideIconPicker)
         }
     )
 
@@ -119,11 +133,11 @@ fun OneTimeTaskEditScreen(
         show = uiState.showTimePicker,
         initTime = uiState.selectedTime,
         onDismiss = {
-            onEvent(OneTimeTaskEvent.HideTimePicker)
+            onEvent(OneTimeEditEvent.HideTimePicker)
         },
         onConfirm = {
-            onEvent(OneTimeTaskEvent.TimeChanged(it))
-            onEvent(OneTimeTaskEvent.HideTimePicker)
+            onEvent(OneTimeEditEvent.TimeChanged(it))
+            onEvent(OneTimeEditEvent.HideTimePicker)
         }
     )
 
@@ -142,7 +156,9 @@ fun OneTimeTaskEditScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = {} /* TODO Delete Habit Event */) {
+                    IconButton(onClick = {
+                        onEvent(OneTimeEditEvent.ShowDeleteHabit)
+                    }) {
                         Icon(
                             imageVector = Icons.Rounded.Delete,
                             tint = MaterialTheme.colorScheme.error,
@@ -180,7 +196,7 @@ fun OneTimeTaskEditScreen(
                 hint = R.string.title_task_name,
                 textValue = uiState.nameText,
                 onTextChange = {
-                    onEvent(OneTimeTaskEvent.NameChanged(it))
+                    onEvent(OneTimeEditEvent.NameChanged(it))
                 },
                 isError = uiState.nameError,
                 errorMsg = stringResource(R.string.sent_warning_text_enter_task_name)
@@ -191,10 +207,10 @@ fun OneTimeTaskEditScreen(
             IconSection(
                 selectedIcon = uiState.selectedIconRes,
                 onIconSelected = {
-                    onEvent(OneTimeTaskEvent.IconSelected(it))
+                    onEvent(OneTimeEditEvent.IconSelected(it))
                 },
                 showPicker = {
-                    onEvent(OneTimeTaskEvent.ShowIconPicker)
+                    onEvent(OneTimeEditEvent.ShowIconPicker)
                 }
             )
 
@@ -205,13 +221,13 @@ fun OneTimeTaskEditScreen(
                 colorSelected = uiState.colorSelected,
                 selectedColorIndex = uiState.selectedColorIndex,
                 onColorIndexSelected = {
-                    onEvent(OneTimeTaskEvent.ColorSelected(it))
+                    onEvent(OneTimeEditEvent.ColorSelected(it))
                 },
                 onColorIntSelected = {
-                    onEvent(OneTimeTaskEvent.ColorIntSelected(it))
+                    onEvent(OneTimeEditEvent.ColorIntSelected(it))
                 },
                 showPicker = {
-                    onEvent(OneTimeTaskEvent.ShowColorPicker)
+                    onEvent(OneTimeEditEvent.ShowColorPicker)
                 }
             )
 
@@ -220,7 +236,7 @@ fun OneTimeTaskEditScreen(
             WhenSection(
                 dateString = formatUniformDate(uiState.selectedDate),
                 onDateSelected = {
-                    onEvent(OneTimeTaskEvent.ShowDatePicker)
+                    onEvent(OneTimeEditEvent.ShowDatePicker)
                 },
                 isError = uiState.dateError
             )
@@ -233,7 +249,7 @@ fun OneTimeTaskEditScreen(
                 selectedOption = uiState.selectedPeriodOption,
                 labelRes = { it.toLabelRes() },
                 onSelectedChanged = {
-                    onEvent(OneTimeTaskEvent.PeriodOptionChanged(it))
+                    onEvent(OneTimeEditEvent.PeriodOptionChanged(it))
                 }
             )
 
@@ -243,10 +259,10 @@ fun OneTimeTaskEditScreen(
                 reminderCheck = uiState.reminderState,
                 timeString = formatReminderTime(uiState.selectedTime),
                 onReminderChanged = {
-                    onEvent(OneTimeTaskEvent.ReminderChanged(it))
+                    onEvent(OneTimeEditEvent.ReminderChanged(it))
                 },
                 onTimeChanged = {
-                    onEvent(OneTimeTaskEvent.ShowTimePicker)
+                    onEvent(OneTimeEditEvent.ShowTimePicker)
                 },
                 isError = uiState.timeError
             )
