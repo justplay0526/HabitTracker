@@ -78,6 +78,7 @@ import com.justplay.habittracker.ui.view.PickerRow
 import com.justplay.habittracker.ui.view.SingleChoiceChipGroup
 import com.justplay.habittracker.ui.view.bottomSheet.ColorModalBottomSheet
 import com.justplay.habittracker.ui.view.bottomSheet.DateModalBottomSheet
+import com.justplay.habittracker.ui.view.bottomSheet.DeleteHabitModalBottomSheet
 import com.justplay.habittracker.ui.view.bottomSheet.IconModalBottomSheet
 import com.justplay.habittracker.ui.view.bottomSheet.NumberInputModalBottomSheet
 import com.justplay.habittracker.ui.view.oneAlphabetWeekLabels
@@ -185,6 +186,25 @@ fun DatePickerBottomSheet(
             sheetState = sheetState,
             onDateSelected =  onDateSelected,
             onCancel = onDismissRequest
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DeleteHabitBottomSheet(
+    show: Boolean,
+    sheetState: SheetState,
+    onDismissRequest: () -> Unit,
+    onDeleteKeepHistory: suspend () -> Unit,
+    onDeleteClearHistory: suspend () -> Unit,
+) {
+    if (show) {
+        DeleteHabitModalBottomSheet(
+            sheetState = sheetState,
+            onCancel = onDismissRequest,
+            onDeleteKeepHistory = onDeleteKeepHistory,
+            onDeleteClearHistory = onDeleteClearHistory
         )
     }
 }
