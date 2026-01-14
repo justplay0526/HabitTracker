@@ -34,6 +34,7 @@ data class OneTimeEditUiState(
     val showColorPicker: Boolean = false,
     val showIconPicker: Boolean = false,
     val showDatePicker: Boolean = false,
+    val showDeleteHabit: Boolean = false,
     val showTimePicker: Boolean = false,
     // Error State
     val nameError: Boolean = false,
