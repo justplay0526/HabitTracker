@@ -1,6 +1,10 @@
 package com.justplay.habittracker.ui.view.bottomSheet
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -18,13 +22,18 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -35,7 +44,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -43,6 +54,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
+import androidx.core.graphics.toColorInt
 import com.github.skydoves.colorpicker.compose.AlphaSlider
 import com.github.skydoves.colorpicker.compose.AlphaTile
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
@@ -53,6 +65,7 @@ import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.DateCalendar
 import com.justplay.habittracker.ui.view.IconsRes
 import com.justplay.habittracker.ui.view.OutlinedIcon
+import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.YearMonth
 import java.util.Locale
@@ -156,6 +169,115 @@ fun DatePickerContent(
                     onDismiss()
                 }
             }
+        )
+    }
+}
+
+@Composable
+fun DeleteHabitSelection(
+    onDeleteKeepHistory: () -> Unit,
+    onDeleteClearHistory: () -> Unit
+) {
+    SheetContentScaffold {
+        PickerTopTitle(
+            title = stringResource(R.string.title_delete_habit),
+            color = Color("#FC5454".toColorInt())
+        )
+
+        ListItem(
+            headlineContent = {
+                Text(
+                    text = stringResource(R.string.sent_delete_keep)
+                )
+            },
+            leadingContent = {
+                Icon(
+                    painter = painterResource(R.drawable.outline_delete_keep_24),
+                    contentDescription = null,
+                    tint = Color("#FCA43C".toColorInt())
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.3f),
+                    shape = RoundedCornerShape(4.dp)
+                )
+                .clickable { onDeleteKeepHistory() }
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        ListItem(
+            headlineContent = {
+                Text(
+                    text = stringResource(R.string.sent_delete_clear)
+                )
+            },
+            leadingContent = {
+                Icon(
+                    painter = painterResource(R.drawable.outline_delete_clear_24),
+                    contentDescription = null,
+                    tint = Color("#FC5454".toColorInt())
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.3f),
+                    shape = RoundedCornerShape(4.dp)
+                )
+                .clickable { onDeleteClearHistory() }
+        )
+    }
+}
+
+@Composable
+fun DeleteHabitSuccess(
+    clearHistory: Boolean = false,
+    onDone: () -> Unit
+) {
+    val scale = remember { Animatable(0.1f) }
+
+    LaunchedEffect(Unit) {
+        scale.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(
+                durationMillis = 1000
+            )
+        )
+        delay(500)
+        onDone()
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.CheckCircle,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .size(60.dp)
+                .graphicsLayer {
+                scaleX = scale.value
+                scaleY = scale.value
+            }
+        )
+
+        Spacer(Modifier.height(12.dp))
+
+        Text(
+            text = if (clearHistory) {
+                stringResource(R.string.sent_delete_habit_history_success)
+            } else {
+                stringResource(R.string.sent_delete_habit_success)
+            },
         )
     }
 }
@@ -394,6 +516,27 @@ fun DatePickerContentPreview() {
         DatePickerContent(
             onDateSelected = {},
             onDismiss = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DeleteHabitSelectionPreview() {
+    HabitTrackerTheme {
+        DeleteHabitSelection(
+            onDeleteKeepHistory = {},
+            onDeleteClearHistory = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DeleteHabitSuccessPreview() {
+    HabitTrackerTheme {
+        DeleteHabitSuccess(
+            onDone = {}
         )
     }
 }
