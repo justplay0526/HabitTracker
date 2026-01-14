@@ -294,10 +294,12 @@ fun SheetContentScaffold(
 
 @Composable
 fun ColumnScope.PickerTopTitle(
-    title: String
+    title: String,
+    color: Color = Color.Black
 ) {
     Text(
         text = title,
+        color = color,
         style = MaterialTheme.typography.titleLarge,
         modifier = Modifier.align(Alignment.CenterHorizontally)
     )
