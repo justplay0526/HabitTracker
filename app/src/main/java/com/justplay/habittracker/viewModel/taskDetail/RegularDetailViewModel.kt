@@ -1,0 +1,61 @@
+package com.justplay.habittracker.viewModel.taskDetail
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.justplay.data.db.entity.TaskEntity
+import com.justplay.data.db.repo.TaskRepo
+import com.justplay.habittracker.ui.uiEvent.taskDetail.RegularDetailEvent
+import com.justplay.habittracker.ui.uiState.taskDetail.RegularDetailUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class RegularDetailViewModel @Inject constructor(
+    private val repo: TaskRepo,
+): ViewModel() {
+    private val _uiState = MutableStateFlow(RegularDetailUiState())
+    val uiState = _uiState.asStateFlow()
+
+    fun load(taskId: Long) {
+        if (_uiState.value.isLoading.not() && _uiState.value.taskId == taskId) return
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+
+            val entity = repo.getTaskById(taskId)
+            if (entity == null) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                    )
+                }
+                return@launch
+            }
+
+            _uiState.value = entity.toRegularDetailUiState()
+        }
+    }
+
+    fun onEvent(event: RegularDetailEvent) {
+        when(event) {
+            is RegularDetailEvent.HideDeleteHabit ->
+                _uiState.value = _uiState.value.copy(showDeleteHabit = false)
+
+            is RegularDetailEvent.ShowDeleteHabit ->
+                _uiState.value = _uiState.value.copy(showDeleteHabit = true)
+        }
+    }
+// TODO 之後擴充
+    private fun TaskEntity.toRegularDetailUiState(): RegularDetailUiState {
+        return RegularDetailUiState(
+            taskId = id,
+            isLoading = false,
+            habitName = name,
+            iconRes = iconRes
+        )
+    }
+}
