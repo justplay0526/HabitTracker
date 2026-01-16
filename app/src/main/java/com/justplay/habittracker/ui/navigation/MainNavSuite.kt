@@ -37,6 +37,7 @@ import com.justplay.habittracker.ui.screen.HomeScreen
 import com.justplay.habittracker.ui.screen.MoodStatScreen
 import com.justplay.habittracker.ui.screen.MyHabitsScreen
 import com.justplay.habittracker.ui.screen.ReportScreen
+import com.justplay.habittracker.ui.screen.taskDetail.RegularTaskDetailScreen
 import com.justplay.habittracker.ui.screen.taskEdit.OneTimeTaskEditScreen
 
 @Composable
@@ -120,6 +121,9 @@ fun MainNavHost(
                     MainNavSuiteDest.MOOD_STAT -> MoodStatScreen()
                     MainNavSuiteDest.REPORT -> ReportScreen()
                     MainNavSuiteDest.MY_HABITS -> MyHabitsScreen(
+                        onEditRegularTask = { taskId ->
+                            navHost.navigate("${MyHabitsNavDest.REGULAR_TASK_DETAIL.name}/$taskId")
+                        },
                         onEditOneTimeTask = { taskId ->
                             navHost.navigate("${MyHabitsNavDest.EDIT_ONE_TIME_TASK.name}/$taskId")
                         }
@@ -136,6 +140,22 @@ fun MainNavHost(
                 }
             }
         }
+
+        composable(
+            route = MyHabitsNavDest.REGULAR_TASK_DETAIL.name + "/{taskId}",
+            arguments = listOf(
+                navArgument("taskId") { type = NavType.LongType }
+            )
+        ) { backStackEntry ->
+            val taskId = backStackEntry.arguments!!.getLong("taskId")
+
+            RegularTaskDetailScreen(
+                taskId = taskId,
+                onBackClick = { navHost.popBackStack() },
+                onEditClick = {} // TODO Add Edit Regular Habit Screen
+            )
+        }
+
         composable(
             route = MyHabitsNavDest.EDIT_ONE_TIME_TASK.name + "/{taskId}",
             arguments = listOf(
