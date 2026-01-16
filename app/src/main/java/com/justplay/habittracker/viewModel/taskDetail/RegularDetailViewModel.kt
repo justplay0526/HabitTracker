@@ -2,8 +2,8 @@ package com.justplay.habittracker.viewModel.taskDetail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.justplay.data.db.entity.TaskEntity
 import com.justplay.data.db.repo.TaskRepo
+import com.justplay.habittracker.ui.mapper.toRegularDetailUiState
 import com.justplay.habittracker.ui.uiEvent.taskDetail.RegularDetailEvent
 import com.justplay.habittracker.ui.uiState.taskDetail.RegularDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -48,14 +48,5 @@ class RegularDetailViewModel @Inject constructor(
             is RegularDetailEvent.ShowDeleteHabit ->
                 _uiState.value = _uiState.value.copy(showDeleteHabit = true)
         }
-    }
-// TODO 之後擴充
-    private fun TaskEntity.toRegularDetailUiState(): RegularDetailUiState {
-        return RegularDetailUiState(
-            taskId = id,
-            isLoading = false,
-            habitName = name,
-            iconRes = iconRes
-        )
     }
 }

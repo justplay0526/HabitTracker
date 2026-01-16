@@ -16,7 +16,7 @@ import com.justplay.habittracker.R
 import com.justplay.habittracker.data.formatReminderTime
 import com.justplay.habittracker.data.formatUniformDate
 import com.justplay.habittracker.data.formatUniformDays
-import com.justplay.habittracker.ui.helper.toLabelRes
+import com.justplay.habittracker.ui.mapper.toLabelRes
 import com.justplay.habittracker.ui.screen.task.event.RegularTaskEvent
 import com.justplay.habittracker.ui.screen.task.model.RegularTaskViewModel
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme

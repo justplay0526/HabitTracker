@@ -6,7 +6,7 @@ import com.justplay.data.db.classPkg.TaskType
 import com.justplay.data.db.entityHelper.baseSortOrder
 import com.justplay.data.db.repo.TaskRepo
 import com.justplay.habittracker.data.HabitEditUi
-import com.justplay.habittracker.ui.screen.taskEditList.uiMapper.toHabitEditUi
+import com.justplay.habittracker.ui.mapper.toHabitEditUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

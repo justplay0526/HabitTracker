@@ -35,7 +35,7 @@ import com.justplay.data.db.classPkg.PeriodOption
 import com.justplay.habittracker.R
 import com.justplay.habittracker.data.formatReminderTime
 import com.justplay.habittracker.data.formatUniformDate
-import com.justplay.habittracker.ui.helper.toLabelRes
+import com.justplay.habittracker.ui.mapper.toLabelRes
 import com.justplay.habittracker.ui.screen.task.ColorPickerBottomSheet
 import com.justplay.habittracker.ui.screen.task.ColorSection
 import com.justplay.habittracker.ui.screen.task.DatePickerBottomSheet

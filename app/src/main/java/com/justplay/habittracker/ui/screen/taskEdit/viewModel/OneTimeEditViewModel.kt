@@ -1,17 +1,14 @@
 package com.justplay.habittracker.ui.screen.taskEdit.viewModel
 
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.justplay.data.db.classPkg.TaskType
-import com.justplay.data.db.entity.TaskEntity
 import com.justplay.data.db.entityHelper.baseSortOrder
 import com.justplay.data.db.repo.TaskRepo
+import com.justplay.habittracker.ui.mapper.toOneTimeEditUiState
+import com.justplay.habittracker.ui.mapper.toTaskEntity
 import com.justplay.habittracker.ui.screen.taskEdit.OneTimeEditEvent
 import com.justplay.habittracker.ui.screen.taskEdit.uiState.OneTimeEditUiState
-import com.justplay.habittracker.ui.view.ColorResource
-import com.justplay.habittracker.ui.view.LastColorCircleIndex
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -190,64 +187,5 @@ class OneTimeEditViewModel @Inject constructor(
 
         // 未來時間且 >= 60 分鐘 → false
         return diffMinutes < 60
-    }
-
-    fun TaskEntity.toOneTimeEditUiState(): OneTimeEditUiState {
-        val isCustomColorSelected = !ColorResource.any { it.toArgb() == colorInt }
-        return OneTimeEditUiState(
-            taskId = id,
-            isLoading = false,
-            nameText = name,
-            selectedColorIndex =
-                if (!isCustomColorSelected) {
-                    ColorResource.indexOfFirst { it.toArgb() == colorInt }
-                } else LastColorCircleIndex,
-            colorSelected = isCustomColorSelected,
-            selectedColorInt = colorInt,
-            customColor = if (isCustomColorSelected) {
-                colorInt
-            } else {
-                Color.Red.toArgb()
-            },
-            selectedDate = oneTimeDate!!,
-            selectedIconRes = iconRes,
-            selectedPeriodOption = periodOption!!,
-            selectedTime = if (time == null) LocalTime.now() else time!!,
-            reminderState = reminderEnabled,
-            showColorPicker = false,
-            showIconPicker = false,
-            showDatePicker = false,
-            showTimePicker = false,
-            nameError = false,
-            timeError = false
-        )
-    }
-
-    fun OneTimeEditUiState.toTaskEntity(
-        order: Long
-    ): TaskEntity {
-        val color = if (selectedColorIndex == LastColorCircleIndex) customColor else selectedColorInt
-        val time = if (reminderState) selectedTime else null
-
-        return TaskEntity(
-            id = taskId, // 很重要， Update 時依賴這個主鍵進行更新
-            type = TaskType.ONE_TIME,
-            name = nameText.trim(),
-            colorInt = color,
-            iconRes = selectedIconRes,
-            periodOption = selectedPeriodOption,
-            reminderEnabled = reminderState,
-            time = time,
-            startDate = null,
-            oneTimeDate = selectedDate,
-            repeatOption = null,
-            selectedDaySet = emptySet(),
-            selectedDaysOfMonth = emptySet(),
-            freq = null,
-            endHabitOn = false,
-            endHabitDate = null,
-            sortOrder = order,
-            isArchived = false
-        )
     }
 }

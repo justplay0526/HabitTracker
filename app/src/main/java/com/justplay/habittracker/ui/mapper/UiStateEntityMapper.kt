@@ -1,4 +1,4 @@
-package com.justplay.habittracker.ui.helper
+package com.justplay.habittracker.ui.mapper
 
 import com.justplay.data.db.classPkg.EndHabitDayType
 import com.justplay.data.db.classPkg.RepeatOption
@@ -6,6 +6,8 @@ import com.justplay.data.db.classPkg.TaskType
 import com.justplay.data.db.entity.TaskEntity
 import com.justplay.habittracker.ui.screen.task.state.OneTimeTaskUiState
 import com.justplay.habittracker.ui.screen.task.state.RegularTaskUiState
+import com.justplay.habittracker.ui.screen.taskEdit.uiState.OneTimeEditUiState
+import com.justplay.habittracker.ui.view.LastColorCircleIndex
 import java.time.LocalDate
 
 fun RegularTaskUiState.toTaskEntity(
@@ -72,6 +74,34 @@ fun OneTimeTaskUiState.toTaskEntity(
         oneTimeDate = selectedDate,
 
         // OneTime 不用 repeat
+        repeatOption = null,
+        selectedDaySet = emptySet(),
+        selectedDaysOfMonth = emptySet(),
+        freq = null,
+        endHabitOn = false,
+        endHabitDate = null,
+        sortOrder = order,
+        isArchived = false
+    )
+}
+
+fun OneTimeEditUiState.toTaskEntity(
+    order: Long
+): TaskEntity {
+    val color = if (selectedColorIndex == LastColorCircleIndex) customColor else selectedColorInt
+    val time = if (reminderState) selectedTime else null
+
+    return TaskEntity(
+        id = taskId, // 很重要， Update 時依賴這個主鍵進行更新
+        type = TaskType.ONE_TIME,
+        name = nameText.trim(),
+        colorInt = color,
+        iconRes = selectedIconRes,
+        periodOption = selectedPeriodOption,
+        reminderEnabled = reminderState,
+        time = time,
+        startDate = null,
+        oneTimeDate = selectedDate,
         repeatOption = null,
         selectedDaySet = emptySet(),
         selectedDaysOfMonth = emptySet(),

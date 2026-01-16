@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.justplay.data.db.classPkg.TaskType
 import com.justplay.data.db.entityHelper.baseSortOrder
 import com.justplay.data.db.repo.TaskRepo
-import com.justplay.habittracker.ui.helper.toTaskEntity
+import com.justplay.habittracker.ui.mapper.toTaskEntity
 import com.justplay.habittracker.ui.screen.task.event.OneTimeTaskEvent
 import com.justplay.habittracker.ui.screen.task.state.OneTimeTaskUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
