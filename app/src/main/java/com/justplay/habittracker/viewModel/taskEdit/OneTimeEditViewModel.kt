@@ -63,7 +63,7 @@ class OneTimeEditViewModel @Inject constructor(
 
                 is OneTimeEditEvent.ColorIntSelected -> {
                     Timber
-                        .tag("OneTimeTaskViewModel")
+                        .tag(TAG)
                         .d("SelectedColorInt = ${event.color}")
 
                     state.copy(selectedColorInt = event.color)
@@ -187,5 +187,9 @@ class OneTimeEditViewModel @Inject constructor(
 
         // 未來時間且 >= 60 分鐘 → false
         return diffMinutes < 60
+    }
+
+    companion object {
+        const val TAG = "OneTimeEditViewModel"
     }
 }
