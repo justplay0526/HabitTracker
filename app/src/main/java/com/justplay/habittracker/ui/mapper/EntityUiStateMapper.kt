@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.justplay.data.db.entity.TaskEntity
 import com.justplay.habittracker.data.HabitEditUi
-import com.justplay.habittracker.ui.screen.taskEdit.uiState.OneTimeEditUiState
+import com.justplay.habittracker.ui.uiState.taskEdit.OneTimeEditUiState
 import com.justplay.habittracker.ui.uiState.taskDetail.RegularDetailUiState
 import com.justplay.habittracker.ui.view.ColorResource
 import com.justplay.habittracker.ui.view.LastColorCircleIndex

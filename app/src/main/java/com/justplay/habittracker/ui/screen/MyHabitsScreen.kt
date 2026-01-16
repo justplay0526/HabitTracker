@@ -24,8 +24,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.justplay.habittracker.R
 import com.justplay.habittracker.ui.screen.taskEditList.OneTimeEditListScreen
 import com.justplay.habittracker.ui.screen.taskEditList.RegularEditListScreen
-import com.justplay.habittracker.ui.screen.taskEditList.viewModel.OneTimeEditListViewModel
-import com.justplay.habittracker.ui.screen.taskEditList.viewModel.RegularEditListViewModel
+import com.justplay.habittracker.viewModel.taskEditList.OneTimeEditListViewModel
+import com.justplay.habittracker.viewModel.taskEditList.RegularEditListViewModel
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.CustomHorizontalPager
 

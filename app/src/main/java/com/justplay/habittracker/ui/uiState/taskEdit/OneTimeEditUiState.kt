@@ -1,4 +1,4 @@
-package com.justplay.habittracker.ui.screen.taskEdit.uiState
+package com.justplay.habittracker.ui.uiState.taskEdit
 
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
@@ -19,7 +19,7 @@ data class OneTimeEditUiState(
     // Color / Icon
     val colorSelected: Boolean = false,
     @param:ColorInt val selectedColorInt: Int = ColorResource.first().toArgb(),
-    @param:ColorInt val customColor: Int = Color.Red.toArgb(),
+    @param:ColorInt val customColor: Int = Color.Companion.Red.toArgb(),
     // Selected State
     val selectedDate: LocalDate = LocalDate.now(),
     /**

@@ -1,4 +1,4 @@
-package com.justplay.habittracker.ui.screen.taskEdit.viewModel
+package com.justplay.habittracker.viewModel.taskEdit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,8 +7,8 @@ import com.justplay.data.db.entityHelper.baseSortOrder
 import com.justplay.data.db.repo.TaskRepo
 import com.justplay.habittracker.ui.mapper.toOneTimeEditUiState
 import com.justplay.habittracker.ui.mapper.toTaskEntity
-import com.justplay.habittracker.ui.screen.taskEdit.OneTimeEditEvent
-import com.justplay.habittracker.ui.screen.taskEdit.uiState.OneTimeEditUiState
+import com.justplay.habittracker.ui.uiEvent.taskEdit.OneTimeEditEvent
+import com.justplay.habittracker.ui.uiState.taskEdit.OneTimeEditUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -113,7 +113,7 @@ class OneTimeEditViewModel @Inject constructor(
 
                 is OneTimeEditEvent.ShowDatePicker ->
                     state.copy(showDatePicker = true)
-                
+
                 is OneTimeEditEvent.ShowDeleteHabit ->
                     state.copy(showDeleteHabit = true)
 

@@ -1,4 +1,4 @@
-package com.justplay.habittracker.ui.screen.taskEdit
+package com.justplay.habittracker.ui.uiEvent.taskEdit
 
 import com.justplay.data.db.classPkg.PeriodOption
 import java.time.LocalDate

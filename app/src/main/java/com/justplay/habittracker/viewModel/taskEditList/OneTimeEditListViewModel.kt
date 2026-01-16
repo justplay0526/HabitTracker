@@ -1,4 +1,4 @@
-package com.justplay.habittracker.ui.screen.taskEditList.viewModel
+package com.justplay.habittracker.viewModel.taskEditList
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,10 +17,10 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class RegularEditListViewModel @Inject constructor(
+class OneTimeEditListViewModel @Inject constructor(
     private val repo: TaskRepo
 ): ViewModel() {
-    private val _listItems = repo.observeTasksByType(TaskType.REGULAR)
+    private val _listItems = repo.observeTasksByType(TaskType.ONE_TIME)
 
     val uiState: StateFlow<List<HabitEditUi>> = _listItems
         .map {
@@ -42,7 +42,7 @@ class RegularEditListViewModel @Inject constructor(
     }
 
     fun commitOrder(orderedIds: List<Long>) = viewModelScope.launch {
-        val base = baseSortOrder(TaskType.REGULAR)
+        val base = baseSortOrder(TaskType.ONE_TIME)
         /**
          * 因為sortOrder方向是 desc 所以要反著輸出
          */
@@ -53,6 +53,6 @@ class RegularEditListViewModel @Inject constructor(
     }
 
     companion object {
-        const val TAG = "RegularEditListViewModel"
+        const val TAG = "OneTimeEditListViewModel"
     }
 }

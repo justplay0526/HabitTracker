@@ -49,9 +49,10 @@ import com.justplay.habittracker.ui.screen.task.SingleChoiceSection
 import com.justplay.habittracker.ui.screen.task.TaskScaffold
 import com.justplay.habittracker.ui.screen.task.TimePickerDialog
 import com.justplay.habittracker.ui.screen.task.WhenSection
-import com.justplay.habittracker.ui.screen.taskEdit.uiState.OneTimeEditUiState
-import com.justplay.habittracker.ui.screen.taskEdit.viewModel.OneTimeEditViewModel
+import com.justplay.habittracker.ui.uiState.taskEdit.OneTimeEditUiState
+import com.justplay.habittracker.viewModel.taskEdit.OneTimeEditViewModel
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
+import com.justplay.habittracker.ui.uiEvent.taskEdit.OneTimeEditEvent
 import com.justplay.habittracker.ui.view.LastColorCircleIndex
 import kotlinx.coroutines.launch
 import timber.log.Timber

@@ -19,7 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.justplay.habittracker.data.HabitEditUi
-import com.justplay.habittracker.ui.screen.taskEditList.viewModel.RegularEditListViewModel
+import com.justplay.habittracker.viewModel.taskEditList.RegularEditListViewModel
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState

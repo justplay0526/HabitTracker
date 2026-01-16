@@ -6,7 +6,7 @@ import com.justplay.data.db.classPkg.TaskType
 import com.justplay.data.db.entity.TaskEntity
 import com.justplay.habittracker.ui.screen.task.state.OneTimeTaskUiState
 import com.justplay.habittracker.ui.screen.task.state.RegularTaskUiState
-import com.justplay.habittracker.ui.screen.taskEdit.uiState.OneTimeEditUiState
+import com.justplay.habittracker.ui.uiState.taskEdit.OneTimeEditUiState
 import com.justplay.habittracker.ui.view.LastColorCircleIndex
 import java.time.LocalDate
 
