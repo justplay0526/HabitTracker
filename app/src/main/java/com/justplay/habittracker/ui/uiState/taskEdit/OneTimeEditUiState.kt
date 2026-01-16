@@ -19,7 +19,7 @@ data class OneTimeEditUiState(
     // Color / Icon
     val colorSelected: Boolean = false,
     @param:ColorInt val selectedColorInt: Int = ColorResource.first().toArgb(),
-    @param:ColorInt val customColor: Int = Color.Companion.Red.toArgb(),
+    @param:ColorInt val customColor: Int = Color.Red.toArgb(),
     // Selected State
     val selectedDate: LocalDate = LocalDate.now(),
     /**
