@@ -39,6 +39,7 @@ import com.justplay.habittracker.ui.screen.MyHabitsScreen
 import com.justplay.habittracker.ui.screen.ReportScreen
 import com.justplay.habittracker.ui.screen.taskDetail.RegularTaskDetailScreen
 import com.justplay.habittracker.ui.screen.taskEdit.OneTimeTaskEditScreen
+import com.justplay.habittracker.ui.screen.taskEdit.RegularTaskEditScreen
 
 @Composable
 fun MainNavSuite() {
@@ -152,7 +153,23 @@ fun MainNavHost(
             RegularTaskDetailScreen(
                 taskId = taskId,
                 onBackClick = { navHost.popBackStack() },
-                onEditClick = {} // TODO Add Edit Regular Habit Screen
+                onEditClick = {
+                    navHost.navigate("${MyHabitsNavDest.EDIT_REGULAR_TASK.name}/$taskId")
+                }
+            )
+        }
+
+        composable(
+            route = MyHabitsNavDest.EDIT_REGULAR_TASK.name + "/{taskId}",
+            arguments = listOf(
+                navArgument("taskId") { type = NavType.LongType }
+            )
+        ) { backStackEntry ->
+            val taskId = backStackEntry.arguments!!.getLong("taskId")
+
+            RegularTaskEditScreen(
+                taskId = taskId,
+                onBackClick = { navHost.popBackStack() }
             )
         }
 

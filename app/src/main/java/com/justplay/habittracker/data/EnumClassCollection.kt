@@ -22,6 +22,7 @@ enum class HomeNavDest(
 enum class MyHabitsNavDest(
 ) {
     REGULAR_TASK_DETAIL,
+    EDIT_REGULAR_TASK,
     EDIT_ONE_TIME_TASK
 }
 
