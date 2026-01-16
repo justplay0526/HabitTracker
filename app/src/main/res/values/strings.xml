@@ -30,6 +30,12 @@
         <item quantity="other">%d days per week</item>
     </plurals>
 
+    <!-- Delete Habit -->
+    <string name="sent_delete_keep">Delete Habit &amp; Keep History</string>
+    <string name="sent_delete_clear">Delete Habit &amp; Clear History</string>
+    <string name="sent_delete_habit_success">Habit has been deleted!</string>
+    <string name="sent_delete_habit_history_success">Habit &amp; history has been deleted!</string>
+
     <string name="sent_warning_text_choose_day_of_week">Please Choose at least one Day Of Week</string>
     <string name="sent_warning_text_choose_day_of_month">Please Choose at least one Day Of Month</string>
     <string name="sent_warning_text_enter_habit_name">Please Enter A Habit Name</string>
@@ -37,6 +43,7 @@
     <string name="sent_warning_text_select_repeat_type">Please Select A Repeat Type</string>
     <string name="sent_warning_text_select_period_type">Please Select A Time Of Day</string>
     <string name="sent_warning_text_select_time">Please select a time range of at least 60 minutes</string>
+    <string name="sent_warning_text_select_new_date">Please select a new date</string>
 
     <string name="sent_warning_text_enter_number">
         Range: %d~%d
@@ -93,9 +100,11 @@
     <string name="title_choose_color">Choose Color</string>
     <string name="title_choose_icon">Choose Icon</string>
     <string name="title_create_new_habit">Create New Habit</string>
+    <string name="title_delete_habit">Delete this Habit?</string>
     <string name="title_do_it_at">Do it at:</string>
     <string name="title_end_habit_on">End Habit On</string>
     <string name="title_enter_number">Enter Number</string>
+    <string name="title_habit">Habit</string>
     <string name="title_habit_name">Habit Name</string>
     <string name="title_home">Home</string>
     <string name="title_icon">Icon</string>

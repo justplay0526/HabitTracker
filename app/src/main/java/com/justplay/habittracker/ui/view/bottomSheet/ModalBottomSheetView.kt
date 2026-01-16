@@ -3,7 +3,16 @@ package com.justplay.habittracker.ui.view.bottomSheet
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.tooling.preview.Preview
+import com.justplay.habittracker.data.DeleteHabitSheetState
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,6 +48,69 @@ fun DateModalBottomSheet(
             onDateSelected = onDateSelected,
             onDismiss = onCancel
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DeleteHabitModalBottomSheet(
+    sheetState: SheetState,
+    onCancel: () -> Unit,
+    onDeleteKeepHistory: suspend () -> Unit,
+    onDeleteClearHistory: suspend () -> Unit
+) {
+    var uiState by remember {
+        mutableStateOf<DeleteHabitSheetState>(
+            DeleteHabitSheetState.Confirm
+        )
+    }
+
+    val scope = rememberCoroutineScope()
+
+    ModalBottomSheet(
+        onDismissRequest = onCancel,
+        sheetState = sheetState,
+    ) {
+        when (uiState) {
+            DeleteHabitSheetState.Confirm -> {
+                DeleteHabitSelection(
+                    onDeleteKeepHistory = {
+                        scope.launch {
+                            onDeleteKeepHistory()
+                            uiState = DeleteHabitSheetState.SuccessKeep
+                        }
+                    },
+                    onDeleteClearHistory = {
+                        scope.launch {
+                            onDeleteClearHistory()
+                            uiState = DeleteHabitSheetState.SuccessClear
+                        }
+                    }
+                )
+            }
+            DeleteHabitSheetState.SuccessKeep -> {
+                DeleteHabitSuccess(
+                    clearHistory = false,
+                    onDone = {
+                        scope.launch {
+                            sheetState.hide()
+                            onCancel()
+                        }
+                    }
+                )
+            }
+            DeleteHabitSheetState.SuccessClear -> {
+                DeleteHabitSuccess(
+                    clearHistory = true,
+                    onDone = {
+                        scope.launch {
+                            sheetState.hide()
+                            onCancel()
+                        }
+                    }
+                )
+            }
+        }
     }
 }
 
@@ -80,4 +152,19 @@ fun NumberInputModalBottomSheet(
             onDismiss = onCancel
         )
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+fun DeleteHabitModalBottomSheetPreview() {
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
+    DeleteHabitModalBottomSheet(
+        sheetState = sheetState,
+        onCancel = {},
+        onDeleteKeepHistory = {},
+        onDeleteClearHistory = {}
+    )
 }

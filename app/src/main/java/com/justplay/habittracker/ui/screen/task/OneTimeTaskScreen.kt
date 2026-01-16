@@ -18,10 +18,11 @@ import com.justplay.data.db.classPkg.PeriodOption
 import com.justplay.habittracker.R
 import com.justplay.habittracker.data.formatReminderTime
 import com.justplay.habittracker.data.formatUniformDate
-import com.justplay.habittracker.ui.helper.toLabelRes
+import com.justplay.habittracker.ui.mapper.toLabelRes
 import com.justplay.habittracker.ui.screen.task.event.OneTimeTaskEvent
 import com.justplay.habittracker.ui.screen.task.model.OneTimeTaskViewModel
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
+import com.justplay.habittracker.ui.view.LastColorCircleIndex
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,7 +49,7 @@ fun OneTimeTaskScreen(
         onColorSelected = {
             onEvent(OneTimeTaskEvent.ColorPicked(it.toColorInt()))
             onEvent(OneTimeTaskEvent.ColorIntSelected(it.toColorInt()))
-            onEvent(OneTimeTaskEvent.ColorSelected(14))
+            onEvent(OneTimeTaskEvent.ColorSelected(LastColorCircleIndex))
             onEvent(OneTimeTaskEvent.HideColorPicker)
         }
     )

@@ -42,7 +42,7 @@ import com.justplay.data.db.classPkg.PeriodOption
 import com.justplay.habittracker.data.DragToActionValue
 import com.justplay.habittracker.data.HabitUi
 import com.justplay.habittracker.data.TodayUiState
-import com.justplay.habittracker.ui.helper.toLabelRes
+import com.justplay.habittracker.ui.mapper.toLabelRes
 import com.justplay.habittracker.ui.theme.AppTypography
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.DraggableItemWithActions

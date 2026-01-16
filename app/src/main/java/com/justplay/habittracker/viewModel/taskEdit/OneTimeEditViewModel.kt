@@ -1,16 +1,19 @@
-package com.justplay.habittracker.ui.screen.task.model
+package com.justplay.habittracker.viewModel.taskEdit
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.justplay.data.db.classPkg.TaskType
 import com.justplay.data.db.entityHelper.baseSortOrder
 import com.justplay.data.db.repo.TaskRepo
+import com.justplay.habittracker.ui.mapper.toOneTimeEditUiState
 import com.justplay.habittracker.ui.mapper.toTaskEntity
-import com.justplay.habittracker.ui.screen.task.event.OneTimeTaskEvent
-import com.justplay.habittracker.ui.screen.task.state.OneTimeTaskUiState
+import com.justplay.habittracker.ui.uiEvent.taskEdit.OneTimeEditEvent
+import com.justplay.habittracker.ui.uiState.taskEdit.OneTimeEditUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.Duration
 import java.time.LocalDate
@@ -19,81 +22,108 @@ import java.time.LocalTime
 import javax.inject.Inject
 
 @HiltViewModel
-class OneTimeTaskViewModel @Inject constructor(
-    private val repo: TaskRepo
-): ViewModel() {
-    private val _uiState = MutableStateFlow(OneTimeTaskUiState())
+class OneTimeEditViewModel @Inject constructor(
+    private val repo: TaskRepo,
+) : ViewModel() {
+    private val _uiState = MutableStateFlow(OneTimeEditUiState())
     val uiState = _uiState.asStateFlow()
 
-    fun onEvent(event: OneTimeTaskEvent) {
+    fun load(taskId: Long) {
+        if (_uiState.value.isLoading.not() && _uiState.value.taskId == taskId) return
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+
+            val entity = repo.getTaskById(taskId)
+            if (entity == null) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                    )
+                }
+                return@launch
+            }
+
+            _uiState.value = entity.toOneTimeEditUiState()
+        }
+    }
+
+    fun onEvent(event: OneTimeEditEvent) {
         _uiState.update { state ->
             when(event) {
-                is OneTimeTaskEvent.ColorPicked ->
+                is OneTimeEditEvent.ColorPicked ->
                     state.copy(
                         customColor = event.color,
                         colorSelected = true
                     )
 
-                is OneTimeTaskEvent.ColorSelected ->
+                is OneTimeEditEvent.ColorSelected -> {
                     state.copy(selectedColorIndex = event.index)
+                }
 
-                is OneTimeTaskEvent.ColorIntSelected -> {
+                is OneTimeEditEvent.ColorIntSelected -> {
                     Timber
-                        .tag("OneTimeTaskViewModel")
+                        .tag(TAG)
                         .d("SelectedColorInt = ${event.color}")
 
                     state.copy(selectedColorInt = event.color)
                 }
 
-                is OneTimeTaskEvent.DateChanged ->
-                    state.copy(selectedDate = event.date)
+                is OneTimeEditEvent.DateChanged ->
+                    state.copy(
+                        selectedDate = event.date,
+                        dateError = false)
 
-                is OneTimeTaskEvent.HideColorPicker ->
+                is OneTimeEditEvent.HideColorPicker ->
                     state.copy(showColorPicker = false)
 
-                is OneTimeTaskEvent.HideDatePicker ->
+                is OneTimeEditEvent.HideDatePicker ->
                     state.copy(showDatePicker = false)
 
-                is OneTimeTaskEvent.HideIconPicker ->
+                is OneTimeEditEvent.HideDeleteHabit ->
+                    state.copy(showDeleteHabit = false)
+
+                is OneTimeEditEvent.HideIconPicker ->
                     state.copy(showIconPicker = false)
 
-                is OneTimeTaskEvent.HideTimePicker ->
+                is OneTimeEditEvent.HideTimePicker ->
                     state.copy(showTimePicker = false)
 
-                is OneTimeTaskEvent.IconPicked ->
+                is OneTimeEditEvent.IconPicked ->
                     state.copy(selectedIconRes = event.iconRes)
 
-                is OneTimeTaskEvent.IconSelected ->
+                is OneTimeEditEvent.IconSelected ->
                     state.copy(selectedIconRes = event.index)
 
-                is OneTimeTaskEvent.NameChanged -> {
+                is OneTimeEditEvent.NameChanged -> {
                     state.copy(
                         nameText = event.value,
-                        nameTextEdited = true,
-                        nameError = (event.value.isBlank() &&
-                                state.nameTextEdited)
+                        nameError = event.value.isBlank()
                     )
                 }
 
-                is OneTimeTaskEvent.PeriodOptionChanged ->
+                is OneTimeEditEvent.PeriodOptionChanged ->
                     state.copy(selectedPeriodOption = event.option)
 
-                is OneTimeTaskEvent.ReminderChanged ->
+                is OneTimeEditEvent.ReminderChanged ->
                     state.copy(reminderState = event.enabled)
 
-                is OneTimeTaskEvent.ShowColorPicker ->
+                is OneTimeEditEvent.ShowColorPicker ->
                     state.copy(showColorPicker = true)
 
-                is OneTimeTaskEvent.ShowDatePicker ->
+                is OneTimeEditEvent.ShowDatePicker ->
                     state.copy(showDatePicker = true)
 
-                is OneTimeTaskEvent.ShowIconPicker ->
+                is OneTimeEditEvent.ShowDeleteHabit ->
+                    state.copy(showDeleteHabit = true)
+
+                is OneTimeEditEvent.ShowIconPicker ->
                     state.copy(showIconPicker = true)
 
-                is OneTimeTaskEvent.ShowTimePicker ->
+                is OneTimeEditEvent.ShowTimePicker ->
                     state.copy(showTimePicker = true)
 
-                is OneTimeTaskEvent.TimeChanged -> {
+                is OneTimeEditEvent.TimeChanged -> {
                     state.copy(
                         selectedTime = event.time,
                         timeError = isTimeNotValid(
@@ -115,7 +145,7 @@ class OneTimeTaskViewModel @Inject constructor(
             max < base -> base
             else -> max + 1
         }
-        repo.upsertTask(_uiState.value.toTaskEntity(order))
+        repo.updateTask(_uiState.value.toTaskEntity(order))
         return true
     }
 
@@ -126,13 +156,25 @@ class OneTimeTaskViewModel @Inject constructor(
                     state.copy(nameError = true)
                 }
             }
+            if (isDateNotValid(selectedDate)) {
+                _uiState.update { state ->
+                    state.copy(dateError = true)
+                }
+            }
             if (reminderState && isTimeNotValid(selectedDate, selectedTime)) {
                 _uiState.update { state ->
                     state.copy(timeError = true)
                 }
             }
         }
-        return with(_uiState.value) { nameError || timeError }
+        return with(_uiState.value) { nameError || dateError || timeError }
+    }
+
+    private fun isDateNotValid(
+        date: LocalDate
+    ): Boolean {
+        val now = LocalDate.now()
+        return date.isBefore(now)
     }
 
     private fun isTimeNotValid(
@@ -145,5 +187,9 @@ class OneTimeTaskViewModel @Inject constructor(
 
         // 未來時間且 >= 60 分鐘 → false
         return diffMinutes < 60
+    }
+
+    companion object {
+        const val TAG = "OneTimeEditViewModel"
     }
 }

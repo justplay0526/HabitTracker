@@ -1,7 +1,9 @@
 package com.justplay.data.db.repo
 
 import com.justplay.data.db.classPkg.RepeatOption
+import com.justplay.data.db.classPkg.SortOrderUpdate
 import com.justplay.data.db.classPkg.TaskStatus
+import com.justplay.data.db.classPkg.TaskType
 import com.justplay.data.db.classPkg.TodayTaskItem
 import com.justplay.data.db.dao.TaskDao
 import com.justplay.data.db.dao.TaskLogDao
@@ -25,6 +27,8 @@ interface TaskRepo {
 
     fun observeActiveTasks(): Flow<List<TaskEntity>>
 
+    fun observeTasksByType(type: TaskType): Flow<List<TaskEntity>>
+
     fun observeTodayItems(today: LocalDate): Flow<List<TodayTaskItem>>
 
     fun observeWeeklyCompletedCounts(
@@ -39,6 +43,12 @@ interface TaskRepo {
         date: LocalDate): Flow<Map<Long, TaskStatus>>
 
     suspend fun upsertTask(entity: TaskEntity): Long
+
+    suspend fun getTaskById(id: Long): TaskEntity?
+
+    suspend fun getTasksByType(type: TaskType): List<TaskEntity>
+
+    suspend fun getMaxSortOrderByType(type: TaskType): Long?
 
     /**
      * 讀 [date] 狀態（null = NONE）
@@ -61,6 +71,12 @@ interface TaskRepo {
      */
     suspend fun getStatusMapForStreak(
         taskId: Long, fromDate: LocalDate): Map<LocalDate, TaskStatus>
+
+    suspend fun updateTask(entity: TaskEntity)
+
+    suspend fun updateSortOrder(id: Long, sortOrder: Long): Int
+
+    suspend fun updateSortOrders(updates: List<Pair<Long, Long>>)
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -71,6 +87,9 @@ class TaskRepoImpl @Inject constructor(
 ): TaskRepo {
     override fun observeActiveTasks(): Flow<List<TaskEntity>>
     = taskDao.observeActiveTasks()
+
+    override fun observeTasksByType(type: TaskType): Flow<List<TaskEntity>>
+    = taskDao.observeTasksByType(type)
 
     override fun observeTodayItems(today: LocalDate): Flow<List<TodayTaskItem>> =
         taskDao.observeActiveTasks()
@@ -158,6 +177,14 @@ class TaskRepoImpl @Inject constructor(
 
     override suspend fun upsertTask(entity: TaskEntity): Long = taskDao.upsert(entity)
 
+    override suspend fun getTaskById(id: Long): TaskEntity? = taskDao.getById(id)
+
+    override suspend fun getTasksByType(type: TaskType): List<TaskEntity>
+    = taskDao.getTasksByType(type)
+
+    override suspend fun getMaxSortOrderByType(type: TaskType): Long?
+    = taskDao.getMaxSortOrderByType(type)
+
     override suspend fun getStatus(
         taskId: Long, date: LocalDate): TaskStatus?
     = logDao.get(taskId, date)?.status
@@ -183,4 +210,12 @@ class TaskRepoImpl @Inject constructor(
     = logDao.getLogsFrom(taskId, fromDate).associate {
         it.date to it.status
     }
+
+    override suspend fun updateTask(entity: TaskEntity) = taskDao.update(entity)
+
+    override suspend fun updateSortOrder(id: Long, sortOrder: Long): Int
+    = taskDao.updateSortOrder(id, sortOrder)
+
+    override suspend fun updateSortOrders(updates: List<Pair<Long, Long>>)
+    = taskDao.updateSortOrders(updates.map { (id, order) -> SortOrderUpdate(id, order) })
 }

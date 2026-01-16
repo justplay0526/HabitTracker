@@ -64,19 +64,21 @@ import com.justplay.habittracker.R
 import com.justplay.habittracker.data.formatUniformDate
 import com.justplay.habittracker.data.formatUniformDays
 import com.justplay.habittracker.ui.helper.asPainter
-import com.justplay.habittracker.ui.helper.toLabelRes
+import com.justplay.habittracker.ui.mapper.toLabelRes
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.CircleColorBox
 import com.justplay.habittracker.ui.view.CirclePictureBox
 import com.justplay.habittracker.ui.view.ColorResource
 import com.justplay.habittracker.ui.view.HabitInputField
 import com.justplay.habittracker.ui.view.IconsRes
+import com.justplay.habittracker.ui.view.LastColorCircleIndex
 import com.justplay.habittracker.ui.view.MonthlyCalendar
 import com.justplay.habittracker.ui.view.OutlinedIcon
 import com.justplay.habittracker.ui.view.PickerRow
 import com.justplay.habittracker.ui.view.SingleChoiceChipGroup
 import com.justplay.habittracker.ui.view.bottomSheet.ColorModalBottomSheet
 import com.justplay.habittracker.ui.view.bottomSheet.DateModalBottomSheet
+import com.justplay.habittracker.ui.view.bottomSheet.DeleteHabitModalBottomSheet
 import com.justplay.habittracker.ui.view.bottomSheet.IconModalBottomSheet
 import com.justplay.habittracker.ui.view.bottomSheet.NumberInputModalBottomSheet
 import com.justplay.habittracker.ui.view.oneAlphabetWeekLabels
@@ -113,7 +115,7 @@ fun ColorSection(
          * TODO handle color picker for last Circle Box
          * TODO connect to ViewModel
          */
-        ColorResource.take(14).forEachIndexed {
+        ColorResource.take(LastColorCircleIndex).forEachIndexed {
                 index, colorData ->
             CircleColorBox(
                 color = colorData,
@@ -130,7 +132,7 @@ fun ColorSection(
         if (!colorSelected) {
             CirclePictureBox(
                 painter = painterResource(R.mipmap.hsv_color_palette),
-                selected = selectedColorIndex == 14,
+                selected = selectedColorIndex == LastColorCircleIndex,
                 onClick = {
                     showPicker()
                 },
@@ -141,9 +143,9 @@ fun ColorSection(
         } else {
             CircleColorBox(
                 color = Color(customColor),
-                selected = selectedColorIndex == 14,
+                selected = selectedColorIndex == LastColorCircleIndex,
                 onClick = {
-                    onColorIndexSelected(14)
+                    onColorIndexSelected(LastColorCircleIndex)
                     showPicker()
                 },
                 modifier = Modifier
@@ -184,6 +186,25 @@ fun DatePickerBottomSheet(
             sheetState = sheetState,
             onDateSelected =  onDateSelected,
             onCancel = onDismissRequest
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DeleteHabitBottomSheet(
+    show: Boolean,
+    sheetState: SheetState,
+    onDismissRequest: () -> Unit,
+    onDeleteKeepHistory: suspend () -> Unit,
+    onDeleteClearHistory: suspend () -> Unit,
+) {
+    if (show) {
+        DeleteHabitModalBottomSheet(
+            sheetState = sheetState,
+            onCancel = onDismissRequest,
+            onDeleteKeepHistory = onDeleteKeepHistory,
+            onDeleteClearHistory = onDeleteClearHistory
         )
     }
 }
@@ -598,10 +619,11 @@ fun <T> SingleChoiceSection(
 
 @Composable
 fun TaskScaffold(
+    modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp)
@@ -749,7 +771,8 @@ fun WeeklySection(
 @Composable
 fun WhenSection(
     dateString: String,
-    onDateSelected: () -> Unit
+    onDateSelected: () -> Unit,
+    isError: Boolean = false
 ) {
     Text(
         text = stringResource(R.string.title_when),
@@ -764,6 +787,15 @@ fun WhenSection(
         modifier = Modifier
             .fillMaxWidth()
     )
+
+    if (isError) {
+        Text(
+            text = stringResource(R.string.sent_warning_text_select_new_date),
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+        )
+    }
 }
 // Preview Region
 @Preview(showBackground = true, locale = "en")

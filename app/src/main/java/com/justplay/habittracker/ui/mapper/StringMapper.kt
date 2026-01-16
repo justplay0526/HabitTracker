@@ -1,4 +1,4 @@
-package com.justplay.habittracker.ui.helper
+package com.justplay.habittracker.ui.mapper
 
 import androidx.annotation.StringRes
 import com.justplay.data.db.classPkg.EndHabitDayType
