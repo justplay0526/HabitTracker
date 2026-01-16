@@ -1,5 +1,6 @@
 package com.justplay.habittracker.ui.screen.taskEditList
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -25,7 +26,8 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
 fun RegularEditListScreen(
-    vm: RegularEditListViewModel
+    vm: RegularEditListViewModel,
+    onEditRegularTask: (Long) -> Unit,
 ) {
     val uiState by vm.uiState.collectAsState()
     val lazyListState = rememberLazyListState()
@@ -70,7 +72,9 @@ fun RegularEditListScreen(
                         color = habit.color,
                         text = habit.title,
                         iconRes = habit.icon,
-                        modifier = Modifier.draggableHandle(
+                        modifier = Modifier
+                            .clickable { onEditRegularTask(habit.id) }
+                            .draggableHandle(
                             onDragStarted = { isDragging = true },
                             onDragStopped = {
                                 isDragging = false
@@ -91,6 +95,6 @@ fun RegularEditListScreenPreview() {
     val viewModel: RegularEditListViewModel = hiltViewModel()
 
     HabitTrackerTheme {
-        RegularEditListScreen(vm = viewModel)
+        RegularEditListScreen(vm = viewModel) {}
     }
 }
