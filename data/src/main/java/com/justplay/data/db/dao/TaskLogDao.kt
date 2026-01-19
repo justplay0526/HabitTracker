@@ -22,6 +22,9 @@ interface TaskLogDao {
     @Query("DELETE FROM $TASK_LOG_TABLE WHERE taskId = :taskId AND date = :date")
     suspend fun delete(taskId: Long, date: LocalDate)
 
+    @Query("DELETE FROM $TASK_LOG_TABLE WHERE taskId = :taskId")
+    suspend fun deleteById(taskId: Long)
+
     /**
      * 查某 task 某天的狀態（null = NONE）
      */

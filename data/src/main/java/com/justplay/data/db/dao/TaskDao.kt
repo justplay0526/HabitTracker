@@ -26,6 +26,9 @@ interface TaskDao {
     @Delete
     suspend fun delete(entity: TaskEntity)
 
+    @Query("DELETE FROM $TASK_TABLE WHERE id = :taskId")
+    suspend fun deleteById(taskId: Long)
+
     /**
      * 軟刪除（不直接 delete，避免歷史紀錄變成無頭騎士）
      */
