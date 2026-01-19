@@ -33,7 +33,7 @@ interface TaskLogDao {
 
     @Query("""
         SELECT taskId AS taskId, COUNT(*) AS cnt
-        FROM task_log
+        FROM $TASK_LOG_TABLE
         WHERE taskId IN (:taskIds)
           AND status = :status
           AND date BETWEEN :startDate AND :endDate
@@ -49,7 +49,7 @@ interface TaskLogDao {
     // Today 還會用到「今天每個 task 的狀態」
     @Query("""
         SELECT *
-        FROM task_log
+        FROM $TASK_LOG_TABLE
         WHERE date = :date
           AND taskId IN (:taskIds)
     """)
@@ -66,7 +66,8 @@ interface TaskLogDao {
 
     /**
      * streak 用：取某 task 從某天之後(含)的所有 log
-     * （你可以用 today.minusDays(365) 做一年回溯）
+     *
+     * 可以用 today.minusDays(365) 做一年回溯
      */
     @Query("SELECT * FROM $TASK_LOG_TABLE WHERE taskId = :taskId AND date >= :fromDate")
     suspend fun getLogsFrom(taskId: Long, fromDate: LocalDate): List<TaskLogEntity>
