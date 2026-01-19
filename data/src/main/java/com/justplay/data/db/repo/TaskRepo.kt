@@ -58,6 +58,10 @@ interface TaskRepo {
 
     suspend fun archiveTask(taskId: Long)
 
+    suspend fun deleteTask(taskId: Long)
+
+    suspend fun deleteTaskLog(taskId: Long)
+
     /**
      * 設定某天狀態：
      * - COMPLETED / SKIPPED：upsert log
@@ -190,6 +194,10 @@ class TaskRepoImpl @Inject constructor(
     = logDao.get(taskId, date)?.status
 
     override suspend fun archiveTask(taskId: Long) = taskDao.archive(taskId)
+
+    override suspend fun deleteTask(taskId: Long) = taskDao.deleteById(taskId)
+
+    override suspend fun deleteTaskLog(taskId: Long) = logDao.deleteById(taskId)
 
     override suspend fun setStatus(
         taskId: Long, date: LocalDate, status: TaskStatus?)
