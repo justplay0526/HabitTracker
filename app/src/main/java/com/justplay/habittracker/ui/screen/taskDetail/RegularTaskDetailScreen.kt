@@ -162,8 +162,54 @@ fun RegularTaskDetailScreen(
                     Spacer(modifier = Modifier.weight(1f))
 
                     Text(
-                        text = "Everyday", // TODO Add calculate Frequency
-                        style = MaterialTheme.typography.bodyMedium
+                        text = transferFreq(
+                            daySet = uiState.daySet,
+                            dayOfMonth = uiState.dayOfMonth,
+                            freq = uiState.freq
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                }
+            }
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 160.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = 16.dp, vertical = 8.dp
+                    ),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                // Current Streak
+                item {
+                    RegularDetailGridItem(
+                        contentText = "121 days", // Sample Text
+                        hintText = stringResource(R.string.text_current_streak)
+                    )
+                }
+                // Completion Rate
+                item {
+                    RegularDetailGridItem(
+                        contentText = "95 %", // Sample Text
+                        hintText = stringResource(R.string.text_complete_rate)
+                    )
+                }
+                // Habit Completed
+                item {
+                    RegularDetailGridItem(
+                        contentText = "500", // Sample Text
+                        hintText = stringResource(R.string.text_habit_complete)
+                    )
+                }
+                // Total Perfect Days
+                item {
+                    RegularDetailGridItem(
+                        contentText = "495", // Sample Text
+                        hintText = stringResource(R.string.text_total_perfect_day)
                     )
                 }
             }
