@@ -5,13 +5,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -39,7 +37,6 @@ import com.justplay.habittracker.ui.mapper.toLabelRes
 import com.justplay.habittracker.ui.screen.task.ColorPickerBottomSheet
 import com.justplay.habittracker.ui.screen.task.ColorSection
 import com.justplay.habittracker.ui.screen.task.DatePickerBottomSheet
-import com.justplay.habittracker.ui.screen.task.DeleteHabitBottomSheet
 import com.justplay.habittracker.ui.screen.task.EndHabitOnSection
 import com.justplay.habittracker.ui.screen.task.IconPickerBottomSheet
 import com.justplay.habittracker.ui.screen.task.IconSection
@@ -108,20 +105,6 @@ fun RegularTaskEditScreen(
         }
     )
 
-    DeleteHabitBottomSheet(
-        show = uiState.showDeleteHabit,
-        sheetState = sheetState,
-        onDismissRequest = {
-            onEvent(RegularEditEvent.HideDeleteHabit)
-        },
-        onDeleteKeepHistory = {
-            // TODO call archive function
-        },
-        onDeleteClearHistory = {
-            // TODO call delete Task & log function
-        }
-    )
-
     IconPickerBottomSheet(
         show = uiState.showIconPicker,
         initIcon = uiState.selectedIconRes,
@@ -158,17 +141,6 @@ fun RegularTaskEditScreen(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.Rounded.Close,
-                            contentDescription = null
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {
-                        onEvent(RegularEditEvent.ShowDeleteHabit)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Rounded.Delete,
-                            tint = MaterialTheme.colorScheme.error,
                             contentDescription = null
                         )
                     }
