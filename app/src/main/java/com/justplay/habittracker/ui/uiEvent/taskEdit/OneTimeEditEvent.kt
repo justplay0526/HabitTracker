@@ -24,6 +24,9 @@ sealed interface OneTimeEditEvent {
 
     // Switch
     data class ReminderChanged(val enabled: Boolean) : OneTimeEditEvent
+    // Delete Task
+    data class DeleteAndKeepHistory(val taskId: Long) : OneTimeEditEvent
+    data class DeleteAndClearHistory(val taskId: Long) : OneTimeEditEvent
 
     // Sheet control
     data object ShowColorPicker : OneTimeEditEvent
