@@ -59,6 +59,11 @@
 <!-- Text -->
     <string name="text_all_day">All day</string>
     <string name="text_date">Date</string>
+    <string name="text_complete_rate">Completion rate</string>
+    <string name="text_current_streak">Current Streak</string>
+    <string name="text_everyday">Everyday</string>
+    <string name="text_habit_complete">Habit completed</string>
+    <string name="text_total_perfect_day">Total perfect days</string>
 <!--  Date Text -->
     <string name="text_date_today">Today,</string>
     <string name="text_date_tomorrow">Tomorrow,</string>
