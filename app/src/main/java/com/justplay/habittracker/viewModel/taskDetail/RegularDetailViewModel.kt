@@ -42,6 +42,19 @@ class RegularDetailViewModel @Inject constructor(
 
     fun onEvent(event: RegularDetailEvent) {
         when(event) {
+            is RegularDetailEvent.DeleteAndKeepHistory -> {
+                viewModelScope.launch {
+                    repo.archiveTask(event.taskId)
+                }
+            }
+
+            is RegularDetailEvent.DeleteAndClearHistory -> {
+                viewModelScope.launch {
+                    repo.deleteTask(event.taskId)
+                    repo.deleteTaskLog(event.taskId)
+                }
+            }
+
             is RegularDetailEvent.HideDeleteHabit ->
                 _uiState.value = _uiState.value.copy(showDeleteHabit = false)
 

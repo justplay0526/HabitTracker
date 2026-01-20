@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,6 +43,8 @@ import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.uiEvent.taskDetail.RegularDetailEvent
 import com.justplay.habittracker.ui.uiState.taskDetail.RegularDetailUiState
 import com.justplay.habittracker.viewModel.taskDetail.RegularDetailViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,6 +55,7 @@ fun RegularTaskDetailScreen(
     onEvent: (RegularDetailEvent) -> Unit
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
@@ -64,10 +68,18 @@ fun RegularTaskDetailScreen(
             onEvent(RegularDetailEvent.HideDeleteHabit)
         },
         onDeleteKeepHistory = {
-            // TODO call archive function
+            onEvent(RegularDetailEvent.DeleteAndKeepHistory(uiState.taskId))
+            scope.launch {
+                delay(1000)
+                onBackClick()
+            }
         },
         onDeleteClearHistory = {
-            // TODO call delete Task & log function
+            onEvent(RegularDetailEvent.DeleteAndClearHistory(uiState.taskId))
+            scope.launch {
+                delay(1000)
+                onBackClick()
+            }
         }
     )
 
