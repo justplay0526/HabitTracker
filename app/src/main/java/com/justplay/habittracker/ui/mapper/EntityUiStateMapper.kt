@@ -26,7 +26,10 @@ fun TaskEntity.toRegularDetailUiState(): RegularDetailUiState {
         taskId = id,
         isLoading = false,
         habitName = name,
-        iconRes = iconRes
+        iconRes = iconRes,
+        daySet = selectedDaySet,
+        dayOfMonth = selectedDaysOfMonth,
+        freq = freq
     )
 }
 
