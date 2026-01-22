@@ -32,6 +32,20 @@ interface TaskLogDao {
     suspend fun get(taskId: Long, date: LocalDate): TaskLogEntity?
 
     @Query("""
+    SELECT COUNT(*) 
+    FROM $TASK_LOG_TABLE
+    WHERE taskId = :taskId
+      AND status = :status
+      AND date BETWEEN :startDate AND :endDate
+    """)
+    suspend fun getCountInRange(
+        taskId: Long,
+        status: TaskStatus,
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): Int
+
+    @Query("""
         SELECT taskId AS taskId, COUNT(*) AS cnt
         FROM $TASK_LOG_TABLE
         WHERE taskId IN (:taskIds)

@@ -56,6 +56,11 @@ interface TaskRepo {
     suspend fun getStatus(
         taskId: Long, date: LocalDate): TaskStatus?
 
+    suspend fun getCountInRange(
+        taskId: Long, status: TaskStatus,
+        startDate: LocalDate, endDate: LocalDate
+    ): Int
+
     suspend fun archiveTask(taskId: Long)
 
     suspend fun deleteTask(taskId: Long)
@@ -192,6 +197,11 @@ class TaskRepoImpl @Inject constructor(
     override suspend fun getStatus(
         taskId: Long, date: LocalDate): TaskStatus?
     = logDao.get(taskId, date)?.status
+
+    override suspend fun getCountInRange(
+        taskId: Long, status: TaskStatus,
+        startDate: LocalDate, endDate: LocalDate
+    ): Int = logDao.getCountInRange(taskId, status, startDate, endDate)
 
     override suspend fun archiveTask(taskId: Long) = taskDao.archive(taskId)
 
