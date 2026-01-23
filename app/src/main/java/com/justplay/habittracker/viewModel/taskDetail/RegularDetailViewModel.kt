@@ -2,6 +2,7 @@ package com.justplay.habittracker.viewModel.taskDetail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.justplay.data.db.classPkg.TaskStatus
 import com.justplay.data.db.repo.TaskRepo
 import com.justplay.habittracker.ui.mapper.toRegularDetailUiState
 import com.justplay.habittracker.ui.uiEvent.taskDetail.RegularDetailEvent
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,6 +39,14 @@ class RegularDetailViewModel @Inject constructor(
             }
 
             _uiState.value = entity.toRegularDetailUiState()
+
+            val completedCnt = repo.getCountInRange(
+                taskId = taskId,
+                status = TaskStatus.COMPLETED,
+                startDate = entity.startDate!!,
+                endDate = LocalDate.now()
+            )
+            _uiState.update { it.copy(completedCount = completedCnt) }
         }
     }
 

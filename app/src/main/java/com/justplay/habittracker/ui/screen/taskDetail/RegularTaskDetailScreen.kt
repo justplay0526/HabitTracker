@@ -217,7 +217,7 @@ fun RegularTaskDetailScreen(
                 // Habit Completed
                 item {
                     RegularDetailGridItem(
-                        contentText = "500", // Sample Text
+                        contentText = uiState.completedCount.toString(), // Sample Text
                         hintText = stringResource(R.string.text_habit_complete)
                     )
                 }
