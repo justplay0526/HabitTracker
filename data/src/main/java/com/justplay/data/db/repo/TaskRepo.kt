@@ -81,6 +81,12 @@ interface TaskRepo {
     suspend fun getStatusMapForStreak(
         taskId: Long, fromDate: LocalDate): Map<LocalDate, TaskStatus>
 
+    suspend fun calculateStreak(
+        taskId: Long,
+        today: LocalDate,
+        lookBackDays: Long
+    ): Int
+
     suspend fun updateTask(entity: TaskEntity)
 
     suspend fun updateSortOrder(id: Long, sortOrder: Long): Int
@@ -227,6 +233,37 @@ class TaskRepoImpl @Inject constructor(
         taskId: Long, fromDate: LocalDate): Map<LocalDate, TaskStatus>
     = logDao.getLogsFrom(taskId, fromDate).associate {
         it.date to it.status
+    }
+
+    override suspend fun calculateStreak(
+        taskId: Long,
+        today: LocalDate,
+        lookBackDays: Long
+    ): Int {
+        val fromDate = today.minusDays(lookBackDays)
+        val logs = logDao.getLogsFrom(taskId, fromDate)
+
+        // 轉成 Map 方便 O(1) 查詢
+        val logByDate = logs.associateBy { it.date }
+
+        var streak = 0
+        var cursor = today
+
+        while (cursor >= fromDate) {
+            val log = logByDate[cursor]
+
+            when (log?.status) {
+                TaskStatus.COMPLETED -> {
+                    streak++
+                    cursor = cursor.minusDays(1)
+                }
+                TaskStatus.SKIPPED, null -> {
+                    break
+                }
+            }
+        }
+
+        return streak
     }
 
     override suspend fun updateTask(entity: TaskEntity) = taskDao.update(entity)
