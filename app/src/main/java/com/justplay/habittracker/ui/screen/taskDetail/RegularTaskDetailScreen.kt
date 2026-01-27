@@ -38,6 +38,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -203,14 +204,18 @@ fun RegularTaskDetailScreen(
                 // Current Streak
                 item {
                     RegularDetailGridItem(
-                        contentText = "121 days", // Sample Text
+                        contentText = pluralStringResource(
+                            R.plurals.text_streak_day,
+                            uiState.streak,
+                            uiState.streak
+                        ), // Sample Text
                         hintText = stringResource(R.string.text_current_streak)
                     )
                 }
                 // Completion Rate
                 item {
                     RegularDetailGridItem(
-                        contentText = "95 %", // Sample Text
+                        contentText = "${uiState.completedRate} %", // Sample Text
                         hintText = stringResource(R.string.text_complete_rate)
                     )
                 }
