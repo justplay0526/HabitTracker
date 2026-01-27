@@ -10,6 +10,8 @@ data class RegularDetailUiState(
     val daySet: Set<Int> = setOf(0, 1, 2, 3, 4, 5, 6),
     val dayOfMonth: Set<Int> = emptySet(),
     val freq: Int? = null,
+    val streak: Int = 0,
     val completedCount: Int = 0,
+    val completedRate: Int = 0,
     val showDeleteHabit: Boolean = false
 )
