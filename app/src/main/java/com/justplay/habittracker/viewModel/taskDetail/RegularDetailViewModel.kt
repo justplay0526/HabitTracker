@@ -13,7 +13,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
+import kotlin.math.abs
 
 @HiltViewModel
 class RegularDetailViewModel @Inject constructor(
@@ -46,7 +48,28 @@ class RegularDetailViewModel @Inject constructor(
                 startDate = entity.startDate!!,
                 endDate = LocalDate.now()
             )
-            _uiState.update { it.copy(completedCount = completedCnt) }
+
+            val totalDays = abs(
+                n = LocalDate
+                    .now()
+                    .until(entity.startDate, ChronoUnit.DAYS)
+            )
+
+            val streak = repo.calculateStreak(
+                taskId = taskId,
+                today = LocalDate.now(),
+                lookBackDays = totalDays
+            )
+
+            val completedRate = (completedCnt.toDouble() / totalDays.toDouble() * 100).toInt()
+
+            _uiState.update {
+                it.copy(
+                    streak = streak,
+                    completedCount = completedCnt,
+                    completedRate = completedRate,
+                )
+            }
         }
     }
 
