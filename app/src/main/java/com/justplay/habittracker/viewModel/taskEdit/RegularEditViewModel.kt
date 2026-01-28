@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.justplay.data.db.classPkg.RepeatOption
 import com.justplay.data.db.classPkg.TaskType
+import com.justplay.data.db.entity.TaskEntity
 import com.justplay.data.db.entityHelper.baseSortOrder
 import com.justplay.data.db.repo.TaskRepo
 import com.justplay.habittracker.ui.mapper.toRegularEditUiState
@@ -22,6 +23,8 @@ import javax.inject.Inject
 class RegularEditViewModel @Inject constructor(
     private val repo: TaskRepo,
 ) : ViewModel() {
+    var entity: TaskEntity? = null
+
     private val _uiState = MutableStateFlow(RegularEditUiState())
     val uiState = _uiState.asStateFlow()
 
@@ -31,7 +34,8 @@ class RegularEditViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
-            val entity = repo.getTaskById(taskId)
+            entity = repo.getTaskById(taskId)
+
             if (entity == null) {
                 _uiState.update {
                     it.copy(
@@ -41,7 +45,7 @@ class RegularEditViewModel @Inject constructor(
                 return@launch
             }
 
-            _uiState.value = entity.toRegularEditUiState()
+            _uiState.value = entity!!.toRegularEditUiState()
         }
     }
 
@@ -187,7 +191,7 @@ class RegularEditViewModel @Inject constructor(
             max < base -> base
             else -> max + 1
         }
-        repo.updateTask(_uiState.value.toTaskEntity(order))
+        repo.updateTask(_uiState.value.toTaskEntity(entity!!, order))
         return true
     }
 
