@@ -28,6 +28,9 @@ class TaskRepoImpl @Inject constructor(
     private val taskDao: TaskDao,
     private val logDao: TaskLogDao
 ): TaskRepo {
+    override fun observeTaskById(id: Long): Flow<TaskEntity?>
+            = taskDao.observeTaskById(id)
+
     override fun observeActiveTasks(): Flow<List<TaskEntity>>
             = taskDao.observeActiveTasks()
 

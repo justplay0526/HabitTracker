@@ -57,6 +57,9 @@ interface TaskDao {
 
     // ---------- Read (Observe) ----------
 
+    @Query("SELECT * FROM $TASK_TABLE WHERE id = :id LIMIT 1")
+    fun observeTaskById(id: Long): Flow<TaskEntity?>
+
     /**
      * 所有「啟用中」任務
      * Today / Habit list / 統計 都會用到
