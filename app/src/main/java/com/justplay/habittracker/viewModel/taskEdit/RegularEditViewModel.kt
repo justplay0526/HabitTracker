@@ -23,7 +23,7 @@ import javax.inject.Inject
 class RegularEditViewModel @Inject constructor(
     private val repo: TaskRepo,
 ) : ViewModel() {
-    var entity: TaskEntity? = null
+    private var entity: TaskEntity? = null
 
     private val _uiState = MutableStateFlow(RegularEditUiState())
     val uiState = _uiState.asStateFlow()
