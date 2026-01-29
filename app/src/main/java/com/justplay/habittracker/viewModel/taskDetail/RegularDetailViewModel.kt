@@ -10,6 +10,7 @@ import com.justplay.habittracker.ui.uiState.taskDetail.RegularDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -30,45 +31,48 @@ class RegularDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
-            val entity = repo.getTaskById(taskId)
-            if (entity == null) {
+            repo.observeTaskById(id = taskId).collectLatest { entity ->
+                if (entity == null) {
+                    _uiState.update { it.copy(isLoading = false) }
+                    return@collectLatest
+                }
+
+                _uiState.value = entity.toRegularDetailUiState()
+
+                val startDate = entity.startDate
+                if (startDate == null) {
+                    _uiState.update { it.copy(isLoading = false) }
+                    return@collectLatest
+                }
+
+                val completedCnt = repo.getCountInRange(
+                    taskId = taskId,
+                    status = TaskStatus.COMPLETED,
+                    startDate = startDate,
+                    endDate = LocalDate.now()
+                )
+
+                val totalDays = abs(
+                    LocalDate.now().until(startDate, ChronoUnit.DAYS)
+                )
+
+                val streak = repo.calculateStreak(
+                    taskId = taskId,
+                    today = LocalDate.now(),
+                    lookBackDays = totalDays
+                )
+
+                val totalDaysDivider = if (totalDays == 0L) 1 else totalDays
+
+                val completedRate = (completedCnt.toDouble() / totalDaysDivider.toDouble() * 100).toInt()
+
                 _uiState.update {
                     it.copy(
-                        isLoading = false,
+                        streak = streak,
+                        completedCount = completedCnt,
+                        completedRate = completedRate,
                     )
                 }
-                return@launch
-            }
-
-            _uiState.value = entity.toRegularDetailUiState()
-
-            val completedCnt = repo.getCountInRange(
-                taskId = taskId,
-                status = TaskStatus.COMPLETED,
-                startDate = entity.startDate!!,
-                endDate = LocalDate.now()
-            )
-
-            val totalDays = abs(
-                n = LocalDate
-                    .now()
-                    .until(entity.startDate, ChronoUnit.DAYS)
-            )
-
-            val streak = repo.calculateStreak(
-                taskId = taskId,
-                today = LocalDate.now(),
-                lookBackDays = totalDays
-            )
-
-            val completedRate = (completedCnt.toDouble() / totalDays.toDouble() * 100).toInt()
-
-            _uiState.update {
-                it.copy(
-                    streak = streak,
-                    completedCount = completedCnt,
-                    completedRate = completedRate,
-                )
             }
         }
     }
