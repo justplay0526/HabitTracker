@@ -59,9 +59,27 @@ fun transferFreq(
     dayOfMonth: Set<Int>,
     freq: Int?
 ): String {
+    val weekdayShort = listOf(
+        stringResource(R.string.text_week_two_sun),
+        stringResource(R.string.text_week_two_mon),
+        stringResource(R.string.text_week_two_tue),
+        stringResource(R.string.text_week_two_wed),
+        stringResource(R.string.text_week_two_thu),
+        stringResource(R.string.text_week_two_fri),
+        stringResource(R.string.text_week_two_sat),
+    )
+
     return if (daySet == setOf(0, 1, 2, 3, 4, 5, 6)) {
         stringResource(R.string.text_everyday)
-    } else if (freq != null) {
+    } else if (daySet.isNotEmpty()) {
+        "Every Week on ${
+            daySet.sorted()
+                .joinToString(", ") { index ->
+                    weekdayShort[index]
+                }
+        }"
+    }
+    else if (freq != null) {
         "$freq days per week" // TODO add String Resource
     } else {
         "Every Month on ${dayOfMonth.sorted().joinToString(", ")}"
