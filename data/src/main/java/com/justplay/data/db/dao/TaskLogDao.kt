@@ -85,4 +85,16 @@ interface TaskLogDao {
      */
     @Query("SELECT * FROM $TASK_LOG_TABLE WHERE taskId = :taskId AND date >= :fromDate")
     suspend fun getLogsFrom(taskId: Long, fromDate: LocalDate): List<TaskLogEntity>
+
+    @Query("""
+        SELECT * 
+        FROM $TASK_LOG_TABLE 
+        WHERE taskId = :taskId
+            AND date BETWEEN :startDate AND :endDate
+    """)
+    suspend fun getLogsInRange(
+        taskId: Long,
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): List<TaskLogEntity>
 }

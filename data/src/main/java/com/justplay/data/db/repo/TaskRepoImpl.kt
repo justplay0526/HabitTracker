@@ -140,6 +140,13 @@ class TaskRepoImpl @Inject constructor(
         startDate: LocalDate, endDate: LocalDate
     ): Int = logDao.getCountInRange(taskId, status, startDate, endDate)
 
+    override suspend fun getLogsInRange(
+        taskId: Long,
+        startDate: LocalDate, endDate: LocalDate
+    ): List<TaskLogEntity>
+        = logDao.getLogsInRange(taskId, startDate, endDate)
+
+
     override suspend fun archiveTask(taskId: Long) = taskDao.archive(taskId)
 
     override suspend fun deleteTask(taskId: Long) = taskDao.deleteById(taskId)

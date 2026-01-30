@@ -4,6 +4,7 @@ import com.justplay.data.db.classPkg.TaskStatus
 import com.justplay.data.db.classPkg.TaskType
 import com.justplay.data.db.classPkg.TodayTaskItem
 import com.justplay.data.db.entity.TaskEntity
+import com.justplay.data.db.entity.TaskLogEntity
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 import javax.inject.Singleton
@@ -47,6 +48,11 @@ interface TaskRepo {
         taskId: Long, status: TaskStatus,
         startDate: LocalDate, endDate: LocalDate
     ): Int
+
+    suspend fun getLogsInRange(
+        taskId: Long,
+        startDate: LocalDate, endDate: LocalDate
+    ): List<TaskLogEntity>
 
     suspend fun archiveTask(taskId: Long)
 
