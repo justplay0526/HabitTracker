@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
@@ -89,6 +90,22 @@ class RegularDetailViewModel @Inject constructor(
                 viewModelScope.launch {
                     repo.deleteTask(event.taskId)
                     repo.deleteTaskLog(event.taskId)
+                }
+            }
+
+            is RegularDetailEvent.LoadLogInRange -> {
+                viewModelScope.launch {
+                    Timber.tag("LoadLogInRange").d("start${event.startDate}")
+                    Timber.tag("LoadLogInRange").d("end${event.endDate}")
+                    _uiState.update {
+                        it.copy(logList =
+                            repo.getLogsInRange(
+                                taskId = event.taskId,
+                                startDate = event.startDate,
+                                endDate = event.endDate
+                            )
+                        )
+                    }
                 }
             }
 
