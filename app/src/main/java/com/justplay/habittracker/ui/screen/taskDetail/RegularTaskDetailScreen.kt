@@ -49,11 +49,13 @@ import com.justplay.habittracker.ui.screen.task.DeleteHabitBottomSheet
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.uiEvent.taskDetail.RegularDetailEvent
 import com.justplay.habittracker.ui.uiState.taskDetail.RegularDetailUiState
+import com.justplay.habittracker.ui.view.CalendarStats
 import com.justplay.habittracker.ui.view.taskDetail.RegularDetailGridItem
 import com.justplay.habittracker.ui.view.taskDetail.transferFreq
 import com.justplay.habittracker.viewModel.taskDetail.RegularDetailViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.YearMonth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -234,6 +236,23 @@ fun RegularTaskDetailScreen(
                     )
                 }
             }
+
+            CalendarStats(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.surface,
+                        shape = RoundedCornerShape(16.dp)
+                ),
+                logList = uiState.logList,
+                onMonthChanged = { currentMonth ->
+                    onEvent(RegularDetailEvent.LoadLogInRange(
+                        taskId = uiState.taskId,
+                        startDate = currentMonth.atDay(1),
+                        endDate = currentMonth.atEndOfMonth()
+                    ))
+                }
+            )
         }
     }
 }
@@ -249,6 +268,13 @@ fun RegularTaskDetailScreen(
 
     LaunchedEffect(taskId) {
         vm.load(taskId = taskId)
+        vm.onEvent(
+            event = RegularDetailEvent.LoadLogInRange(
+                taskId = taskId,
+                startDate = YearMonth.now().atDay(1),
+                endDate = YearMonth.now().atEndOfMonth()
+            )
+        )
     }
 
     RegularTaskDetailScreen(
