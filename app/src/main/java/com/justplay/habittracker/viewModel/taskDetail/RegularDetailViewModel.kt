@@ -38,7 +38,16 @@ class RegularDetailViewModel @Inject constructor(
                     return@collectLatest
                 }
 
-                _uiState.value = entity.toRegularDetailUiState()
+                val mapped = entity.toRegularDetailUiState()
+
+                _uiState.update { old ->
+                    mapped.copy(
+                        currentMonth = old.currentMonth,
+                        logList = old.logList,
+                        showDeleteHabit = old.showDeleteHabit,
+                        isLoading = false
+                    )
+                }
 
                 val startDate = entity.startDate
                 if (startDate == null) {
