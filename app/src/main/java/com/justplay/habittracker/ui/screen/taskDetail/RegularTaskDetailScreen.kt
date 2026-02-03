@@ -55,7 +55,6 @@ import com.justplay.habittracker.ui.view.taskDetail.transferFreq
 import com.justplay.habittracker.viewModel.taskDetail.RegularDetailViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.YearMonth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -244,13 +243,10 @@ fun RegularTaskDetailScreen(
                         color = MaterialTheme.colorScheme.surface,
                         shape = RoundedCornerShape(16.dp)
                 ),
+                currentMonth = uiState.currentMonth,
                 logList = uiState.logList,
                 onMonthChanged = { currentMonth ->
-                    onEvent(RegularDetailEvent.LoadLogInRange(
-                        taskId = uiState.taskId,
-                        startDate = currentMonth.atDay(1),
-                        endDate = currentMonth.atEndOfMonth()
-                    ))
+                    onEvent(RegularDetailEvent.MonthChanged(currentMonth))
                 }
             )
         }
@@ -268,13 +264,6 @@ fun RegularTaskDetailScreen(
 
     LaunchedEffect(taskId) {
         vm.load(taskId = taskId)
-        vm.onEvent(
-            event = RegularDetailEvent.LoadLogInRange(
-                taskId = taskId,
-                startDate = YearMonth.now().atDay(1),
-                endDate = YearMonth.now().atEndOfMonth()
-            )
-        )
     }
 
     RegularTaskDetailScreen(
