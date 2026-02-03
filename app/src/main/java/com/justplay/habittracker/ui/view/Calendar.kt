@@ -357,18 +357,10 @@ fun MonthlyCalendar(
 fun CalendarStats(
     modifier: Modifier = Modifier,
     locale: Locale = Locale.US,
+    currentMonth: YearMonth,
     logList: List<TaskLogEntity>,
     onMonthChanged: (YearMonth) -> Unit,
 ) {
-    var currentMonth by rememberSaveable(stateSaver =
-        Saver<YearMonth, String>(
-            save = { it.toString() },
-            restore = { YearMonth.parse(it) }
-        )
-    ) {
-        mutableStateOf(YearMonth.now())
-    }
-
     val selectedDays = logListToSelectedDays(
         logList = logList,
         yearMonth = currentMonth
@@ -421,7 +413,11 @@ fun CalendarStats(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { currentMonth = currentMonth.minusMonths(1) }) {
+            IconButton(
+                onClick = {
+                    onMonthChanged(currentMonth.minusMonths(1))
+                }
+            ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                     contentDescription = "Previous month"
@@ -438,7 +434,11 @@ fun CalendarStats(
                 style = MaterialTheme.typography.titleMedium
             )
 
-            IconButton(onClick = { currentMonth = currentMonth.plusMonths(1) }) {
+            IconButton(
+                onClick = {
+                    onMonthChanged(currentMonth.plusMonths(1))
+                }
+            ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "Next month"
@@ -570,10 +570,15 @@ fun MonthlyCalendarPreview() {
 @Preview(showBackground = true)
 @Composable
 fun CalendarStatsPreview() {
+    var currMonth by remember { mutableStateOf(YearMonth.now()) }
+
     HabitTrackerTheme {
         CalendarStats(
+            currentMonth = currMonth,
             logList = sampleLogs,
-            onMonthChanged = {}
+            onMonthChanged = { month ->
+                currMonth = month
+            }
         )
     }
 }
