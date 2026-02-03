@@ -8,12 +8,17 @@ import com.justplay.habittracker.ui.mapper.toRegularDetailUiState
 import com.justplay.habittracker.ui.uiEvent.taskDetail.RegularDetailEvent
 import com.justplay.habittracker.ui.uiState.taskDetail.RegularDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.dropWhile
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
@@ -25,6 +30,10 @@ class RegularDetailViewModel @Inject constructor(
 ): ViewModel() {
     private val _uiState = MutableStateFlow(RegularDetailUiState())
     val uiState = _uiState.asStateFlow()
+
+    init {
+        observeLogs()
+    }
 
     fun load(taskId: Long) {
         if (_uiState.value.isLoading.not() && _uiState.value.taskId == taskId) return
@@ -102,20 +111,8 @@ class RegularDetailViewModel @Inject constructor(
                 }
             }
 
-            is RegularDetailEvent.LoadLogInRange -> {
-                viewModelScope.launch {
-                    Timber.tag("LoadLogInRange").d("start${event.startDate}")
-                    Timber.tag("LoadLogInRange").d("end${event.endDate}")
-                    _uiState.update {
-                        it.copy(logList =
-                            repo.getLogsInRange(
-                                taskId = event.taskId,
-                                startDate = event.startDate,
-                                endDate = event.endDate
-                            )
-                        )
-                    }
-                }
+            is RegularDetailEvent.MonthChanged -> {
+                _uiState.value = _uiState.value.copy(currentMonth = event.month)
             }
 
             is RegularDetailEvent.HideDeleteHabit ->
@@ -123,6 +120,32 @@ class RegularDetailViewModel @Inject constructor(
 
             is RegularDetailEvent.ShowDeleteHabit ->
                 _uiState.value = _uiState.value.copy(showDeleteHabit = true)
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun observeLogs() {
+        viewModelScope.launch {
+            val taskIdFlow = _uiState
+                .map { it.taskId }
+                .dropWhile { it <= 0L } // 等到條件解除後 emit 第一筆
+                .distinctUntilChanged()
+
+            val monthFlow = _uiState
+                .map { it.currentMonth }
+                .distinctUntilChanged()
+
+            combine(taskIdFlow, monthFlow) { taskId, month ->
+                Triple(
+                    taskId,
+                    month.atDay(1),
+                    month.atEndOfMonth()
+                )
+            }.flatMapLatest { (taskId, start, end) ->
+                    repo.observeLogsInRange(taskId, start, end)
+                }.collect { logs ->
+                    _uiState.update { it.copy(logList = logs) }
+                }
         }
     }
 }

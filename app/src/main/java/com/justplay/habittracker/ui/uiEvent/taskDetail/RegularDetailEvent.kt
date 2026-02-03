@@ -1,13 +1,11 @@
 package com.justplay.habittracker.ui.uiEvent.taskDetail
 
-import java.time.LocalDate
+import java.time.YearMonth
 
 sealed interface RegularDetailEvent {
     data class DeleteAndKeepHistory(val taskId: Long) : RegularDetailEvent
     data class DeleteAndClearHistory(val taskId: Long) : RegularDetailEvent
-    data class LoadLogInRange(val taskId: Long,
-                              val startDate: LocalDate,
-                              val endDate: LocalDate) : RegularDetailEvent
-    data object ShowDeleteHabit : RegularDetailEvent
+    data class MonthChanged(val month: YearMonth) : RegularDetailEvent
     data object HideDeleteHabit : RegularDetailEvent
+    data object ShowDeleteHabit : RegularDetailEvent
 }
