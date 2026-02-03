@@ -2,6 +2,7 @@ package com.justplay.habittracker.ui.uiState.taskDetail
 
 import com.justplay.data.db.entity.TaskLogEntity
 import com.justplay.habittracker.ui.view.IconsRes
+import java.time.YearMonth
 
 data class RegularDetailUiState(
     val taskId: Long = -1,
@@ -14,6 +15,7 @@ data class RegularDetailUiState(
     val streak: Int = 0,
     val completedCount: Int = 0,
     val completedRate: Int = 0,
+    val currentMonth: YearMonth = YearMonth.now(),
     val logList: List<TaskLogEntity> = emptyList(),
     val showDeleteHabit: Boolean = false
 )
