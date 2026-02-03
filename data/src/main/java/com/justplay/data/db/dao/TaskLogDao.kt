@@ -72,6 +72,18 @@ interface TaskLogDao {
         date: LocalDate
     ): Flow<List<TaskLogEntity>>
 
+    @Query("""
+        SELECT * 
+        FROM $TASK_LOG_TABLE 
+        WHERE taskId = :taskId
+            AND date BETWEEN :startDate AND :endDate
+    """)
+    fun observeLogsInRange(
+        taskId: Long,
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): Flow<List<TaskLogEntity>>
+
     /**
      * Today 畫面：取某天所有 log（用來 map taskId -> status）
      */
@@ -85,16 +97,4 @@ interface TaskLogDao {
      */
     @Query("SELECT * FROM $TASK_LOG_TABLE WHERE taskId = :taskId AND date >= :fromDate")
     suspend fun getLogsFrom(taskId: Long, fromDate: LocalDate): List<TaskLogEntity>
-
-    @Query("""
-        SELECT * 
-        FROM $TASK_LOG_TABLE 
-        WHERE taskId = :taskId
-            AND date BETWEEN :startDate AND :endDate
-    """)
-    suspend fun getLogsInRange(
-        taskId: Long,
-        startDate: LocalDate,
-        endDate: LocalDate
-    ): List<TaskLogEntity>
 }

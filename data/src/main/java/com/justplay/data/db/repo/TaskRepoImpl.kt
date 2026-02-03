@@ -91,6 +91,17 @@ class TaskRepoImpl @Inject constructor(
                 }
             }
 
+    override fun observeLogsInRange(
+        taskId: Long,
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): Flow<List<TaskLogEntity>>
+    = logDao.observeLogsInRange(
+        taskId = taskId,
+        startDate = startDate,
+        endDate = endDate
+    )
+
     override fun observeWeeklyCompletedCounts(
         taskIds: List<Long>,
         today: LocalDate
@@ -139,13 +150,6 @@ class TaskRepoImpl @Inject constructor(
         taskId: Long, status: TaskStatus,
         startDate: LocalDate, endDate: LocalDate
     ): Int = logDao.getCountInRange(taskId, status, startDate, endDate)
-
-    override suspend fun getLogsInRange(
-        taskId: Long,
-        startDate: LocalDate, endDate: LocalDate
-    ): List<TaskLogEntity>
-        = logDao.getLogsInRange(taskId, startDate, endDate)
-
 
     override suspend fun archiveTask(taskId: Long) = taskDao.archive(taskId)
 

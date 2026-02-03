@@ -19,6 +19,11 @@ interface TaskRepo {
 
     fun observeTodayItems(today: LocalDate): Flow<List<TodayTaskItem>>
 
+    fun observeLogsInRange(
+        taskId: Long,
+        startDate: LocalDate, endDate: LocalDate
+    ): Flow<List<TaskLogEntity>>
+
     fun observeWeeklyCompletedCounts(
         taskIds: List<Long>,
         today: LocalDate
@@ -48,11 +53,6 @@ interface TaskRepo {
         taskId: Long, status: TaskStatus,
         startDate: LocalDate, endDate: LocalDate
     ): Int
-
-    suspend fun getLogsInRange(
-        taskId: Long,
-        startDate: LocalDate, endDate: LocalDate
-    ): List<TaskLogEntity>
 
     suspend fun archiveTask(taskId: Long)
 
