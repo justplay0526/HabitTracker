@@ -59,6 +59,11 @@
 <!-- Text -->
     <string name="text_all_day">All day</string>
     <string name="text_date">Date</string>
+    <string name="text_complete_rate">Completion rate</string>
+    <string name="text_current_streak">Current Streak</string>
+    <string name="text_everyday">Everyday</string>
+    <string name="text_habit_complete">Habit completed</string>
+    <string name="text_total_perfect_day">Total perfect days</string>
 <!--  Date Text -->
     <string name="text_date_today">Today,</string>
     <string name="text_date_tomorrow">Tomorrow,</string>
@@ -73,6 +78,12 @@
     <string name="text_repeat_freq_daily">Daily</string>
     <string name="text_repeat_freq_weekly">Weekly</string>
     <string name="text_repeat_freq_monthly">Monthly</string>
+<!-- Habit Streak day -->
+    <plurals name="text_streak_day">
+        <item quantity="zero">%d day</item>
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
 <!-- Time of Day -->
     <string name="text_time_of_day_all">All</string>
     <string name="text_time_of_day_morning">Morning</string>

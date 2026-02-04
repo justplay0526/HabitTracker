@@ -56,6 +56,7 @@ fun RegularTaskUiState.toTaskEntity(
 }
 
 fun RegularEditUiState.toTaskEntity(
+    base: TaskEntity,
     order: Long
 ): TaskEntity {
     val color = if (colorSelected) customColor else selectedColorRes
@@ -85,7 +86,7 @@ fun RegularEditUiState.toTaskEntity(
         reminderEnabled = reminderState,
         time = time,
 
-        startDate = LocalDate.now(),
+        startDate = base.startDate,
         oneTimeDate = null,
 
         repeatOption = selectedRepeatOption,
@@ -96,7 +97,7 @@ fun RegularEditUiState.toTaskEntity(
         endHabitOn = endHabitOnState,
         endHabitDate = endHabitDate,
         sortOrder = order,
-        isArchived = false
+        isArchived = base.isArchived
     )
 }
 

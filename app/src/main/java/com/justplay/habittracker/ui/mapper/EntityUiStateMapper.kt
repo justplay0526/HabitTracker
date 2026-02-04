@@ -24,9 +24,11 @@ fun TaskEntity.toHabitEditUi(): HabitEditUi = HabitEditUi(
 fun TaskEntity.toRegularDetailUiState(): RegularDetailUiState {
     return RegularDetailUiState(
         taskId = id,
-        isLoading = false,
         habitName = name,
-        iconRes = iconRes
+        iconRes = iconRes,
+        daySet = selectedDaySet,
+        dayOfMonth = selectedDaysOfMonth,
+        freq = freq
     )
 }
 

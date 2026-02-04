@@ -54,6 +54,7 @@ import com.justplay.habittracker.viewModel.taskEdit.OneTimeEditViewModel
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.uiEvent.taskEdit.OneTimeEditEvent
 import com.justplay.habittracker.ui.view.LastColorCircleIndex
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -109,10 +110,18 @@ fun OneTimeTaskEditScreen(
             onEvent(OneTimeEditEvent.HideDeleteHabit)
         },
         onDeleteKeepHistory = {
-            // TODO call archive function
+            onEvent(OneTimeEditEvent.DeleteAndKeepHistory(uiState.taskId))
+            scope.launch {
+                delay(1000)
+                onBackClick()
+            }
         },
         onDeleteClearHistory = {
-            // TODO call delete Task & log function
+            onEvent(OneTimeEditEvent.DeleteAndClearHistory(uiState.taskId))
+            scope.launch {
+                delay(1000)
+                onBackClick()
+            }
         }
     )
 

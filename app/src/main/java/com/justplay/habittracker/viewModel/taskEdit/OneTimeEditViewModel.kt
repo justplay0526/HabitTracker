@@ -132,7 +132,24 @@ class OneTimeEditViewModel @Inject constructor(
                         )
                     )
                 }
+                else -> state
             }
+        }
+        when (event) {
+            is OneTimeEditEvent.DeleteAndKeepHistory -> {
+                viewModelScope.launch {
+                    repo.archiveTask(event.taskId)
+                }
+            }
+
+            is OneTimeEditEvent.DeleteAndClearHistory -> {
+                viewModelScope.launch {
+                    repo.deleteTask(event.taskId)
+                    repo.deleteTaskLog(event.taskId)
+                }
+            }
+
+            else -> {}
         }
     }
     // TODO DO WARNING UI EVENT

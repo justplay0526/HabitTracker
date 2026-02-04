@@ -22,6 +22,9 @@ interface TaskLogDao {
     @Query("DELETE FROM $TASK_LOG_TABLE WHERE taskId = :taskId AND date = :date")
     suspend fun delete(taskId: Long, date: LocalDate)
 
+    @Query("DELETE FROM $TASK_LOG_TABLE WHERE taskId = :taskId")
+    suspend fun deleteById(taskId: Long)
+
     /**
      * 查某 task 某天的狀態（null = NONE）
      */
@@ -29,8 +32,22 @@ interface TaskLogDao {
     suspend fun get(taskId: Long, date: LocalDate): TaskLogEntity?
 
     @Query("""
+    SELECT COUNT(*) 
+    FROM $TASK_LOG_TABLE
+    WHERE taskId = :taskId
+      AND status = :status
+      AND date BETWEEN :startDate AND :endDate
+    """)
+    suspend fun getCountInRange(
+        taskId: Long,
+        status: TaskStatus,
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): Int
+
+    @Query("""
         SELECT taskId AS taskId, COUNT(*) AS cnt
-        FROM task_log
+        FROM $TASK_LOG_TABLE
         WHERE taskId IN (:taskIds)
           AND status = :status
           AND date BETWEEN :startDate AND :endDate
@@ -46,13 +63,25 @@ interface TaskLogDao {
     // Today 還會用到「今天每個 task 的狀態」
     @Query("""
         SELECT *
-        FROM task_log
+        FROM $TASK_LOG_TABLE
         WHERE date = :date
           AND taskId IN (:taskIds)
     """)
     fun observeLogsOnDate(
         taskIds: List<Long>,
         date: LocalDate
+    ): Flow<List<TaskLogEntity>>
+
+    @Query("""
+        SELECT * 
+        FROM $TASK_LOG_TABLE 
+        WHERE taskId = :taskId
+            AND date BETWEEN :startDate AND :endDate
+    """)
+    fun observeLogsInRange(
+        taskId: Long,
+        startDate: LocalDate,
+        endDate: LocalDate
     ): Flow<List<TaskLogEntity>>
 
     /**
@@ -63,7 +92,8 @@ interface TaskLogDao {
 
     /**
      * streak 用：取某 task 從某天之後(含)的所有 log
-     * （你可以用 today.minusDays(365) 做一年回溯）
+     *
+     * 可以用 today.minusDays(365) 做一年回溯
      */
     @Query("SELECT * FROM $TASK_LOG_TABLE WHERE taskId = :taskId AND date >= :fromDate")
     suspend fun getLogsFrom(taskId: Long, fromDate: LocalDate): List<TaskLogEntity>

@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import com.justplay.data.TASK_TABLE
 import com.justplay.data.db.classPkg.SortOrderUpdate
 import com.justplay.data.db.classPkg.TaskType
 import com.justplay.data.db.entity.TaskEntity
@@ -26,19 +27,22 @@ interface TaskDao {
     @Delete
     suspend fun delete(entity: TaskEntity)
 
+    @Query("DELETE FROM $TASK_TABLE WHERE id = :taskId")
+    suspend fun deleteById(taskId: Long)
+
     /**
      * 軟刪除（不直接 delete，避免歷史紀錄變成無頭騎士）
      */
-    @Query("UPDATE task SET isArchived = 1 WHERE id = :taskId")
+    @Query("UPDATE $TASK_TABLE SET isArchived = 1 WHERE id = :taskId")
     suspend fun archive(taskId: Long)
 
     // ---------- Read (Single) ----------
 
-    @Query("SELECT * FROM task WHERE id = :id LIMIT 1")
+    @Query("SELECT * FROM $TASK_TABLE WHERE id = :id LIMIT 1")
     suspend fun getById(id: Long): TaskEntity?
 
     @Query("""
-        SELECT * FROM task
+        SELECT * FROM $TASK_TABLE
         WHERE type = :type
           AND isArchived = 0
         ORDER BY sortOrder DESC
@@ -46,26 +50,29 @@ interface TaskDao {
     suspend fun getTasksByType(type: TaskType): List<TaskEntity>
 
     @Query("""
-    SELECT MAX(sortOrder) FROM task
+    SELECT MAX(sortOrder) FROM $TASK_TABLE
     WHERE type = :type AND isArchived = 0
 """)
     suspend fun getMaxSortOrderByType(type: TaskType): Long?
 
     // ---------- Read (Observe) ----------
 
+    @Query("SELECT * FROM $TASK_TABLE WHERE id = :id LIMIT 1")
+    fun observeTaskById(id: Long): Flow<TaskEntity?>
+
     /**
      * 所有「啟用中」任務
      * Today / Habit list / 統計 都會用到
      */
     @Query("""
-        SELECT * FROM task
+        SELECT * FROM $TASK_TABLE
         WHERE isArchived = 0
         ORDER BY sortOrder DESC
     """)
     fun observeActiveTasks(): Flow<List<TaskEntity>>
 
     @Query("""
-        SELECT * FROM task
+        SELECT * FROM $TASK_TABLE
         WHERE type = :type
           AND isArchived = 0
         ORDER BY sortOrder DESC
@@ -77,7 +84,7 @@ interface TaskDao {
      * 管理頁 / 設定頁會用到
      */
     @Query("""
-        SELECT * FROM task
+        SELECT * FROM $TASK_TABLE
         ORDER BY isArchived ASC, sortOrder DESC
     """)
     fun observeAllTasks(): Flow<List<TaskEntity>>
@@ -87,7 +94,7 @@ interface TaskDao {
      * （後續排 Alarm 一定會用）
      */
     @Query("""
-        SELECT * FROM task
+        SELECT * FROM $TASK_TABLE
         WHERE reminderEnabled = 1
           AND time IS NOT NULL
           AND isArchived = 0
