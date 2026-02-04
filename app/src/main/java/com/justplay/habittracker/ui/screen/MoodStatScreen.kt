@@ -10,17 +10,25 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.justplay.habittracker.R
+import com.justplay.habittracker.ui.theme.HabitTrackerTheme
+import com.justplay.habittracker.ui.uiEvent.MoodStatEvent
+import com.justplay.habittracker.ui.uiState.MoodStatUiState
 import com.justplay.habittracker.ui.view.Greeting
+import com.justplay.habittracker.viewModel.MoodStatViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
-@PreviewScreenSizes
 @Composable
 fun MoodStatScreen(
+    uiState: MoodStatUiState,
+    onEvent: (MoodStatEvent) -> Unit,
+    onHistoryClick: () -> Unit
 ) {
     Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
         CenterAlignedTopAppBar(
@@ -30,7 +38,9 @@ fun MoodStatScreen(
                     contentDescription = stringResource(R.string.app_name))
             },
             actions = {
-                IconButton(onClick = {/* TODO Mood Stat Button */}) {
+                IconButton(onClick = {
+                    onHistoryClick()
+                }) {
                     Icon(painter = painterResource(R.drawable.round_history_24),
                         contentDescription = stringResource(R.string.title_setting)
                     )
@@ -41,6 +51,32 @@ fun MoodStatScreen(
         Greeting(
             name = stringResource(R.string.title_mood_stat),
             modifier = Modifier.padding(innerPadding)
+        )
+    }
+}
+
+@Composable
+fun MoodStatScreen(
+    onHistoryClick: () -> Unit,
+    vm: MoodStatViewModel = hiltViewModel()
+) {
+    val uiState = vm.uiState.collectAsState()
+
+    MoodStatScreen(
+        uiState = uiState.value,
+        onEvent = vm::onEvent,
+        onHistoryClick = onHistoryClick
+    )
+}
+
+@Preview
+@Composable
+fun MoodStatScreenPreView(){
+    HabitTrackerTheme {
+        MoodStatScreen(
+            uiState = MoodStatUiState(),
+            onEvent = {},
+            onHistoryClick = {}
         )
     }
 }
