@@ -18,24 +18,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.window.core.layout.WindowHeightSizeClass
+import androidx.navigation.navArgument
+import androidx.window.core.layout.WindowSizeClass
 import com.justplay.habittracker.data.HomeNavDest
 import com.justplay.habittracker.data.MainNavSuiteDest
+import com.justplay.habittracker.data.MyHabitsNavDest
 import com.justplay.habittracker.ui.screen.CreateNewHabitScreen
 import com.justplay.habittracker.ui.screen.HomeScreen
 import com.justplay.habittracker.ui.screen.MoodStatScreen
 import com.justplay.habittracker.ui.screen.MyHabitsScreen
 import com.justplay.habittracker.ui.screen.ReportScreen
-import com.justplay.habittracker.ui.theme.HabitTrackerTheme
+import com.justplay.habittracker.ui.screen.taskDetail.RegularTaskDetailScreen
+import com.justplay.habittracker.ui.screen.taskEdit.OneTimeTaskEditScreen
+import com.justplay.habittracker.ui.screen.taskEdit.RegularTaskEditScreen
 
 @Composable
 fun MainNavSuite() {
@@ -62,9 +66,12 @@ fun MainNavSuite() {
      *
      * 除非我想做切割視窗否則這夠用了
      */
-    val isHeightCompact = (currentWindowAdaptiveInfo()
-        .windowSizeClass.windowHeightSizeClass
-            == WindowHeightSizeClass.COMPACT
+    val isHeightNotCompact = (currentWindowAdaptiveInfo()
+        .windowSizeClass
+        .isHeightAtLeastBreakpoint(
+            heightDpBreakpoint =
+                WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND
+        )
     )
 
     /**
@@ -86,7 +93,7 @@ fun MainNavSuite() {
         modifier = Modifier.fillMaxSize(),
         layoutType = if (!shouldShowSuite) {
             NavigationSuiteType.None
-        } else if (isHeightCompact) {
+        } else if (!isHeightNotCompact) {
             NavigationSuiteType.NavigationRail
         } else {
             NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(
@@ -114,7 +121,14 @@ fun MainNavHost(
                     )
                     MainNavSuiteDest.MOOD_STAT -> MoodStatScreen()
                     MainNavSuiteDest.REPORT -> ReportScreen()
-                    MainNavSuiteDest.MY_HABITS -> MyHabitsScreen()
+                    MainNavSuiteDest.MY_HABITS -> MyHabitsScreen(
+                        onEditRegularTask = { taskId ->
+                            navHost.navigate("${MyHabitsNavDest.REGULAR_TASK_DETAIL.name}/$taskId")
+                        },
+                        onEditOneTimeTask = { taskId ->
+                            navHost.navigate("${MyHabitsNavDest.EDIT_ONE_TIME_TASK.name}/$taskId")
+                        }
+                    )
                 }
             }
         }
@@ -126,6 +140,51 @@ fun MainNavHost(
                     )
                 }
             }
+        }
+
+        composable(
+            route = MyHabitsNavDest.REGULAR_TASK_DETAIL.name + "/{taskId}",
+            arguments = listOf(
+                navArgument("taskId") { type = NavType.LongType }
+            )
+        ) { backStackEntry ->
+            val taskId = backStackEntry.arguments!!.getLong("taskId")
+
+            RegularTaskDetailScreen(
+                taskId = taskId,
+                onBackClick = { navHost.popBackStack() },
+                onEditClick = {
+                    navHost.navigate("${MyHabitsNavDest.EDIT_REGULAR_TASK.name}/$taskId")
+                }
+            )
+        }
+
+        composable(
+            route = MyHabitsNavDest.EDIT_REGULAR_TASK.name + "/{taskId}",
+            arguments = listOf(
+                navArgument("taskId") { type = NavType.LongType }
+            )
+        ) { backStackEntry ->
+            val taskId = backStackEntry.arguments!!.getLong("taskId")
+
+            RegularTaskEditScreen(
+                taskId = taskId,
+                onBackClick = { navHost.popBackStack() }
+            )
+        }
+
+        composable(
+            route = MyHabitsNavDest.EDIT_ONE_TIME_TASK.name + "/{taskId}",
+            arguments = listOf(
+                navArgument("taskId") { type = NavType.LongType }
+            )
+        ) { backStackEntry ->
+            val taskId = backStackEntry.arguments!!.getLong("taskId")
+
+            OneTimeTaskEditScreen(
+                taskId = taskId,
+                onBackClick = { navHost.popBackStack() }
+            )
         }
     }
 }
@@ -169,13 +228,5 @@ private fun navigateWithBackStackHandling(route: String, navHost: NavHostControl
         }
         launchSingleTop = true
         restoreState = true
-    }
-}
-
-@PreviewScreenSizes
-@Composable
-fun MainNavSuitePreview() {
-    HabitTrackerTheme {
-        MainNavSuite()
     }
 }

@@ -16,10 +16,11 @@ import com.justplay.habittracker.R
 import com.justplay.habittracker.data.formatReminderTime
 import com.justplay.habittracker.data.formatUniformDate
 import com.justplay.habittracker.data.formatUniformDays
-import com.justplay.habittracker.ui.helper.toLabelRes
+import com.justplay.habittracker.ui.mapper.toLabelRes
 import com.justplay.habittracker.ui.screen.task.event.RegularTaskEvent
 import com.justplay.habittracker.ui.screen.task.model.RegularTaskViewModel
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
+import com.justplay.habittracker.ui.view.LastColorCircleIndex
 import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,7 +48,7 @@ fun RegularTaskScreen(
         onColorSelected = {
             onEvent(RegularTaskEvent.ColorPicked(it.toColorInt()))
             onEvent(RegularTaskEvent.ColorIntSelected(it.toColorInt()))
-            onEvent(RegularTaskEvent.ColorSelected(14))
+            onEvent(RegularTaskEvent.ColorSelected(LastColorCircleIndex))
             onEvent(RegularTaskEvent.HideColorPicker)
         }
     )

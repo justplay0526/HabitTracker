@@ -6,6 +6,7 @@ import com.justplay.habittracker.R
 
 val HabitListItemHeight = 68.dp
 val HabitTextFieldHeight = 52.dp
+const val LastColorCircleIndex = 14 // 15 - 1
 
 val IconsRes = listOf(
     R.mipmap.emoji_01_smile_sunglasses, R.mipmap.emoji_02_slightly_smile,

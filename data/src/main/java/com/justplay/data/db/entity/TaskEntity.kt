@@ -76,6 +76,8 @@ data class TaskEntity(
     val endHabitOn: Boolean = false,
     val endHabitDate: LocalDate? = null,
 
+    val sortOrder: Long = 0L,
+
     /**
      * 軟刪除, = true 時不顯示出來
      *

@@ -44,7 +44,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.justplay.data.db.classPkg.TaskStatus
+import com.justplay.data.db.entity.TaskLogEntity
 import com.justplay.habittracker.data.DayUi
+import com.justplay.habittracker.test.sampleLogs
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import java.time.LocalDate
 import java.time.YearMonth
@@ -113,6 +116,19 @@ fun buildMonthDays(
     }
 
     return days
+}
+
+fun logListToSelectedDays(
+    logList: List<TaskLogEntity>,
+    yearMonth: YearMonth
+): Set<Int> {
+    return logList
+        .asSequence()
+        .filter { it.status == TaskStatus.COMPLETED }
+        .map { it.date }
+        .filter { YearMonth.from(it) == yearMonth }
+        .map { it.dayOfMonth }
+        .toSet()
 }
 
 @Composable
@@ -288,7 +304,8 @@ fun MonthlyCalendar(
                 .fillMaxWidth()
                 .padding(start = 8.dp, end = 8.dp, bottom = 16.dp),
             thickness = 2.dp,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f))
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+        )
 
         // 星期標題列
         val weekLabels = twoAlphabetWeekLabels()
@@ -330,6 +347,131 @@ fun MonthlyCalendar(
 
                         onSelectionChanged(newSet)
                     }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun CalendarStats(
+    modifier: Modifier = Modifier,
+    locale: Locale = Locale.US,
+    currentMonth: YearMonth,
+    logList: List<TaskLogEntity>,
+    onMonthChanged: (YearMonth) -> Unit,
+) {
+    val selectedDays = logListToSelectedDays(
+        logList = logList,
+        yearMonth = currentMonth
+    )
+
+    val days = remember(currentMonth, selectedDays) {
+        buildMonthDays(
+            yearMonth = currentMonth,
+            disableByDate = false,
+            selectedDaysOfMonth = selectedDays
+        )
+    }
+
+    LaunchedEffect(currentMonth) {
+        onMonthChanged(currentMonth)
+    }
+
+    Column(
+        modifier = modifier
+            .border(
+                width = 2.dp,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                shape = RoundedCornerShape(16.dp) // 可省略
+            )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 8.dp)
+        ) {
+            Text(
+                text = "Calendar Stats", // TODO add to String Resource
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(all = 4.dp)
+            )
+        }
+
+        HorizontalDivider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
+            thickness = 2.dp,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+        )
+        
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(
+                onClick = {
+                    onMonthChanged(currentMonth.minusMonths(1))
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                    contentDescription = "Previous month"
+                )
+            }
+
+            val monthTitle = remember(currentMonth) {
+                val monthName = currentMonth.month
+                    .getDisplayName(TextStyle.FULL, locale)
+                "$monthName ${currentMonth.year}"
+            }
+            Text(
+                text = monthTitle,
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            IconButton(
+                onClick = {
+                    onMonthChanged(currentMonth.plusMonths(1))
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = "Next month"
+                )
+            }
+        }
+
+        val weekLabels = twoAlphabetWeekLabels()
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            weekLabels.forEach {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.labelMedium,
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+
+        // 日期格 7 欄 Grid
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(7),
+            modifier = Modifier.heightIn(min = 240.dp, max = 360.dp), // 給一個高度，避免無限高度問題
+            userScrollEnabled = false                   // 不需要捲動
+        ) {
+            items(days) { day ->
+                DayCell(
+                    day = day,
+                    onClick = { }
                 )
             }
         }
@@ -422,5 +564,21 @@ fun MonthlyCalendarPreview() {
                 modifier = Modifier.padding(16.dp)
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CalendarStatsPreview() {
+    var currMonth by remember { mutableStateOf(YearMonth.now()) }
+
+    HabitTrackerTheme {
+        CalendarStats(
+            currentMonth = currMonth,
+            logList = sampleLogs,
+            onMonthChanged = { month ->
+                currMonth = month
+            }
+        )
     }
 }
