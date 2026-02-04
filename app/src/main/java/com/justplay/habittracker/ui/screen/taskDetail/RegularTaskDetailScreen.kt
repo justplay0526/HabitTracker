@@ -230,7 +230,7 @@ fun RegularTaskDetailScreen(
                 // Total Perfect Days
                 item {
                     RegularDetailGridItem(
-                        contentText = "495", // Sample Text
+                        contentText = "495", // TODO Add Total Perfect day count
                         hintText = stringResource(R.string.text_total_perfect_day)
                     )
                 }
