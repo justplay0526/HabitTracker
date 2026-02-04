@@ -31,6 +31,7 @@ import androidx.navigation.navArgument
 import androidx.window.core.layout.WindowSizeClass
 import com.justplay.habittracker.data.HomeNavDest
 import com.justplay.habittracker.data.MainNavSuiteDest
+import com.justplay.habittracker.data.MoodStatDest
 import com.justplay.habittracker.data.MyHabitsNavDest
 import com.justplay.habittracker.ui.screen.CreateNewHabitScreen
 import com.justplay.habittracker.ui.screen.HomeScreen
@@ -119,7 +120,9 @@ fun MainNavHost(
                     MainNavSuiteDest.HOME -> HomeScreen(onFabClick =
                         { navHost.navigate(HomeNavDest.CREATE_NEW_HABIT.name) }
                     )
-                    MainNavSuiteDest.MOOD_STAT -> MoodStatScreen()
+                    MainNavSuiteDest.MOOD_STAT -> MoodStatScreen(onHistoryClick =
+                        { navHost.navigate(MoodStatDest.MOOD_STAT_HISTORY.name) }
+                    )
                     MainNavSuiteDest.REPORT -> ReportScreen()
                     MainNavSuiteDest.MY_HABITS -> MyHabitsScreen(
                         onEditRegularTask = { taskId ->
