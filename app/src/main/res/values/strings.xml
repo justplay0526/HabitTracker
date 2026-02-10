@@ -40,6 +40,7 @@
     <string name="sent_warning_text_choose_day_of_month">Please Choose at least one Day Of Month</string>
     <string name="sent_warning_text_enter_habit_name">Please Enter A Habit Name</string>
     <string name="sent_warning_text_enter_task_name">Please Enter A Task Name</string>
+    <string name="sent_warning_text_no_mood_selected">Please Select A Mood</string>
     <string name="sent_warning_text_select_repeat_type">Please Select A Repeat Type</string>
     <string name="sent_warning_text_select_period_type">Please Select A Time Of Day</string>
     <string name="sent_warning_text_select_time">Please select a time range of at least 60 minutes</string>
@@ -74,6 +75,14 @@
     <string name="text_habit_task_regular">Regular Habit</string>
     <string name="text_habit_task_one_time">One-Time Task</string>
     <string name="text_icon">Icon</string>
+<!-- Mood Value Text -->
+    <string name="text_mood_place_holder">I Feel…</string>
+    <string name="text_mood_selection">I Feel %1$s!</string>
+    <string name="text_mood_great">Great</string>
+    <string name="text_mood_good">Good</string>
+    <string name="text_mood_okay">Okay</string>
+    <string name="text_mood_not_good">Not Good</string>
+    <string name="text_mood_bad">Bad</string>
 <!--Habit Repeat Frequency -->
     <string name="text_repeat_freq_daily">Daily</string>
     <string name="text_repeat_freq_weekly">Weekly</string>
@@ -120,6 +129,7 @@
     <string name="title_home">Home</string>
     <string name="title_icon">Icon</string>
     <string name="title_mood_stat">Mood Stat</string>
+    <string name="title_mood_today">How is your mood today?</string>
     <string name="title_my_habits">My Habits</string>
     <string name="title_on_these_day">On these day:</string>
 <!-- Habit Period -->
