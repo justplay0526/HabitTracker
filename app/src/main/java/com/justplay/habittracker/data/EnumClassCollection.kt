@@ -42,5 +42,23 @@ enum class MoodValue {
     GOOD,
     OKAY,
     NOT_GOOD,
-    BAD
+    BAD;
+
+    companion object {
+        fun fromOrdinal(ordinal: Int): MoodValue? =
+            entries.firstOrNull { it.ordinal == ordinal }
+    }
+}
+
+enum class FeelingValue {
+    Happy, Brave, Motivated,
+    Creative, Confident, Calm,
+    Grateful, Peaceful, Excited,
+    Loved, Hopeful, Inspired,
+    Proud, Euphoric, Nostalgic;
+
+    companion object {
+        fun fromOrdinal(ordinal: Int): FeelingValue? =
+            entries.firstOrNull { it.ordinal == ordinal }
+    }
 }
