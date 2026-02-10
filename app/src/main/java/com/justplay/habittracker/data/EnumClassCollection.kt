@@ -36,3 +36,11 @@ enum class DragToActionValue {
     COMPLETE,
     SKIP
 }
+
+enum class MoodValue {
+    GREAT,
+    GOOD,
+    OKAY,
+    NOT_GOOD,
+    BAD
+}
