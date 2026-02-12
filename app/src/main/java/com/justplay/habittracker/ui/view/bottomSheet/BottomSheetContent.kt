@@ -3,11 +3,13 @@ package com.justplay.habittracker.ui.view.bottomSheet
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +18,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -25,6 +28,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -51,6 +59,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
@@ -61,10 +70,14 @@ import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.justplay.habittracker.R
+import com.justplay.habittracker.data.FeelingValue
+import com.justplay.habittracker.data.MoodValue
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.DateCalendar
 import com.justplay.habittracker.ui.view.IconsRes
 import com.justplay.habittracker.ui.view.OutlinedIcon
+import com.justplay.habittracker.ui.view.moodListItem
+import com.justplay.habittracker.ui.view.moodSelectItemWidth
 import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.YearMonth
@@ -265,9 +278,9 @@ fun DeleteHabitSuccess(
             modifier = Modifier
                 .size(60.dp)
                 .graphicsLayer {
-                scaleX = scale.value
-                scaleY = scale.value
-            }
+                    scaleX = scale.value
+                    scaleY = scale.value
+                }
         )
 
         Spacer(Modifier.height(12.dp))
@@ -279,6 +292,96 @@ fun DeleteHabitSuccess(
                 stringResource(R.string.sent_delete_habit_success)
             },
         )
+    }
+}
+
+@Composable
+fun FeelingSelectContent(
+    onFeelingSelected: (FeelingValue) -> Unit,
+){
+    var selectedFeeling by remember { mutableStateOf<Int?>(null) }
+    var isError by remember { mutableStateOf(false) }
+
+    SheetContentScaffold {
+        PickerTopTitle(
+            stringResource(R.string.title_feeling_today)
+        )
+
+        FlowRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            maxItemsInEachRow = 3,
+            horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            FeelingValue.entries.forEachIndexed { index, feeling ->
+                val selected = (index == selectedFeeling)
+
+                FilterChip(
+                    selected = selected,
+                    onClick = {
+                        selectedFeeling = if (selected) {
+                            null
+                        } else {
+                            index
+                        }
+                        isError = false
+
+                    },
+                    label = {
+                        Text(
+                            text = feeling.name,
+                            color = if (selected) {
+                                MaterialTheme.colorScheme.surface
+                            } else {
+                                MaterialTheme.colorScheme.onSurface
+                            }
+                        )
+                    },
+                    shape = RoundedCornerShape(50),
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = MaterialTheme.colorScheme.primary
+                    )
+                )
+            }
+        }
+
+        if (isError) {
+            Text(
+                text = stringResource(
+                    R.string.sent_warning_text_no_feeling_selected
+                ),
+                color = MaterialTheme.colorScheme.error
+            )
+        }
+
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = {
+                if (selectedFeeling == null) {
+                    isError = true
+                } else {
+                    val feeling = FeelingValue.fromOrdinal(selectedFeeling!!)
+
+                    onFeelingSelected(feeling!!)
+                }
+            }
+        ) {
+            Text(
+                text = if (selectedFeeling == null) {
+                    stringResource(R.string.text_mood_place_holder)
+                } else {
+                    stringResource(
+                        R.string.text_mood_selection,
+                            FeelingValue.entries.first {
+                                it.ordinal == selectedFeeling!!
+                            }.name
+                    )
+                },
+                fontWeight = FontWeight.SemiBold
+            )
+        }
     }
 }
 
@@ -324,6 +427,117 @@ fun IconPickerContent(
                 }
             }
         )
+    }
+}
+
+@Composable
+fun MoodSelectContent(
+    onMoodSelected: (MoodValue) -> Unit,
+) {
+    var selectedMood by remember { mutableStateOf<Int?>(null) }
+    var isError by remember { mutableStateOf(false) }
+
+    SheetContentScaffold {
+        PickerTopTitle(
+            stringResource(R.string.title_mood_today)
+        )
+
+        FlowRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            maxItemsInEachRow = 3,
+            horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            moodListItem.forEach { mood ->
+                val selected = (mood.id == selectedMood)
+
+                Card(
+                    modifier = Modifier
+                        .width(moodSelectItemWidth)
+                        .clickable {
+                            selectedMood = if (selected) {
+                                null
+                            } else {
+                                mood.id
+                            }
+                            isError = false
+                        },
+                    shape = RoundedCornerShape(8.dp),
+                    colors = CardColors(
+                        containerColor = if (selected) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.surfaceContainerLow
+                            // ModalBottomSheet 底色是 surfaceContainerLow
+                        },
+                        contentColor = CardDefaults.cardColors().contentColor, // 預設顏色
+                        disabledContainerColor = CardDefaults.cardColors().disabledContainerColor,
+                        disabledContentColor = CardDefaults.cardColors().disabledContentColor
+                    )
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
+                        painter = painterResource(mood.iconRes),
+                        contentDescription = null,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp),
+                        text = stringResource(mood.labelRes),
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = TextAlign.Center,
+                        color = if (selected) {
+                            MaterialTheme.colorScheme.surface
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        }
+                    )
+                }
+            }
+        }
+
+        if (isError) {
+            Text(
+                text = stringResource(
+                    R.string.sent_warning_text_no_mood_selected
+                ),
+                color = MaterialTheme.colorScheme.error
+            )
+        }
+
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = {
+                if (selectedMood == null) {
+                    isError = true
+                } else {
+                    val mood = MoodValue.fromOrdinal(selectedMood!!)
+                    onMoodSelected(mood!!)
+                }
+            }
+        ) {
+            Text(
+                text = if (selectedMood == null) {
+                    stringResource(R.string.text_mood_place_holder)
+                } else {
+                    stringResource(
+                        R.string.text_mood_selection,
+                        stringResource(
+                            moodListItem.first {
+                                it.id == selectedMood!!
+                            }.labelRes
+                        )
+                    )
+                },
+                fontWeight = FontWeight.SemiBold
+            )
+        }
     }
 }
 
@@ -541,6 +755,20 @@ fun DeleteHabitSuccessPreview() {
     }
 }
 
+@Preview(
+    showBackground = true,
+    widthDp = 418,
+    heightDp = 915
+)
+@Composable
+fun FeelingSelectContentPreview() {
+    HabitTrackerTheme {
+        FeelingSelectContent(
+            onFeelingSelected = {}
+        )
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun IconPickerContentPreview() {
@@ -548,6 +776,20 @@ fun IconPickerContentPreview() {
         IconPickerContent(
             onIconSelected = {},
             onDismiss = {}
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    widthDp = 418,
+    heightDp = 915
+)
+@Composable
+fun MoodSelectContentPreview() {
+    HabitTrackerTheme {
+        MoodSelectContent(
+            onMoodSelected = {}
         )
     }
 }
