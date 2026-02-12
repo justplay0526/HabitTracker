@@ -5,3 +5,8 @@ sealed interface DeleteHabitSheetState {
     data object SuccessKeep : DeleteHabitSheetState
     data object SuccessClear : DeleteHabitSheetState
 }
+
+sealed interface MoodSelectSheetState {
+    data object MoodSelect : MoodSelectSheetState
+    data object FeelingSelect : MoodSelectSheetState
+}
