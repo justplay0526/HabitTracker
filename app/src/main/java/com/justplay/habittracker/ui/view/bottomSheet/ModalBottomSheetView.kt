@@ -12,6 +12,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
 import com.justplay.habittracker.data.DeleteHabitSheetState
+import com.justplay.habittracker.data.FeelingValue
+import com.justplay.habittracker.data.MoodSelectSheetState
+import com.justplay.habittracker.data.MoodValue
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -131,6 +134,55 @@ fun IconModalBottomSheet(
             onIconSelected = onIconSelected,
             onDismiss = onCancel
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MoodSelectModalBottomSheet(
+    show: Boolean,
+    sheetState: SheetState,
+    onCancel: () -> Unit,
+    onMoodSelected: (MoodValue) -> Unit,
+    onFeelingSelected: (FeelingValue) -> Unit
+) {
+    if (!show) return
+
+    var uiState by remember {
+        mutableStateOf<MoodSelectSheetState>(
+            MoodSelectSheetState.MoodSelect
+        )
+    }
+
+    var selectedMood by remember {
+        mutableStateOf<MoodValue?>(null)
+    }
+
+    ModalBottomSheet(
+        onDismissRequest = onCancel,
+        sheetState = sheetState
+    ) {
+        when(uiState) {
+            MoodSelectSheetState.MoodSelect -> {
+                MoodSelectContent(
+                    onMoodSelected = { mood ->
+                        selectedMood = mood
+                        uiState = MoodSelectSheetState.FeelingSelect
+                    },
+                )
+            }
+            MoodSelectSheetState.FeelingSelect -> {
+                FeelingSelectContent(
+                    onFeelingSelected = { feeling ->
+                        selectedMood?.let { mood ->
+                            onMoodSelected(mood)
+                            onFeelingSelected(feeling)
+                            onCancel()
+                        }
+                    }
+                )
+            }
+        }
     }
 }
 
