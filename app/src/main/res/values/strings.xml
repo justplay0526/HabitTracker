@@ -72,6 +72,7 @@
     <string name="text_date_yesterday">Yesterday,</string>
     <string name="text_days">Day</string>
     <string name="text_emoji">Emoji</string>
+    <string name="text_feeling_happy">Happy</string>
 <!-- Habit Task Type -->
     <string name="text_habit_task_regular">Regular Habit</string>
     <string name="text_habit_task_one_time">One-Time Task</string>
