@@ -26,6 +26,16 @@ class MoodStatViewModel @Inject constructor(
 
     fun onEvent(event: MoodStatEvent) {
         when(event) {
+            is MoodStatEvent.FeelingChanged -> {
+                _uiState.update { it.copy(feelingValue = event.feelingValue) }
+                Timber.tag(TAG).d("feelingValue = ${event.feelingValue}")
+            }
+
+            is MoodStatEvent.MoodChanged -> {
+                _uiState.update { it.copy(moodValue = event.moodValue) }
+                Timber.tag(TAG).d("moodValue = ${event.moodValue}")
+            }
+
             is MoodStatEvent.HideAddMood -> {
                 _uiState.update { it.copy(showAddMood = false) }
             }
