@@ -69,9 +69,9 @@ import com.github.skydoves.colorpicker.compose.AlphaTile
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import com.justplay.data.db.classPkg.FeelingValue
+import com.justplay.data.db.classPkg.MoodValue
 import com.justplay.habittracker.R
-import com.justplay.habittracker.data.FeelingValue
-import com.justplay.habittracker.data.MoodValue
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.DateCalendar
 import com.justplay.habittracker.ui.view.IconsRes
