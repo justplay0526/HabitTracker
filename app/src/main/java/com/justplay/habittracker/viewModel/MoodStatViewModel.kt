@@ -1,22 +1,39 @@
 package com.justplay.habittracker.viewModel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.justplay.data.db.entity.MoodLogEntity
+import com.justplay.data.db.repo.MoodRepo
 import com.justplay.habittracker.ui.uiEvent.MoodStatEvent
 import com.justplay.habittracker.ui.uiState.MoodStatUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalDate
 import javax.inject.Inject
 
+@HiltViewModel
 class MoodStatViewModel @Inject constructor(
-    // TODO Add MoodStatRepo
+    private val repo: MoodRepo
 ): ViewModel() {
     private val _uiState = MutableStateFlow(MoodStatUiState())
     val uiState = _uiState.asStateFlow()
 
     init {
         Timber.tag(TAG).d("init")
+        viewModelScope.launch(Dispatchers.IO) {
+            val entity = repo.getLogByDate(LocalDate.now())
+            if (entity == null) {
+                Timber.tag(TAG).d("entity is null")
+            } else {
+                Timber.tag(TAG).d("mood = ${entity.moodValue}")
+                Timber.tag(TAG).d("feeling = ${entity.feelingValue}")
+            }
+        }
     }
 
     override fun onCleared() {
@@ -26,14 +43,13 @@ class MoodStatViewModel @Inject constructor(
 
     fun onEvent(event: MoodStatEvent) {
         when(event) {
-            is MoodStatEvent.FeelingChanged -> {
-                _uiState.update { it.copy(feelingValue = event.feelingValue) }
-                Timber.tag(TAG).d("feelingValue = ${event.feelingValue}")
-            }
-
             is MoodStatEvent.MoodChanged -> {
-                _uiState.update { it.copy(moodValue = event.moodValue) }
-                Timber.tag(TAG).d("moodValue = ${event.moodValue}")
+                _uiState.update {
+                    it.copy(
+                        moodValue = event.moodValue,
+                        feelingValue = event.feelingValue
+                    )
+                }
             }
 
             is MoodStatEvent.HideAddMood -> {

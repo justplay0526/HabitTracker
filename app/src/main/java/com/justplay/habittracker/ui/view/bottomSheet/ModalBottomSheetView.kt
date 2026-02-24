@@ -143,8 +143,7 @@ fun MoodSelectModalBottomSheet(
     show: Boolean,
     sheetState: SheetState,
     onCancel: () -> Unit,
-    onMoodSelected: (MoodValue) -> Unit,
-    onFeelingSelected: (FeelingValue) -> Unit
+    onSelected: (MoodValue, FeelingValue) -> Unit
 ) {
     if (!show) return
 
@@ -175,8 +174,7 @@ fun MoodSelectModalBottomSheet(
                 FeelingSelectContent(
                     onFeelingSelected = { feeling ->
                         selectedMood?.let { mood ->
-                            onMoodSelected(mood)
-                            onFeelingSelected(feeling)
+                            onSelected(mood ,feeling)
                             onCancel()
                         }
                     }

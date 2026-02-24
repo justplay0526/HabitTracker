@@ -64,11 +64,8 @@ fun MoodStatScreen(
             onCancel = {
                 onEvent(MoodStatEvent.HideAddMood)
             },
-            onMoodSelected = { value ->
-                onEvent(MoodStatEvent.MoodChanged(value))
-            },
-            onFeelingSelected = { value ->
-                onEvent(MoodStatEvent.FeelingChanged(value))
+            onSelected = { mood, feeling ->
+                onEvent(MoodStatEvent.MoodChanged(mood, feeling))
             }
         )
 
