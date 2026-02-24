@@ -26,6 +26,9 @@ object DatabaseModule {
         .build()
 
     @Provides
+    fun provideMoodLogDao(db: DataDb) = db.moodLogDao()
+
+    @Provides
     fun provideTaskDao(db: DataDb) = db.taskDao()
 
     @Provides
