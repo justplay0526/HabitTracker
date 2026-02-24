@@ -2,9 +2,11 @@ package com.justplay.habittracker.ui.uiEvent
 
 import com.justplay.data.db.classPkg.FeelingValue
 import com.justplay.data.db.classPkg.MoodValue
+import java.time.LocalDate
 
 sealed interface MoodStatEvent {
     data class MoodChanged(
+        val date: LocalDate,
         val moodValue: MoodValue,
         val feelingValue: FeelingValue
     ) : MoodStatEvent

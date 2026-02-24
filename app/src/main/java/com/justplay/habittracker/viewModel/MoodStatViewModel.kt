@@ -25,6 +25,7 @@ class MoodStatViewModel @Inject constructor(
 
     init {
         Timber.tag(TAG).d("init")
+        // Adjust to a Month Range
         viewModelScope.launch(Dispatchers.IO) {
             val entity = repo.getLogByDate(LocalDate.now())
             if (entity == null) {
@@ -49,6 +50,16 @@ class MoodStatViewModel @Inject constructor(
                         moodValue = event.moodValue,
                         feelingValue = event.feelingValue
                     )
+                }
+                viewModelScope.launch(Dispatchers.IO) {
+                    repo.upsert(
+                        MoodLogEntity(
+                            date = event.date,
+                            feelingValue = event.feelingValue,
+                            moodValue = event.moodValue
+                        )
+                    )
+                    Timber.tag(TAG).d("upsert success")
                 }
             }
 
