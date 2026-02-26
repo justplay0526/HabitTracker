@@ -4,6 +4,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.toArgb
+import com.justplay.data.db.classPkg.MoodValue
 import com.justplay.data.db.classPkg.PeriodOption
 import com.justplay.habittracker.ui.view.ColorResource
 import com.justplay.habittracker.ui.view.IconsRes
@@ -36,6 +37,12 @@ data class MoodItem(
     val id: Int,
     @param:DrawableRes val iconRes: Int,
     @param:StringRes val labelRes: Int,
+)
+
+data class MoodDayUi(
+    val date: LocalDate,
+    val mood: MoodValue?,
+    val enabled: Boolean
 )
 
 data class TodayUiState(
