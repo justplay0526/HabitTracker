@@ -36,7 +36,7 @@ fun MoodDayCell(
 ) {
     Box(
         modifier = modifier
-            .aspectRatio(0.5f)
+            .aspectRatio(0.6f)
             .padding(2.dp),
         contentAlignment = Alignment.Center
     ) {
