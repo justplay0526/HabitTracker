@@ -1,11 +1,11 @@
 package com.justplay.habittracker.ui.uiState
 
-import com.justplay.data.db.classPkg.FeelingValue
-import com.justplay.data.db.classPkg.MoodValue
+import com.justplay.data.db.entity.MoodLogEntity
+import java.time.YearMonth
 
 data class MoodStatUiState(
-    val moodValue: MoodValue? = null,
-    val feelingValue: FeelingValue? = null,
+    val currMonth: YearMonth = YearMonth.now(),
+    val logList: List<MoodLogEntity> = emptyList(),
 
     val showAddMood: Boolean = false
 )

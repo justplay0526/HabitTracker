@@ -8,33 +8,57 @@ import com.justplay.habittracker.ui.uiEvent.MoodStatEvent
 import com.justplay.habittracker.ui.uiState.MoodStatUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.time.LocalDate
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class MoodStatViewModel @Inject constructor(
     private val repo: MoodRepo
 ): ViewModel() {
     private val _uiState = MutableStateFlow(MoodStatUiState())
-    val uiState = _uiState.asStateFlow()
+    private val logsFlow: StateFlow<List<MoodLogEntity>> =
+        _uiState
+            .map { it.currMonth }
+            .distinctUntilChanged()
+            .flatMapLatest { month ->
+                repo.observeLogsInRange(
+                    startDate = month
+                        .minusMonths(1L)
+                        .atEndOfMonth().minusDays(14L), // 抓取前個月份的 14 天資料
+                    endDate = month
+                        .plusMonths(1L)
+                        .atDay(14) // 抓取後個月份的 14 天資料
+                )
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = emptyList()
+            )
+
+    val uiState: StateFlow<MoodStatUiState> =
+        combine(_uiState, logsFlow) { base, logs ->
+            base.copy(logList = logs)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = MoodStatUiState()
+        )
 
     init {
         Timber.tag(TAG).d("init")
-        // Adjust to a Month Range
-        viewModelScope.launch(Dispatchers.IO) {
-            val entity = repo.getLogByDate(LocalDate.now())
-            if (entity == null) {
-                Timber.tag(TAG).d("entity is null")
-            } else {
-                Timber.tag(TAG).d("mood = ${entity.moodValue}")
-                Timber.tag(TAG).d("feeling = ${entity.feelingValue}")
-            }
-        }
     }
 
     override fun onCleared() {
@@ -44,13 +68,10 @@ class MoodStatViewModel @Inject constructor(
 
     fun onEvent(event: MoodStatEvent) {
         when(event) {
+            is MoodStatEvent.MonthChanged -> {
+                _uiState.update { it.copy(currMonth = event.month) }
+            }
             is MoodStatEvent.MoodChanged -> {
-                _uiState.update {
-                    it.copy(
-                        moodValue = event.moodValue,
-                        feelingValue = event.feelingValue
-                    )
-                }
                 viewModelScope.launch(Dispatchers.IO) {
                     repo.upsert(
                         MoodLogEntity(
