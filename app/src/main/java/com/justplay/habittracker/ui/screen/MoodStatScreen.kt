@@ -2,11 +2,8 @@ package com.justplay.habittracker.ui.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -15,7 +12,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,11 +22,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.justplay.habittracker.R
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.uiEvent.MoodStatEvent
 import com.justplay.habittracker.ui.uiState.MoodStatUiState
 import com.justplay.habittracker.ui.view.bottomSheet.MoodSelectModalBottomSheet
+import com.justplay.habittracker.ui.view.calendar.MoodLogCalendar
 import com.justplay.habittracker.viewModel.MoodStatViewModel
 import java.time.LocalDate
 
@@ -88,18 +86,17 @@ fun MoodStatScreen(
                 .padding(innerPadding)
                 .padding(horizontal = 8.dp)
         ) {
-            Spacer(modifier = Modifier.weight(1f))
-
-            // This is Test UI
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                onClick = {
+            MoodLogCalendar(
+                currentMonth = uiState.currMonth,
+                logList = uiState.logList,
+                onDateClicked = {
+                    selectDate = it
                     onEvent(MoodStatEvent.ShowAddMood)
+                },
+                onMonthChanged = { month ->
+                    onEvent(MoodStatEvent.MonthChanged(month))
                 }
-            ) {
-                Text(text = "Add Mood")
-            }
+            )
         }
     }
 }
@@ -109,7 +106,7 @@ fun MoodStatScreen(
     onHistoryClick: () -> Unit,
     vm: MoodStatViewModel = hiltViewModel()
 ) {
-    val uiState = vm.uiState.collectAsState()
+    val uiState = vm.uiState.collectAsStateWithLifecycle()
 
     MoodStatScreen(
         uiState = uiState.value,
