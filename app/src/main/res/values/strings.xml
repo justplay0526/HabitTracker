@@ -132,6 +132,7 @@
     <string name="title_habit_name">Habit Name</string>
     <string name="title_home">Home</string>
     <string name="title_icon">Icon</string>
+    <string name="title_mood_history">Mood Stat History</string>
     <string name="title_mood_stat">Mood Stat</string>
     <string name="title_mood_today">How is your mood today?</string>
     <string name="title_my_habits">My Habits</string>
