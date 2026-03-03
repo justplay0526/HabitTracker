@@ -117,6 +117,12 @@ val sampleMoodLogs = listOf(
     ),
 
     MoodLogEntity(
+        date = sampleLogsYearMonth.atDay(17),
+        feelingValue = FeelingValue.Hopeful,
+        moodValue = MoodValue.GREAT
+    ),
+
+    MoodLogEntity(
         date = sampleLogsYearMonth.atEndOfMonth(),
         feelingValue = FeelingValue.Peaceful,
         moodValue = MoodValue.GOOD
@@ -131,7 +137,28 @@ val sampleMoodLogs = listOf(
     ),
 
     MoodLogEntity(
-        date = sampleLogsYearMonth.plusMonths(1L).atDay(1),
+        date = sampleLogsYearMonth.plusMonths(1L).atDay(2),
+        feelingValue = FeelingValue.Creative,
+        moodValue = MoodValue.GOOD
+    ),
+
+    MoodLogEntity(
+        date = sampleLogsYearMonth.plusMonths(1L).atDay(3),
+        feelingValue = FeelingValue.Calm,
+        moodValue = MoodValue.NOT_GOOD
+    ),
+)
+
+val sampleDescMoodLogs = listOf(
+    // 跨月資料
+    MoodLogEntity(
+        date = sampleLogsYearMonth.plusMonths(1L).atDay(3),
+        feelingValue = FeelingValue.Happy,
+        moodValue = MoodValue.GREAT
+    ),
+
+    MoodLogEntity(
+        date = sampleLogsYearMonth.plusMonths(1L).atDay(2),
         feelingValue = FeelingValue.Creative,
         moodValue = MoodValue.GOOD
     ),
@@ -141,4 +168,52 @@ val sampleMoodLogs = listOf(
         feelingValue = FeelingValue.Calm,
         moodValue = MoodValue.NOT_GOOD
     ),
+    // 本月資料
+    MoodLogEntity(
+        date = sampleLogsYearMonth.atEndOfMonth(),
+        feelingValue = FeelingValue.Peaceful,
+        moodValue = MoodValue.GOOD
+    ),
+
+    MoodLogEntity(
+        date = sampleLogsYearMonth.atDay(17),
+        feelingValue = FeelingValue.Creative,
+        moodValue = MoodValue.OKAY
+    ),
+
+    MoodLogEntity(
+        date = sampleLogsYearMonth.atDay(13),
+        feelingValue = FeelingValue.Happy,
+        moodValue = MoodValue.GREAT
+    ),
+
+    MoodLogEntity(
+        date = sampleLogsYearMonth.atDay(11),
+        feelingValue = FeelingValue.Nostalgic,
+        moodValue = MoodValue.GOOD
+    ),
+
+    MoodLogEntity(
+        date = sampleLogsYearMonth.atDay(7),
+        feelingValue = FeelingValue.Brave,
+        moodValue = MoodValue.NOT_GOOD
+    ),
+
+    MoodLogEntity(
+        date = sampleLogsYearMonth.atDay(5),
+        feelingValue = FeelingValue.Creative,
+        moodValue = MoodValue.OKAY
+    ),
+
+    MoodLogEntity(
+        date = sampleLogsYearMonth.atDay(3),
+        feelingValue = FeelingValue.Calm,
+        moodValue = MoodValue.NOT_GOOD
+    ),
+
+    MoodLogEntity(
+        date = sampleLogsYearMonth.atDay(2),
+        feelingValue = FeelingValue.Hopeful,
+        moodValue = MoodValue.GREAT
+    )
 )
