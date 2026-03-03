@@ -38,6 +38,7 @@ import com.justplay.habittracker.ui.screen.HomeScreen
 import com.justplay.habittracker.ui.screen.MoodStatScreen
 import com.justplay.habittracker.ui.screen.MyHabitsScreen
 import com.justplay.habittracker.ui.screen.ReportScreen
+import com.justplay.habittracker.ui.screen.moodHistory.MoodHistoryScreen
 import com.justplay.habittracker.ui.screen.taskDetail.RegularTaskDetailScreen
 import com.justplay.habittracker.ui.screen.taskEdit.OneTimeTaskEditScreen
 import com.justplay.habittracker.ui.screen.taskEdit.RegularTaskEditScreen
@@ -143,6 +144,14 @@ fun MainNavHost(
                     )
                 }
             }
+        }
+
+        composable(
+            route = MoodStatDest.MOOD_STAT_HISTORY.name
+        ) {
+            MoodHistoryScreen(
+                onBackClick = { navHost.popBackStack() }
+            )
         }
 
         composable(
