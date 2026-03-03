@@ -1,5 +1,8 @@
 package com.justplay.data.db.repo
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.justplay.data.db.classPkg.FeelingValue
 import com.justplay.data.db.classPkg.MoodValue
 import com.justplay.data.db.dao.MoodLogDao
@@ -24,6 +27,16 @@ class MoodRepoImpl @Inject constructor(
         endDate: LocalDate
     ): Flow<List<MoodLogEntity>> =
         logDao.observeLogsInRange(startDate, endDate)
+
+    override fun observeMoodPager(): Flow<PagingData<MoodLogEntity>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 20,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { logDao.pagingMoodLogs() }
+        ).flow
+    }
 
     override suspend fun updateFeeling(
         date: LocalDate,

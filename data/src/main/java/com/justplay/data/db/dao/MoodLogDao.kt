@@ -1,5 +1,6 @@
 package com.justplay.data.db.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -28,6 +29,12 @@ interface MoodLogDao {
         startDate: LocalDate,
         endDate: LocalDate
     ): Flow<List<MoodLogEntity>>
+
+    @Query("""
+        SELECT * FROM $MOOD_LOG_TABLE
+        ORDER BY date DESC
+    """)
+    fun pagingMoodLogs(): PagingSource<Int, MoodLogEntity>
 
     @Query("""
         UPDATE $MOOD_LOG_TABLE
