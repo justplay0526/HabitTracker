@@ -41,7 +41,11 @@ fun MoodDayCell(
         contentAlignment = Alignment.Center
     ) {
         Column(
-            modifier = Modifier.clickable { onClick(day.date) },
+            modifier = Modifier.clickable {
+                if (day.enabled) {
+                    onClick(day.date)
+                }
+            },
             verticalArrangement = Arrangement.Center
         ) {
             val moodIcon = if (

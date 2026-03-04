@@ -52,8 +52,7 @@ fun MoodLogCalendar(
     val days = remember(currentMonth, logList) {
         buildMoodMonthDays(
             yearMonth = currentMonth,
-            logList = logList,
-            disableByDate = false,
+            logList = logList
         )
     }
 

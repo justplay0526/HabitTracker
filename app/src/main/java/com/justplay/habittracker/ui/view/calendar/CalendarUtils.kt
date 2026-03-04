@@ -11,7 +11,6 @@ import java.time.YearMonth
 fun buildMoodMonthDays(
     yearMonth: YearMonth,
     logList: List<MoodLogEntity>,
-    disableByDate: Boolean,
 ): List<MoodDayUi> {
     val firstOfMonth = yearMonth.atDay(1)
     val firstDayOfWeek = firstOfMonth.dayOfWeek
@@ -50,11 +49,11 @@ fun buildMoodMonthDays(
     // 本月
     for (day in 1..daysInMonth) {
         val date = yearMonth.atDay(day)
-        val enabled = !date.isBefore(today)
+        val enabled = date.isBefore(today) || date.isEqual(today)
         days += MoodDayUi(
             date = date,
             mood = logMap[date]?.moodValue,
-            enabled = if (!disableByDate) true else enabled
+            enabled = enabled
         )
     }
 
