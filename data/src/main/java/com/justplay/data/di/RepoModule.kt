@@ -1,5 +1,7 @@
 package com.justplay.data.di
 
+import com.justplay.data.db.repo.MoodRepo
+import com.justplay.data.db.repo.MoodRepoImpl
 import com.justplay.data.db.repo.TaskRepo
 import com.justplay.data.db.repo.TaskRepoImpl
 import dagger.Binds
@@ -12,4 +14,7 @@ import dagger.hilt.components.SingletonComponent
 abstract class RepoModule {
     @Binds
     abstract fun bindTaskRepo(impl: TaskRepoImpl): TaskRepo
+
+    @Binds
+    abstract fun bindMoodRepo(impl: MoodRepoImpl): MoodRepo
 }
