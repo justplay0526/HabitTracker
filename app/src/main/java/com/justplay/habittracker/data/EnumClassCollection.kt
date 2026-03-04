@@ -19,6 +19,11 @@ enum class HomeNavDest(
     CREATE_NEW_HABIT
 }
 
+enum class MoodStatDest(
+) {
+    MOOD_STAT_HISTORY
+}
+
 enum class MyHabitsNavDest(
 ) {
     REGULAR_TASK_DETAIL,

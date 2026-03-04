@@ -2,10 +2,14 @@ package com.justplay.habittracker.ui.view
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.justplay.data.db.classPkg.MoodValue
 import com.justplay.habittracker.R
+import com.justplay.habittracker.data.MoodItem
 
 val HabitListItemHeight = 68.dp
 val HabitTextFieldHeight = 52.dp
+val moodSelectItemWidth = 100.dp
+
 const val LastColorCircleIndex = 14 // 15 - 1
 
 val IconsRes = listOf(
@@ -24,6 +28,14 @@ val IconsRes = listOf(
     R.mipmap.emoji_25_sleeping, R.mipmap.emoji_26_cold,
     R.mipmap.emoji_27_spiral_eyes, R.mipmap.emoji_28_symbol_on_month,
     R.mipmap.emoji_29_exploding_head, R.mipmap.emoji_30_smile_horns,
+)
+
+val moodListItem = listOf(
+    MoodItem(MoodValue.GREAT.ordinal, R.mipmap.emoji_01_smile_sunglasses, R.string.text_mood_great),
+    MoodItem(MoodValue.GOOD.ordinal, R.mipmap.emoji_09_grinning_big_eyes, R.string.text_mood_good),
+    MoodItem(MoodValue.OKAY.ordinal, R.mipmap.emoji_23_exhaling, R.string.text_mood_okay),
+    MoodItem(MoodValue.NOT_GOOD.ordinal, R.mipmap.emoji_19_anxious_sweat, R.string.text_mood_not_good),
+    MoodItem(MoodValue.BAD.ordinal, R.mipmap.emoji_28_symbol_on_month, R.string.text_mood_bad),
 )
 
 val ColorResource = listOf(
