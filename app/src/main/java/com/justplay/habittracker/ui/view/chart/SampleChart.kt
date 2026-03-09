@@ -12,10 +12,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.justplay.habittracker.ui.view.SvgPinBubbleComponent
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
@@ -25,6 +31,7 @@ import com.patrykandpatrick.vico.compose.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.compose.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
+import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarkerVisibilityListener
 import com.patrykandpatrick.vico.compose.cartesian.marker.ColumnCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.compose.cartesian.marker.DefaultCartesianMarker
@@ -34,7 +41,6 @@ import com.patrykandpatrick.vico.compose.common.Fill
 import com.patrykandpatrick.vico.compose.common.Insets
 import com.patrykandpatrick.vico.compose.common.component.LineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
-import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.data.ExtraStore
 import kotlinx.coroutines.runBlocking
@@ -51,22 +57,44 @@ fun HabitCompletedColumnChart(
     val marker = rememberDefaultCartesianMarker(
         label = rememberTextComponent(
             style = TextStyle(
-                fontSize = 12.sp,
-                color = Color(0xFF6E68D8),
+                textAlign = TextAlign.Center
             ),
-            padding = Insets(horizontal = 12.dp, vertical = 8.dp),
-            background = rememberShapeComponent(
-                fill = Fill(Color.White),
-                shape = RoundedCornerShape(14.dp),
-                strokeFill = Fill(Color(0xFFD9D4FF)),
-                strokeThickness = 1.dp,
+            lineCount = 2,
+            padding = Insets(
+                start = 12.dp,
+                top = 4.dp,
+                end = 12.dp,
+                bottom = 20.dp, // 多留一點空間，避免太貼近尾巴
             ),
+            background = remember {
+                SvgPinBubbleComponent()
+            },
         ),
         valueFormatter = remember {
             DefaultCartesianMarker.ValueFormatter { _, targets ->
                 val columnTarget = targets.firstOrNull() as? ColumnCartesianLayerMarkerTarget
-                val y = columnTarget?.columns?.firstOrNull()?.entry?.y
-                "$y\nAug"
+                val y = columnTarget?.columns?.firstOrNull()?.entry?.y?.toInt() ?: 0
+                buildAnnotatedString {
+                    withStyle(
+                        SpanStyle(
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    ) {
+                        append(y.toString())
+                    }
+
+                    append("\n")
+
+                    withStyle(
+                        SpanStyle(
+                            fontSize = 6.sp,
+                            color = Color.Gray
+                        )
+                    ) {
+                        append("habits")
+                    }
+                }
             }
         },
     )
@@ -115,14 +143,17 @@ fun HabitCompletedColumnChart(
                 ),
                 startAxis = VerticalAxis.rememberStart(
                     // adjust Y axis step
-                    itemPlacer = VerticalAxis.ItemPlacer.step(step = { 1.0 })
+                    itemPlacer = VerticalAxis.ItemPlacer.step(step = { 1.0 }),
+                    guideline = null
                 ),
                 bottomAxis = HorizontalAxis.rememberBottom(
                     valueFormatter = { _, x, _ ->
                         xLabels.getOrNull(x.toInt()) ?: ""
-                    }
+                    },
+                    guideline = null
                 ),
                 marker = marker,
+                markerController = CartesianMarkerController.rememberToggleOnTap(),
                 markerVisibilityListener = object : CartesianMarkerVisibilityListener {
                     override fun onShown(
                         marker: CartesianMarker,
