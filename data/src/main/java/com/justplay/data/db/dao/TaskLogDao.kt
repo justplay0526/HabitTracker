@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.justplay.data.TASK_LOG_TABLE
+import com.justplay.data.db.classPkg.DailyCompletedCount
 import com.justplay.data.db.classPkg.TaskStatus
 import com.justplay.data.db.classPkg.TaskWeeklyCount
 import com.justplay.data.db.entity.TaskLogEntity
@@ -59,6 +60,22 @@ interface TaskLogDao {
         startDate: LocalDate,
         endDate: LocalDate
     ): Flow<List<TaskWeeklyCount>>
+
+    @Query(
+        """
+    SELECT date, COUNT(*) AS count
+    FROM task_log
+    WHERE date BETWEEN :startDate AND :endDate
+      AND status = :completedStatus
+    GROUP BY date
+    ORDER BY date ASC
+    """
+    )
+    fun observeDailyCompletedCountInRange(
+        startDate: LocalDate,
+        endDate: LocalDate,
+        completedStatus: TaskStatus = TaskStatus.COMPLETED
+    ): Flow<List<DailyCompletedCount>>
 
     // Today 還會用到「今天每個 task 的狀態」
     @Query("""

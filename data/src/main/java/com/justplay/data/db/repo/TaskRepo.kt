@@ -1,5 +1,6 @@
 package com.justplay.data.db.repo
 
+import com.justplay.data.db.classPkg.DailyCompletedCount
 import com.justplay.data.db.classPkg.TaskStatus
 import com.justplay.data.db.classPkg.TaskType
 import com.justplay.data.db.classPkg.TodayTaskItem
@@ -23,6 +24,12 @@ interface TaskRepo {
         taskId: Long,
         startDate: LocalDate, endDate: LocalDate
     ): Flow<List<TaskLogEntity>>
+
+    fun observeDailyCompletedCountInRange(
+        startDate: LocalDate,
+        endDate: LocalDate,
+        completedStatus: TaskStatus = TaskStatus.COMPLETED
+    ): Flow<List<DailyCompletedCount>>
 
     fun observeWeeklyCompletedCounts(
         taskIds: List<Long>,

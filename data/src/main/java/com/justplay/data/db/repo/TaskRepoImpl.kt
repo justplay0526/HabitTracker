@@ -1,5 +1,6 @@
 package com.justplay.data.db.repo
 
+import com.justplay.data.db.classPkg.DailyCompletedCount
 import com.justplay.data.db.classPkg.RepeatOption
 import com.justplay.data.db.classPkg.SortOrderUpdate
 import com.justplay.data.db.classPkg.TaskStatus
@@ -100,6 +101,17 @@ class TaskRepoImpl @Inject constructor(
         taskId = taskId,
         startDate = startDate,
         endDate = endDate
+    )
+
+    override fun observeDailyCompletedCountInRange(
+        startDate: LocalDate,
+        endDate: LocalDate,
+        completedStatus: TaskStatus
+    ): Flow<List<DailyCompletedCount>>
+    = logDao.observeDailyCompletedCountInRange(
+        startDate = startDate,
+        endDate = endDate,
+        completedStatus = completedStatus
     )
 
     override fun observeWeeklyCompletedCounts(
