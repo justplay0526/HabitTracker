@@ -65,6 +65,7 @@
     <string name="text_current_streak">Current Streak</string>
     <string name="text_everyday">Everyday</string>
     <string name="text_habit_complete">Habit Completed</string>
+    <string name="text_habit_complete_rate">Habit Completed Rate</string>
     <string name="text_total_perfect_day">Total perfect days</string>
 <!--  Date Text -->
     <string name="text_date_today">Today,</string>
