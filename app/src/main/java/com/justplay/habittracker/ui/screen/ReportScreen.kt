@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -20,6 +21,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -27,14 +30,32 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.justplay.habittracker.R
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
+import com.justplay.habittracker.ui.uiState.report.ReportUiState
+import com.justplay.habittracker.ui.view.chart.HabitCompletedColumnChart
 import com.justplay.habittracker.ui.view.taskDetail.RegularDetailGridItem
+import com.justplay.habittracker.viewModel.report.ReportViewModel
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.compose.cartesian.data.columnSeries
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReportScreen(
+    uiState: ReportUiState
 ) {
+    val modelProducer = remember { CartesianChartModelProducer() }
+
+    LaunchedEffect(
+        uiState.habitCompletedCounts
+    ) {
+        modelProducer.runTransaction {
+            columnSeries { series(uiState.habitCompletedCounts) }
+        }
+    }
+
     Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
         CenterAlignedTopAppBar(
             title = { Text(stringResource(R.string.title_report)) },
@@ -54,7 +75,8 @@ fun ReportScreen(
                 scrolledContainerColor = Color.Transparent,
                 navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
                 titleContentColor = MaterialTheme.colorScheme.onSurface,
-                actionIconContentColor = Color.Unspecified
+                actionIconContentColor = Color.Unspecified,
+                subtitleContentColor = Color.Unspecified
             ),
         )
     }) { innerPadding ->
@@ -109,14 +131,38 @@ fun ReportScreen(
                 }
             }
 
+            HabitCompletedColumnChart(
+                modelProducer = modelProducer,
+                xLabels = uiState.habitCompletedLabels,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.surface,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+            )
         }
     }
+}
+
+@Composable
+fun ReportScreen(
+    vm: ReportViewModel = hiltViewModel()
+) {
+    val uiState = vm.uiState.collectAsStateWithLifecycle()
+
+    ReportScreen(
+        uiState = uiState.value
+    )
 }
 
 @Preview
 @Composable
 fun ReportScreenPreview() {
     HabitTrackerTheme {
-        ReportScreen()
+        ReportScreen(
+            uiState = ReportUiState()
+        )
     }
 }
