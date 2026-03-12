@@ -29,7 +29,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.justplay.habittracker.R
-import com.justplay.habittracker.ui.screen.period.SectionHeader
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.SvgPinBubbleComponent
 import com.justplay.habittracker.ui.viewUtils.getWeekString
