@@ -14,7 +14,8 @@ private const val PIN_PATH_DATA =
 
 class SvgPinBubbleComponent(
     private val fillColor: Color = Color(0xFF8B83E6),
-    private val holeColor: Color = Color.White
+    private val holeColor: Color = Color.White,
+    private val holeRadius: Float = 140f,
 ) : Component {
 
     private val originalWidth = 384f
@@ -64,7 +65,7 @@ class SvgPinBubbleComponent(
                 drawPath(pinPath, fillPaint)
                 // 內圓
                 drawCircle(
-                    192f, 192f, 140f,
+                    192f, 192f, holeRadius,
                     holePaint
                 )
             }
