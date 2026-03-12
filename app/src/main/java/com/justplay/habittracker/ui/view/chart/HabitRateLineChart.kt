@@ -39,8 +39,8 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLa
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarkerController
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarkerVisibilityListener
-import com.patrykandpatrick.vico.compose.cartesian.marker.ColumnCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.compose.cartesian.marker.DefaultCartesianMarker
+import com.patrykandpatrick.vico.compose.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.common.Fill
@@ -63,7 +63,7 @@ fun HabitRateLineChart(
     val marker = rememberDefaultCartesianMarker(
         label = rememberTextComponent(
             style = TextStyle(
-                fontSize = 12.sp,
+                fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             ),
@@ -75,14 +75,16 @@ fun HabitRateLineChart(
                 bottom = 17.dp, // 多留一點空間，避免太貼近尾巴
             ),
             background = remember {
-                SvgPinBubbleComponent()
+                SvgPinBubbleComponent(
+                    holeRadius = 160f
+                )
             },
         ),
         labelPosition = DefaultCartesianMarker.LabelPosition.AbovePoint,
         valueFormatter = remember {
             DefaultCartesianMarker.ValueFormatter { _, targets ->
-                val columnTarget = targets.firstOrNull() as? ColumnCartesianLayerMarkerTarget
-                val y = columnTarget?.columns?.firstOrNull()?.entry?.y?.toInt() ?: 0
+                val pointTarget = targets.firstOrNull() as? LineCartesianLayerMarkerTarget
+                val y = pointTarget?.points?.firstOrNull()?.entry?.y?.toInt() ?: 0
                 "$y %"
             }
         },
@@ -131,7 +133,7 @@ fun HabitRateLineChart(
                     ),
                     startAxis = VerticalAxis.rememberStart(
                         // adjust Y axis step
-                        itemPlacer = VerticalAxis.ItemPlacer.step(step = { 1.0 }),
+                        itemPlacer = VerticalAxis.ItemPlacer.step(step = { 10.0 }),
                         guideline = null
                     ),
                     bottomAxis = HorizontalAxis.rememberBottom(
@@ -147,20 +149,7 @@ fun HabitRateLineChart(
                         )
                     },
                     marker = marker,
-                    markerController = CartesianMarkerController.rememberToggleOnTap(),
-                    markerVisibilityListener = object : CartesianMarkerVisibilityListener {
-                        override fun onShown(
-                            marker: CartesianMarker,
-                            targets: List<CartesianMarker.Target>
-                        ) { }
-
-                        override fun onUpdated(
-                            marker: CartesianMarker,
-                            targets: List<CartesianMarker.Target>
-                        ) { }
-
-                        override fun onHidden(marker: CartesianMarker) { }
-                    }
+                    markerController = CartesianMarkerController.rememberToggleOnTap()
                 ),
             modelProducer = modelProducer,
             modifier = Modifier
@@ -179,8 +168,8 @@ private fun HabitRateLineChartPreview() {
     val xLabels = remember {
         getWeekString(date = LocalDate.now(), weekBegin = DayOfWeek.SUNDAY)
     }
-    val values = remember { listOf(4f, 7f, 5f, 6f, 5f, 7f) }
-    val step = 1.toDouble()
+    val values = remember { listOf(40f, 70f, 50f, 60f, 50f, 70f) }
+    val step = 10.toDouble()
     val maxValue = remember { values.max() + step }
     val minValue = remember {
         (values.min() - step)
