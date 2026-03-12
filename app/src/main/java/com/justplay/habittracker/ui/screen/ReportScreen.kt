@@ -3,10 +3,11 @@ package com.justplay.habittracker.ui.screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,23 +37,29 @@ import com.justplay.habittracker.R
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.uiState.report.ReportUiState
 import com.justplay.habittracker.ui.view.chart.HabitCompletedColumnChart
+import com.justplay.habittracker.ui.view.chart.HabitRateLineChart
 import com.justplay.habittracker.ui.view.taskDetail.RegularDetailGridItem
 import com.justplay.habittracker.viewModel.report.ReportViewModel
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.compose.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.compose.cartesian.data.lineSeries
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReportScreen(
     uiState: ReportUiState
 ) {
-    val modelProducer = remember { CartesianChartModelProducer() }
+    val columnModelProducer = remember { CartesianChartModelProducer() }
+    val lineModelProducer = remember { CartesianChartModelProducer() }
 
     LaunchedEffect(
         uiState.habitCompletedCounts
     ) {
-        modelProducer.runTransaction {
+        columnModelProducer.runTransaction {
             columnSeries { series(uiState.habitCompletedCounts) }
+        }
+        lineModelProducer.runTransaction {
+            lineSeries { series(uiState.habitCompletedCounts) }
         }
     }
 
@@ -80,68 +87,91 @@ fun ReportScreen(
             ),
         )
     }) { innerPadding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues = innerPadding)
                 .background(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 160.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = 16.dp, vertical = 8.dp
-                    ),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                // Current Streak
-                item {
-                    RegularDetailGridItem(
-                        contentText = pluralStringResource(
-                            R.plurals.text_streak_day,
-                            5,
-                            5
-                        ), // Sample Text
-                        hintText = stringResource(R.string.text_current_streak)
-                    )
+            item {
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(minSize = 160.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 180.dp)
+                        .padding(
+                            horizontal = 16.dp, vertical = 8.dp
+                        ),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    userScrollEnabled = false
+                ) {
+                    // Current Streak
+                    item {
+                        RegularDetailGridItem(
+                            contentText = pluralStringResource(
+                                R.plurals.text_streak_day,
+                                5,
+                                5
+                            ), // Sample Text
+                            hintText = stringResource(R.string.text_current_streak)
+                        )
+                    }
+                    // Completion Rate
+                    item {
+                        RegularDetailGridItem(
+                            contentText = "${50} %", // Sample Text
+                            hintText = stringResource(R.string.text_complete_rate)
+                        )
+                    }
+                    // Habit Completed
+                    item {
+                        RegularDetailGridItem(
+                            contentText = 50.toString(), // Sample Text
+                            hintText = stringResource(R.string.text_habit_complete)
+                        )
+                    }
+                    // Total Perfect Days
+                    item {
+                        RegularDetailGridItem(
+                            contentText = "495", // TODO Add Total Perfect day count
+                            hintText = stringResource(R.string.text_total_perfect_day)
+                        )
+                    }
                 }
-                // Completion Rate
-                item {
-                    RegularDetailGridItem(
-                        contentText = "${50} %", // Sample Text
-                        hintText = stringResource(R.string.text_complete_rate)
-                    )
-                }
-                // Habit Completed
-                item {
-                    RegularDetailGridItem(
-                        contentText = 50.toString(), // Sample Text
-                        hintText = stringResource(R.string.text_habit_complete)
-                    )
-                }
-                // Total Perfect Days
-                item {
-                    RegularDetailGridItem(
-                        contentText = "495", // TODO Add Total Perfect day count
-                        hintText = stringResource(R.string.text_total_perfect_day)
-                    )
-                }
+
             }
 
-            HabitCompletedColumnChart(
-                modelProducer = modelProducer,
-                xLabels = uiState.habitCompletedLabels,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.surface,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-            )
+            item {
+                HabitCompletedColumnChart(
+                    modelProducer = columnModelProducer,
+                    xLabels = uiState.habitCompletedLabels,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.surface,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                )
+            }
+
+            item {
+                HabitRateLineChart(
+                    modelProducer = lineModelProducer,
+                    xLabels = uiState.habitCompletedLabels,
+                    maxValue = 8.toDouble(), // TODO 改值
+                    minValue = 0.toDouble(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.surface,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                )
+            }
         }
     }
 }
