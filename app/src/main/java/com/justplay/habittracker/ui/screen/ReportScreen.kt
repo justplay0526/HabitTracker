@@ -59,7 +59,7 @@ fun ReportScreen(
             columnSeries { series(uiState.habitCompletedCounts) }
         }
         lineModelProducer.runTransaction {
-            lineSeries { series(uiState.habitCompletedCounts) }
+            lineSeries { series(uiState.habitCompletedRate) }
         }
     }
 
@@ -161,8 +161,8 @@ fun ReportScreen(
                 HabitRateLineChart(
                     modelProducer = lineModelProducer,
                     xLabels = uiState.habitCompletedLabels,
-                    maxValue = 8.toDouble(), // TODO 改值
-                    minValue = 0.toDouble(),
+                    maxValue = uiState.rateMax,
+                    minValue = uiState.rateMin,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp)

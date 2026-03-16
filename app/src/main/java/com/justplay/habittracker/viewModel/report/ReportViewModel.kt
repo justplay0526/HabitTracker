@@ -5,12 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.justplay.data.db.repo.TaskRepo
 import com.justplay.habittracker.ui.uiState.report.ReportUiState
 import com.justplay.habittracker.ui.viewUtils.buildDailyCompletedCounts
+import com.justplay.habittracker.ui.viewUtils.buildDailyTaskCounts
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.DayOfWeek
@@ -35,8 +36,10 @@ class ReportViewModel @Inject constructor(
                     .previousOrSame(DayOfWeek.SUNDAY)
             )
 
+        val rateStep = 10
+
         viewModelScope.launch {
-            taskRepo.observeDailyCompletedCountInRange(
+            val completedCountFlow = taskRepo.observeDailyCompletedCountInRange(
                 startDate = thisWeekBegin,
                 endDate = thisWeekBegin.plusDays(6L)
             ).map { rawCounts ->
@@ -45,13 +48,42 @@ class ReportViewModel @Inject constructor(
                     endDate = thisWeekBegin.plusDays(6L),
                     rawCounts = rawCounts
                 )
-            }.collectLatest { dailyCounts ->
-                _uiState.update { current ->
-                    current.copy(
-                        habitCompletedCounts = dailyCounts.map { it.count.toFloat() },
-                        habitCompletedLabels = dailyCounts.map { it.date.dayOfMonth.toString() }
-                    )
+            }
+
+            val totalCountFlow = taskRepo.observeTasksForCalendarRange(
+                startDate = thisWeekBegin,
+                endDate = thisWeekBegin.plusDays(6L)
+            ).map { tasks ->
+                buildDailyTaskCounts(
+                    startDate = thisWeekBegin,
+                    endDate = thisWeekBegin.plusDays(6L),
+                    tasks = tasks
+                )
+            }
+
+            combine(completedCountFlow, totalCountFlow) { completedList, totalList ->
+                val dailyRate = completedList.zip(totalList) { completed, total ->
+                    when (total.count) {
+                        0 -> 0f
+                        else -> completed.count.toFloat() / total.count.toFloat()
+                    }
                 }
+
+                val intDailyRate = dailyRate.map { (it * 100).toInt()  }
+                val max = (intDailyRate.maxOrNull()?.plus(rateStep) ?: rateStep)
+                    .coerceAtMost(109) // 為了超出 100 時點不會切線
+                val min = ((intDailyRate.minOrNull()?.minus(rateStep) ?: 0)
+                    .coerceAtLeast(0) / 10) * 10
+
+                _uiState.value.copy(
+                    habitCompletedCounts = completedList.map { it.count.toFloat() },
+                    habitCompletedLabels = completedList.map { it.date.dayOfMonth.toString() },
+                    habitCompletedRate = intDailyRate,
+                    rateMax = max.toDouble(),
+                    rateMin = min.toDouble()
+                )
+            }.collectLatest { newState ->
+                _uiState.value = newState
             }
         }
     }
