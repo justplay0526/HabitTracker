@@ -36,9 +36,7 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerPadding
 import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
-import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarkerController
-import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarkerVisibilityListener
 import com.patrykandpatrick.vico.compose.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
@@ -59,7 +57,6 @@ fun HabitRateLineChart(
     minValue: Double,
     modifier: Modifier = Modifier,
 ) {
-
     val marker = rememberDefaultCartesianMarker(
         label = rememberTextComponent(
             style = TextStyle(
@@ -85,7 +82,7 @@ fun HabitRateLineChart(
             DefaultCartesianMarker.ValueFormatter { _, targets ->
                 val pointTarget = targets.firstOrNull() as? LineCartesianLayerMarkerTarget
                 val y = pointTarget?.points?.firstOrNull()?.entry?.y?.toInt() ?: 0
-                "$y %"
+                if (y == 100) "✔" else "$y %"
             }
         },
     )
@@ -154,11 +151,9 @@ fun HabitRateLineChart(
             modelProducer = modelProducer,
             modifier = Modifier
                 .heightIn(min = 300.dp)
-                .padding(horizontal = 8.dp),
+                .padding(horizontal = 8.dp)
         )
     }
-
-
 }
 
 @Preview
