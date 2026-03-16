@@ -31,6 +31,11 @@ interface TaskRepo {
         completedStatus: TaskStatus = TaskStatus.COMPLETED
     ): Flow<List<DailyCompletedCount>>
 
+    fun observeTasksForCalendarRange(
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): Flow<List<TaskEntity>>
+
     fun observeWeeklyCompletedCounts(
         taskIds: List<Long>,
         today: LocalDate

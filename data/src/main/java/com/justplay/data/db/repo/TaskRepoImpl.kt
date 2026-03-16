@@ -114,6 +114,15 @@ class TaskRepoImpl @Inject constructor(
         completedStatus = completedStatus
     )
 
+    override fun observeTasksForCalendarRange(
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): Flow<List<TaskEntity>>
+    = taskDao.observeTasksForCalendarRange(
+        startDate = startDate,
+        endDate = endDate
+    )
+
     override fun observeWeeklyCompletedCounts(
         taskIds: List<Long>,
         today: LocalDate
