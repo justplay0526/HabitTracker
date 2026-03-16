@@ -1,6 +1,9 @@
 package com.justplay.habittracker.ui.viewUtils
 
 import com.justplay.data.db.classPkg.DailyCompletedCount
+import com.justplay.data.db.entity.TaskEntity
+import com.justplay.data.db.entityHelper.shouldAppearOn
+import com.justplay.habittracker.data.DailyTaskCount
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
@@ -37,6 +40,21 @@ fun buildDailyCompletedCounts(
         DailyCompletedCount(
             date = date,
             count = countMap[date] ?: 0
+        )
+    }.toList()
+}
+
+fun buildDailyTaskCounts(
+    startDate: LocalDate,
+    endDate: LocalDate,
+    tasks: List<TaskEntity>
+): List<DailyTaskCount> {
+    return generateSequence(startDate) { current ->
+        if (current < endDate) current.plusDays(1) else null
+    }.map { date ->
+        DailyTaskCount(
+            date = date,
+            count = tasks.count { task -> task.shouldAppearOn(date) }
         )
     }.toList()
 }

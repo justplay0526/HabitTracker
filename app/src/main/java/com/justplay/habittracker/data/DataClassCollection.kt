@@ -27,6 +27,11 @@ data class HabitEditUi(
     val icon: Int = IconsRes.first(),
 )
 
+data class DailyTaskCount(
+    val date: LocalDate,
+    val count: Int
+)
+
 data class DayUi(
     val date: LocalDate,
     val selected: Boolean,
