@@ -38,6 +38,7 @@ import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.uiState.report.ReportUiState
 import com.justplay.habittracker.ui.view.chart.HabitCompletedColumnChart
 import com.justplay.habittracker.ui.view.chart.HabitRateLineChart
+import com.justplay.habittracker.ui.view.customChart.MoodChart
 import com.justplay.habittracker.ui.view.taskDetail.RegularDetailGridItem
 import com.justplay.habittracker.viewModel.report.ReportViewModel
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
@@ -170,6 +171,15 @@ fun ReportScreen(
                             color = MaterialTheme.colorScheme.surface,
                             shape = RoundedCornerShape(8.dp)
                         )
+                )
+            }
+
+            item {
+                MoodChart(
+                    points = uiState.moodPoints,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
                 )
             }
         }

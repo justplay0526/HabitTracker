@@ -2,10 +2,12 @@ package com.justplay.habittracker.viewModel.report
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.justplay.data.db.repo.MoodRepo
 import com.justplay.data.db.repo.TaskRepo
 import com.justplay.habittracker.ui.uiState.report.ReportUiState
 import com.justplay.habittracker.ui.viewUtils.buildDailyCompletedCounts
 import com.justplay.habittracker.ui.viewUtils.buildDailyTaskCounts
+import com.justplay.habittracker.ui.viewUtils.buildMoodPoints
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,6 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ReportViewModel @Inject constructor(
+    private val moodRepo: MoodRepo,
     private val taskRepo: TaskRepo
 ): ViewModel() {
     private val _uiState = MutableStateFlow(ReportUiState())
@@ -61,7 +64,22 @@ class ReportViewModel @Inject constructor(
                 )
             }
 
-            combine(completedCountFlow, totalCountFlow) { completedList, totalList ->
+            val moodFlow = moodRepo.observeLogsInRange(
+                startDate = thisWeekBegin.minusDays(1L),
+                endDate = thisWeekBegin.plusDays(7L)
+            ).map { logs ->
+                for (log in logs) {
+                    Timber.tag(TAG).d("log = $log")
+                }
+                buildMoodPoints(
+                    startDate = thisWeekBegin.minusDays(1L),
+                    endDate = thisWeekBegin.plusDays(7L),
+                    logs = logs
+                )
+            }
+
+            combine(completedCountFlow, totalCountFlow,
+                moodFlow) { completedList, totalList, moodList ->
                 val dailyRate = completedList.zip(totalList) { completed, total ->
                     when (total.count) {
                         0 -> 0f
@@ -79,6 +97,7 @@ class ReportViewModel @Inject constructor(
                     habitCompletedCounts = completedList.map { it.count.toFloat() },
                     habitCompletedLabels = completedList.map { it.date.dayOfMonth.toString() },
                     habitCompletedRate = intDailyRate,
+                    moodPoints = moodList,
                     rateMax = max.toDouble(),
                     rateMin = min.toDouble()
                 )

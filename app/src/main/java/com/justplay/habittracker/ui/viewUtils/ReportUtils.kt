@@ -1,9 +1,11 @@
 package com.justplay.habittracker.ui.viewUtils
 
 import com.justplay.data.db.classPkg.DailyCompletedCount
+import com.justplay.data.db.entity.MoodLogEntity
 import com.justplay.data.db.entity.TaskEntity
 import com.justplay.data.db.entityHelper.shouldAppearOn
 import com.justplay.habittracker.data.DailyTaskCount
+import com.justplay.habittracker.ui.view.customChart.MoodPoint
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
@@ -55,6 +57,23 @@ fun buildDailyTaskCounts(
         DailyTaskCount(
             date = date,
             count = tasks.count { task -> task.shouldAppearOn(date) }
+        )
+    }.toList()
+}
+
+fun buildMoodPoints(
+    startDate: LocalDate,
+    endDate: LocalDate,
+    logs: List<MoodLogEntity>
+): List<MoodPoint> {
+    val moodMap = logs.associate { it.date to it.moodValue }
+
+    return generateSequence(startDate) { current ->
+        if (current < endDate) current.plusDays(1) else null
+    }.map { date ->
+        MoodPoint(
+            label = date.dayOfMonth.toString(),
+            value = moodMap[date]?.ordinal
         )
     }.toList()
 }
