@@ -47,6 +47,11 @@ data class MoodPoint(
     val value: Int?      // 0~4，null 表示不顯示
 )
 
+/**
+ * 心情分析圖表
+ *
+ * @param points 心情點陣列，第一點跟最後一點為圖表延伸點，因此需要取 2+N 個點
+ */
 @Composable
 fun MoodChart(
     points: List<MoodPoint>,
@@ -88,7 +93,7 @@ fun MoodChart(
                     lineStrokeWidth = lineStrokeWidth,
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
                 MoodChartLabels(points = points)
             }
@@ -264,7 +269,7 @@ private fun MoodChartCanvas(
             }
             drawSegment(currentSegment)
 
-            // 左延伸線：15 -> 16
+            // 左延伸線
             val leadingPoint = points.firstOrNull()
             val firstVisibleOffset = visibleOffsets.firstOrNull()
             if (leadingPoint?.value != null && firstVisibleOffset != null && stepX > 0f) {
@@ -280,7 +285,7 @@ private fun MoodChartCanvas(
                 )
             }
 
-            // 右延伸線：22 -> 23
+            // 右延伸線
             val trailingPoint = points.lastOrNull()
             val lastVisibleOffset = visibleOffsets.lastOrNull()
             if (trailingPoint?.value != null && lastVisibleOffset != null && stepX > 0f) {
