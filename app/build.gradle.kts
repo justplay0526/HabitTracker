@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.google.services)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
@@ -57,6 +58,7 @@ dependencies {
     implementation(libs.bundles.androidx)
     implementation(libs.bundles.third.party)
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
     implementation(libs.timber)
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
