@@ -4,12 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.justplay.data.db.repo.MoodRepo
 import com.justplay.data.db.repo.TaskRepo
+import com.justplay.habittracker.data.Summary
 import com.justplay.habittracker.ui.uiEvent.report.ReportEvent
 import com.justplay.habittracker.ui.uiState.report.ReportUiState
 import com.justplay.habittracker.ui.viewUtils.buildDailyCompletedRates
 import com.justplay.habittracker.ui.viewUtils.buildDailyCompletedCounts
 import com.justplay.habittracker.ui.viewUtils.buildDailyTaskCounts
 import com.justplay.habittracker.ui.viewUtils.buildMoodPoints
+import com.justplay.habittracker.ui.viewUtils.getTotalTaskCount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,8 +25,10 @@ import timber.log.Timber
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
+import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalAdjusters
 import javax.inject.Inject
+import kotlin.math.abs
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
@@ -32,7 +36,8 @@ class ReportViewModel @Inject constructor(
     private val moodRepo: MoodRepo,
     private val taskRepo: TaskRepo
 ): ViewModel() {
-    private val currentMonth = MutableStateFlow(YearMonth.now())
+    private val _currentMonth = MutableStateFlow(YearMonth.now())
+    private val _streak = MutableStateFlow(0)
 
     private val _uiState = MutableStateFlow(ReportUiState())
     val uiState = _uiState.asStateFlow()
@@ -53,6 +58,47 @@ class ReportViewModel @Inject constructor(
         val rateStep = 10
 
         viewModelScope.launch {
+            val streakTaskIds = taskRepo.getActiveTaskIds()
+            val earliestDate = taskRepo.getEarliestDate()
+            val lookBackDays = abs(ChronoUnit.DAYS
+                .between(
+                    earliestDate,
+                    LocalDate.now()
+                )
+            )
+
+            _streak.value = taskRepo.getMaxStreak(
+                taskIds = streakTaskIds,
+                today = LocalDate.now(),
+                lookBackDays = lookBackDays
+            )
+        }
+
+        viewModelScope.launch {
+            val allCompleteFlow = taskRepo.observeAllCompleteCount()
+            val totalFlow = taskRepo.observeActiveTasks()
+                .map { rawCounts ->
+                    getTotalTaskCount(
+                        tasks = rawCounts
+                    )
+                }
+
+            val summaryFlow = combine(
+                allCompleteFlow,
+                totalFlow,
+                _streak
+            ) { completed, total, streak ->
+                Timber.tag(TAG).d("summaryFlow emit")
+                Summary(
+                    completed = completed,
+                    total = total,
+                    streak = streak
+                )
+            }
+
+            /**
+             *  這邊應該是可以從 monthly 抓，但我不想搞複雜
+             */
             val completedCountFlow = taskRepo.observeDailyCompletedCountInRange(
                 startDate = weekStart,
                 endDate = weekEnd
@@ -90,7 +136,7 @@ class ReportViewModel @Inject constructor(
             }
 
 
-            val monthlyCompleteRateFlow = currentMonth.flatMapLatest { yearMonth ->
+            val monthlyCompleteRateFlow = _currentMonth.flatMapLatest { yearMonth ->
                 val monthStart = yearMonth.atDay(1).minusDays(14L)
                 val monthEnd = yearMonth.atEndOfMonth().plusDays(14L)
 
@@ -125,11 +171,12 @@ class ReportViewModel @Inject constructor(
             }
 
             combine(
+                summaryFlow,
                 completedCountFlow,
                 totalCountFlow,
                 moodFlow,
                 monthlyCompleteRateFlow
-            ) { completedList, totalList, moodList,
+            ) { summary, completedList, totalList, moodList,
                 monthlyCompleteRate ->
 
                 val dailyRate = completedList.zip(totalList) { completed, total ->
@@ -146,10 +193,13 @@ class ReportViewModel @Inject constructor(
                     .coerceAtLeast(0) / 10) * 10
 
                 _uiState.value.copy(
+                    allCompletedCount = summary.completed,
+                    completeRate = ((summary.completed.toFloat() / summary.total.toFloat())*100).toInt(),
                     completedCounts = completedList.map { it.count.toFloat() },
                     completedLabels = completedList.map { it.date.dayOfMonth.toString() },
                     completedRateForLine = intDailyRate,
                     completedRateForCalendar = monthlyCompleteRate,
+                    maxStreak = summary.streak,
                     moodPoints = moodList,
                     completeRateMax = max.toDouble(),
                     completeRateMin = min.toDouble()
