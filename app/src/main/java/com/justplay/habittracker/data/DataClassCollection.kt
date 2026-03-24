@@ -70,6 +70,12 @@ data class MoodItem(
     @param:StringRes val labelRes: Int,
 )
 
+data class Summary(
+    val completed: Int,
+    val total: Int,
+    val streak: Int
+)
+
 data class TodayUiState(
     val activeHabits: List<HabitUi> = emptyList(),
     val completedHabits: List<HabitUi> = emptyList(),
