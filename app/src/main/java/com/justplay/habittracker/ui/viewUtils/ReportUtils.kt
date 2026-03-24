@@ -4,28 +4,35 @@ import com.justplay.data.db.classPkg.DailyCompletedCount
 import com.justplay.data.db.entity.MoodLogEntity
 import com.justplay.data.db.entity.TaskEntity
 import com.justplay.data.db.entityHelper.shouldAppearOn
+import com.justplay.habittracker.data.CalendarDayUi
+import com.justplay.habittracker.data.DailyCompleteRate
 import com.justplay.habittracker.data.DailyTaskCount
 import com.justplay.habittracker.ui.view.customChart.MoodPoint
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.temporal.TemporalAdjusters
 import kotlin.collections.associate
 
-/**
- * @param date 一週內的任意一天
- * @param weekBegin 週以 SUNDAY 還是以 MONDAY 開頭
- * @return 以 [weekBegin] 為開頭的該週日期
- */
-fun getWeekString(
-    date: LocalDate = LocalDate.now(),
-    weekBegin: DayOfWeek = DayOfWeek.SUNDAY
-): List<String> {
-    val sunday = date.with(
-        TemporalAdjusters.previousOrSame(weekBegin)
-    )
+fun buildCalendarDays(
+    yearMonth: YearMonth,
+    completeRates: List<DailyCompleteRate>,
+    firstDayOfWeek: DayOfWeek = DayOfWeek.MONDAY
+): List<CalendarDayUi> {
+    val rateMap = completeRates.associate { it.date to it.completeRate.coerceIn(0f, 1f) }
 
-    return (0..6).map { offset ->
-        sunday.plusDays(offset.toLong()).dayOfMonth.toString()
+    val firstDayOfMonth = yearMonth.atDay(1)
+
+    val shift = (7 + (firstDayOfMonth.dayOfWeek.value - firstDayOfWeek.value)) % 7
+    val calendarStartDate = firstDayOfMonth.minusDays(shift.toLong())
+
+    return (0 until 42).map { index ->
+        val date = calendarStartDate.plusDays(index.toLong())
+        CalendarDayUi(
+            date = date,
+            isCurrentMonth = date.month == yearMonth.month,
+            completeRate = rateMap[date]
+        )
     }
 }
 
@@ -44,6 +51,21 @@ fun buildDailyCompletedCounts(
             count = countMap[date] ?: 0
         )
     }.toList()
+}
+
+fun buildDailyCompletedRates(
+    completedList: List<DailyCompletedCount>,
+    totalList: List<DailyTaskCount>
+): List<DailyCompleteRate> {
+    return completedList.zip(totalList) { completed, total ->
+        DailyCompleteRate(
+            date = completed.date,
+            completeRate = when (total.count) {
+                0 -> 0f
+                else -> completed.count.toFloat() / total.count.toFloat()
+            }
+        )
+    }
 }
 
 fun buildDailyTaskCounts(
@@ -76,4 +98,22 @@ fun buildMoodPoints(
             value = moodMap[date]?.ordinal
         )
     }.toList()
+}
+
+/**
+ * @param date 一週內的任意一天
+ * @param weekBegin 週以 SUNDAY 還是以 MONDAY 開頭
+ * @return 以 [weekBegin] 為開頭的該週日期
+ */
+fun getWeekString(
+    date: LocalDate = LocalDate.now(),
+    weekBegin: DayOfWeek = DayOfWeek.SUNDAY
+): List<String> {
+    val sunday = date.with(
+        TemporalAdjusters.previousOrSame(weekBegin)
+    )
+
+    return (0..6).map { offset ->
+        sunday.plusDays(offset.toLong()).dayOfMonth.toString()
+    }
 }
