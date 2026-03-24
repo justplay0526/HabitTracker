@@ -2,6 +2,7 @@ package com.justplay.habittracker.ui.uiState.report
 
 import com.justplay.data.db.classPkg.MoodValue
 import com.justplay.habittracker.ui.view.customChart.MoodPoint
+import java.time.YearMonth
 
 data class ReportUiState(
     val habitCompletedRate: List<Int> = listOf(50, 60, 50, 60, 50, 70, 40),
@@ -20,4 +21,5 @@ data class ReportUiState(
         MoodPoint("22", MoodValue.GREAT.ordinal),
         MoodPoint("23", MoodValue.GREAT.ordinal),
     )
+    val currentMonth: YearMonth = YearMonth.now(),
 )
