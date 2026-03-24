@@ -107,6 +107,16 @@ class ReportViewModel @Inject constructor(
         }
     }
 
+    fun onEvent(event: ReportEvent) {
+        when (event) {
+            is ReportEvent.MonthChanged -> {
+                _uiState.value = _uiState.value.copy(
+                    currentMonth = event.month
+                )
+            }
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         Timber.tag(TAG).d("onCleared")

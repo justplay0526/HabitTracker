@@ -48,7 +48,8 @@ import com.patrykandpatrick.vico.compose.cartesian.data.lineSeries
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReportScreen(
-    uiState: ReportUiState
+    uiState: ReportUiState,
+    onEvent: (ReportEvent) -> Unit
 ) {
     val columnModelProducer = remember { CartesianChartModelProducer() }
     val lineModelProducer = remember { CartesianChartModelProducer() }
@@ -193,7 +194,8 @@ fun ReportScreen(
     val uiState = vm.uiState.collectAsStateWithLifecycle()
 
     ReportScreen(
-        uiState = uiState.value
+        uiState = uiState.value,
+        onEvent = vm::onEvent
     )
 }
 
@@ -202,7 +204,8 @@ fun ReportScreen(
 fun ReportScreenPreview() {
     HabitTrackerTheme {
         ReportScreen(
-            uiState = ReportUiState()
+            uiState = ReportUiState(),
+            onEvent = {}
         )
     }
 }
