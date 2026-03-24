@@ -116,8 +116,8 @@ fun ReportScreen(
                         RegularDetailGridItem(
                             contentText = pluralStringResource(
                                 R.plurals.text_streak_day,
-                                5,
-                                5
+                                uiState.maxStreak,
+                                uiState.maxStreak
                             ), // Sample Text
                             hintText = stringResource(R.string.text_current_streak)
                         )
@@ -125,14 +125,14 @@ fun ReportScreen(
                     // Completion Rate
                     item {
                         RegularDetailGridItem(
-                            contentText = "${50} %", // Sample Text
+                            contentText = "${uiState.completeRate} %",
                             hintText = stringResource(R.string.text_complete_rate)
                         )
                     }
                     // Habit Completed
                     item {
                         RegularDetailGridItem(
-                            contentText = 50.toString(), // Sample Text
+                            contentText = uiState.allCompletedCount.toString(),
                             hintText = stringResource(R.string.text_habit_complete)
                         )
                     }
