@@ -114,6 +114,10 @@ class TaskRepoImpl @Inject constructor(
         completedStatus = completedStatus
     )
 
+    override fun observeAllCompleteCount(
+        status: TaskStatus
+    ): Flow<Int> = logDao.observeAllCompleteCount(status)
+
     override fun observeTasksForCalendarRange(
         startDate: LocalDate,
         endDate: LocalDate
@@ -190,6 +194,50 @@ class TaskRepoImpl @Inject constructor(
                 status = status
             )
         )
+    }
+
+    override suspend fun getActiveTaskIds(): List<Long>
+        = logDao.getActiveTaskIds()
+
+    override suspend fun getEarliestDate(): LocalDate? = logDao.getEarliestDate()
+
+    override suspend fun getMaxStreak(
+        taskIds: List<Long>,
+        today: LocalDate,
+        lookBackDays: Long
+    ): Int {
+
+        val fromDate = today.minusDays(lookBackDays)
+
+        val logs = logDao.getLogsFromTasks(taskIds, fromDate)
+
+        // group by taskId
+        val logsByTask = logs.groupBy { it.taskId }
+
+        return taskIds.maxOfOrNull { taskId ->
+
+            val logByDate = logsByTask[taskId]
+                ?.associateBy { it.date }
+                ?: emptyMap()
+
+            var streak = 0
+            var cursor = today
+
+            while (cursor >= fromDate) {
+                val log = logByDate[cursor]
+
+                when (log?.status) {
+                    TaskStatus.COMPLETED -> {
+                        streak++
+                        cursor = cursor.minusDays(1)
+                    }
+                    TaskStatus.SKIPPED, null -> {
+                        break
+                    }
+                }
+            }
+            streak
+        } ?: 0
     }
 
     override suspend fun getStatusMapForStreak(

@@ -31,6 +31,10 @@ interface TaskRepo {
         completedStatus: TaskStatus = TaskStatus.COMPLETED
     ): Flow<List<DailyCompletedCount>>
 
+    fun observeAllCompleteCount(
+        status: TaskStatus = TaskStatus.COMPLETED
+    ): Flow<Int>
+
     fun observeTasksForCalendarRange(
         startDate: LocalDate,
         endDate: LocalDate
@@ -79,6 +83,16 @@ interface TaskRepo {
      */
     suspend fun setStatus(
         taskId: Long, date: LocalDate, status: TaskStatus?)
+
+    suspend fun getActiveTaskIds(): List<Long>
+
+    suspend fun getEarliestDate(): LocalDate?
+
+    suspend fun getMaxStreak(
+        taskIds: List<Long>,
+        today: LocalDate,
+        lookBackDays: Long
+    ): Int
 
     /**
      * 抓特定 [taskId] 的 task 最近一段時間的 log，轉成 Map<LocalDate, TaskStatus>
