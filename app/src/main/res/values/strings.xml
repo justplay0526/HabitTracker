@@ -120,6 +120,7 @@
     <string name="text_week_two_fri">Fr</string>
     <string name="text_week_two_sat">Sa</string>
 <!-- Title -->
+    <string name="title_calendar_stat">Calendar Stats</string>
     <string name="title_color">Color</string>
     <string name="title_choose_color">Choose Color</string>
     <string name="title_choose_icon">Choose Icon</string>
