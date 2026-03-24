@@ -100,6 +100,24 @@ fun buildMoodPoints(
     }.toList()
 }
 
+fun getTotalTaskCount(
+    tasks: List<TaskEntity>
+): Int {
+
+    val today = LocalDate.now()
+
+    val startDate = tasks
+        .mapNotNull { it.startDate }
+        .minOrNull()
+        ?: today
+
+    return generateSequence(startDate) { current ->
+        if (current < today) current.plusDays(1) else null
+    }.sumOf { date ->
+        tasks.count { task -> task.shouldAppearOn(date) }
+    }
+}
+
 /**
  * @param date 一週內的任意一天
  * @param weekBegin 週以 SUNDAY 還是以 MONDAY 開頭
