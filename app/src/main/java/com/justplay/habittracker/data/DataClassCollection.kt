@@ -10,6 +10,37 @@ import com.justplay.habittracker.ui.view.ColorResource
 import com.justplay.habittracker.ui.view.IconsRes
 import java.time.LocalDate
 
+/**
+ * @param date 日期
+ * @param isCurrentMonth 是否在當月
+ * @param completeRate 範圍: [0f, 1f]
+ */
+data class CalendarDayUi(
+    val date: LocalDate,
+    val isCurrentMonth: Boolean,
+    val completeRate: Float?
+)
+
+/**
+ * @param date 日期
+ * @param completeRate 範圍: [0f, 1f]
+ */
+data class DailyCompleteRate(
+    val date: LocalDate,
+    val completeRate: Float,
+)
+
+data class DailyTaskCount(
+    val date: LocalDate,
+    val count: Int
+)
+
+data class DayUi(
+    val date: LocalDate,
+    val selected: Boolean,
+    val enabled: Boolean
+)
+
 data class HabitUi(
     val id: Long,
     @param:ColorInt val color: Int,
@@ -27,14 +58,9 @@ data class HabitEditUi(
     val icon: Int = IconsRes.first(),
 )
 
-data class DailyTaskCount(
+data class MoodDayUi(
     val date: LocalDate,
-    val count: Int
-)
-
-data class DayUi(
-    val date: LocalDate,
-    val selected: Boolean,
+    val mood: MoodValue?,
     val enabled: Boolean
 )
 
@@ -42,12 +68,6 @@ data class MoodItem(
     val id: Int,
     @param:DrawableRes val iconRes: Int,
     @param:StringRes val labelRes: Int,
-)
-
-data class MoodDayUi(
-    val date: LocalDate,
-    val mood: MoodValue?,
-    val enabled: Boolean
 )
 
 data class TodayUiState(
