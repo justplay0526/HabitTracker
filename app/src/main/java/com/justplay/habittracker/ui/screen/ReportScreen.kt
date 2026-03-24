@@ -35,9 +35,11 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.justplay.habittracker.R
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
+import com.justplay.habittracker.ui.uiEvent.report.ReportEvent
 import com.justplay.habittracker.ui.uiState.report.ReportUiState
 import com.justplay.habittracker.ui.view.chart.HabitCompletedColumnChart
 import com.justplay.habittracker.ui.view.chart.HabitRateLineChart
+import com.justplay.habittracker.ui.view.customChart.CompleteRateCalendar
 import com.justplay.habittracker.ui.view.customChart.MoodChart
 import com.justplay.habittracker.ui.view.taskDetail.RegularDetailGridItem
 import com.justplay.habittracker.viewModel.report.ReportViewModel
@@ -55,13 +57,13 @@ fun ReportScreen(
     val lineModelProducer = remember { CartesianChartModelProducer() }
 
     LaunchedEffect(
-        uiState.habitCompletedCounts
+        uiState.completedCounts
     ) {
         columnModelProducer.runTransaction {
-            columnSeries { series(uiState.habitCompletedCounts) }
+            columnSeries { series(uiState.completedCounts) }
         }
         lineModelProducer.runTransaction {
-            lineSeries { series(uiState.habitCompletedRate) }
+            lineSeries { series(uiState.completedRateForLine) }
         }
     }
 
@@ -148,7 +150,7 @@ fun ReportScreen(
             item {
                 HabitCompletedColumnChart(
                     modelProducer = columnModelProducer,
-                    xLabels = uiState.habitCompletedLabels,
+                    xLabels = uiState.completedLabels,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -162,9 +164,9 @@ fun ReportScreen(
             item {
                 HabitRateLineChart(
                     modelProducer = lineModelProducer,
-                    xLabels = uiState.habitCompletedLabels,
-                    maxValue = uiState.rateMax,
-                    minValue = uiState.rateMin,
+                    xLabels = uiState.completedLabels,
+                    maxValue = uiState.completeRateMax,
+                    minValue = uiState.completeRateMin,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp)
