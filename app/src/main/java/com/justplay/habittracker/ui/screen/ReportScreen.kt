@@ -139,7 +139,7 @@ fun ReportScreen(
                     // Total Perfect Days
                     item {
                         RegularDetailGridItem(
-                            contentText = "495", // TODO Add Total Perfect day count
+                            contentText = uiState.perfectDays.toString(),
                             hintText = stringResource(R.string.text_total_perfect_day)
                         )
                     }

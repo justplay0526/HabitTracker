@@ -19,5 +19,6 @@ data class ReportUiState(
     val completedLabels: List<String> = completeLabelsDefault,
     val currentMonth: YearMonth = YearMonth.now(),
     val maxStreak: Int = 0,
-    val moodPoints: List<MoodPoint> = moodPointDefault
+    val moodPoints: List<MoodPoint> = moodPointDefault,
+    val perfectDays: Int = 0
 )

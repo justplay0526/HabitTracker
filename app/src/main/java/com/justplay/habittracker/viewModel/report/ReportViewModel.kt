@@ -38,6 +38,7 @@ class ReportViewModel @Inject constructor(
 ): ViewModel() {
     private val _currentMonth = MutableStateFlow(YearMonth.now())
     private val _streak = MutableStateFlow(0)
+    private val _totalPerfectDays = MutableStateFlow(0)
 
     private val _uiState = MutableStateFlow(ReportUiState())
     val uiState = _uiState.asStateFlow()
@@ -72,6 +73,40 @@ class ReportViewModel @Inject constructor(
                 today = LocalDate.now(),
                 lookBackDays = lookBackDays
             )
+
+
+            val completedCountFlow = taskRepo.observeDailyCompletedCountInRange(
+                startDate = earliestDate ?: LocalDate.now(),
+                endDate = LocalDate.now()
+            ).map { rawCounts ->
+                buildDailyCompletedCounts(
+                    startDate = earliestDate ?: LocalDate.now(),
+                    endDate = LocalDate.now(),
+                    rawCounts = rawCounts
+                )
+            }
+
+            val totalCountFlow = taskRepo.observeTasksForCalendarRange(
+                startDate = earliestDate ?: LocalDate.now(),
+                endDate = LocalDate.now()
+            ).map { tasks ->
+                buildDailyTaskCounts(
+                    startDate = earliestDate ?: LocalDate.now(),
+                    endDate = LocalDate.now(),
+                    tasks = tasks
+                )
+            }
+
+            combine(
+                completedCountFlow,
+                totalCountFlow
+            ) { completeList, totalList ->
+                completeList.zip(totalList).count { (complete, total) ->
+                    complete.count == total.count
+                }
+            }.collectLatest {
+                _totalPerfectDays.value = it
+            }
         }
 
         viewModelScope.launch {
@@ -86,13 +121,15 @@ class ReportViewModel @Inject constructor(
             val summaryFlow = combine(
                 allCompleteFlow,
                 totalFlow,
-                _streak
-            ) { completed, total, streak ->
+                _streak,
+                _totalPerfectDays
+            ) { completed, total, streak, perfectDays ->
                 Timber.tag(TAG).d("summaryFlow emit")
                 Summary(
                     completed = completed,
                     total = total,
-                    streak = streak
+                    streak = streak,
+                    perfectDays = perfectDays
                 )
             }
 
@@ -201,6 +238,7 @@ class ReportViewModel @Inject constructor(
                     completedRateForCalendar = monthlyCompleteRate,
                     maxStreak = summary.streak,
                     moodPoints = moodList,
+                    perfectDays = summary.perfectDays,
                     completeRateMax = max.toDouble(),
                     completeRateMin = min.toDouble()
                 )

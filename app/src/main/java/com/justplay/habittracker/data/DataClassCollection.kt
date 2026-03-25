@@ -73,7 +73,8 @@ data class MoodItem(
 data class Summary(
     val completed: Int,
     val total: Int,
-    val streak: Int
+    val streak: Int,
+    val perfectDays: Int = 0
 )
 
 data class TodayUiState(
