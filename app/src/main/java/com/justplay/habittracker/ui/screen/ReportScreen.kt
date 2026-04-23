@@ -57,13 +57,13 @@ fun ReportScreen(
     val lineModelProducer = remember { CartesianChartModelProducer() }
 
     LaunchedEffect(
-        uiState.completedCounts
+        uiState.completedUiState.counts
     ) {
         columnModelProducer.runTransaction {
-            columnSeries { series(uiState.completedCounts) }
+            columnSeries { series(uiState.completedUiState.counts) }
         }
         lineModelProducer.runTransaction {
-            lineSeries { series(uiState.completedRateForLine) }
+            lineSeries { series(uiState.rateLineUiState.rateList) }
         }
     }
 
@@ -116,8 +116,8 @@ fun ReportScreen(
                         RegularDetailGridItem(
                             contentText = pluralStringResource(
                                 R.plurals.text_streak_day,
-                                uiState.maxStreak,
-                                uiState.maxStreak
+                                uiState.summaryUiState.streak,
+                                uiState.summaryUiState.streak
                             ), // Sample Text
                             hintText = stringResource(R.string.text_current_streak)
                         )
@@ -125,21 +125,21 @@ fun ReportScreen(
                     // Completion Rate
                     item {
                         RegularDetailGridItem(
-                            contentText = "${uiState.completeRate} %",
+                            contentText = "${uiState.summaryUiState.completedRate} %",
                             hintText = stringResource(R.string.text_complete_rate)
                         )
                     }
                     // Habit Completed
                     item {
                         RegularDetailGridItem(
-                            contentText = uiState.allCompletedCount.toString(),
+                            contentText = uiState.summaryUiState.completed.toString(),
                             hintText = stringResource(R.string.text_habit_complete)
                         )
                     }
                     // Total Perfect Days
                     item {
                         RegularDetailGridItem(
-                            contentText = uiState.perfectDays.toString(),
+                            contentText = uiState.summaryUiState.perfectDays.toString(),
                             hintText = stringResource(R.string.text_total_perfect_day)
                         )
                     }
@@ -150,7 +150,7 @@ fun ReportScreen(
             item {
                 HabitCompletedColumnChart(
                     modelProducer = columnModelProducer,
-                    xLabels = uiState.completedLabels,
+                    xLabels = uiState.completedUiState.labels,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -164,9 +164,9 @@ fun ReportScreen(
             item {
                 HabitRateLineChart(
                     modelProducer = lineModelProducer,
-                    xLabels = uiState.completedLabels,
-                    maxValue = uiState.completeRateMax,
-                    minValue = uiState.completeRateMin,
+                    xLabels = uiState.rateLineUiState.labels,
+                    maxValue = uiState.rateLineUiState.max,
+                    minValue = uiState.rateLineUiState.min,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -179,8 +179,8 @@ fun ReportScreen(
 
             item {
                 CompleteRateCalendar(
-                    currentMonth = uiState.currentMonth,
-                    completeRates = uiState.completedRateForCalendar,
+                    currentMonth = uiState.rateCalendarUiState.currentMonth,
+                    completeRates = uiState.rateCalendarUiState.rateList,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp),
