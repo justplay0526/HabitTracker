@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.DayOfWeek
@@ -59,21 +60,7 @@ class ReportViewModel @Inject constructor(
         val rateStep = 10
 
         viewModelScope.launch {
-            val streakTaskIds = taskRepo.getActiveTaskIds()
             val earliestDate = taskRepo.getEarliestDate()
-            val lookBackDays = abs(ChronoUnit.DAYS
-                .between(
-                    earliestDate,
-                    LocalDate.now()
-                )
-            )
-
-            _streak.value = taskRepo.getMaxStreak(
-                taskIds = streakTaskIds,
-                today = LocalDate.now(),
-                lookBackDays = lookBackDays
-            )
-
 
             val completedCountFlow = taskRepo.observeDailyCompletedCountInRange(
                 startDate = earliestDate ?: LocalDate.now(),
@@ -84,6 +71,8 @@ class ReportViewModel @Inject constructor(
                     endDate = LocalDate.now(),
                     rawCounts = rawCounts
                 )
+            }.onEach {
+                _streak.value = getStreak(earliestDate)
             }
 
             val totalCountFlow = taskRepo.observeTasksForCalendarRange(
@@ -257,6 +246,22 @@ class ReportViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    private suspend fun getStreak(earliestDate: LocalDate?): Int {
+        val streakTaskIds = taskRepo.getActiveTaskIds()
+        val lookBackDays = abs(ChronoUnit.DAYS
+            .between(
+                earliestDate,
+                LocalDate.now()
+            )
+        )
+
+        return taskRepo.getMaxStreak(
+            taskIds = streakTaskIds,
+            today = LocalDate.now(),
+            lookBackDays = lookBackDays
+        )
     }
 
     override fun onCleared() {
