@@ -263,10 +263,24 @@ class ReportViewModel @Inject constructor(
 
     fun onEvent(event: ReportEvent) {
         when (event) {
-            is ReportEvent.MonthChanged -> {
-                _uiState.value = _uiState.value.copy(
-                    currentMonth = event.month
-                )
+            is ReportEvent.MonthNext -> {
+                _uiState.update { state ->
+                    state.copy(
+                        rateCalendarUiState = state.rateCalendarUiState.copy(
+                            currentMonth = state.rateCalendarUiState.currentMonth.plusMonths(1L)
+                        )
+                    )
+                }
+            }
+
+            is ReportEvent.MonthPrevious -> {
+                _uiState.update { state ->
+                    state.copy(
+                        rateCalendarUiState = state.rateCalendarUiState.copy(
+                            currentMonth = state.rateCalendarUiState.currentMonth.minusMonths(1L)
+                        )
+                    )
+                }
             }
         }
     }

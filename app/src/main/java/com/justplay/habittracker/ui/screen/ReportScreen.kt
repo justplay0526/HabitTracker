@@ -185,14 +185,10 @@ fun ReportScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                     onPreviousMonth = {
-                        onEvent(ReportEvent
-                            .MonthChanged(uiState.currentMonth.minusMonths(1L))
-                        )
+                        onEvent(ReportEvent.MonthPrevious)
                     },
                     onNextMonth = {
-                        onEvent(ReportEvent
-                            .MonthChanged(uiState.currentMonth.plusMonths(1L))
-                        )
+                        onEvent(ReportEvent.MonthNext)
                     }
                 )
             }
