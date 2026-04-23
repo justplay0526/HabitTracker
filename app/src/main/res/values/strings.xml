@@ -64,7 +64,8 @@
     <string name="text_complete_rate">Completion rate</string>
     <string name="text_current_streak">Current Streak</string>
     <string name="text_everyday">Everyday</string>
-    <string name="text_habit_complete">Habit completed</string>
+    <string name="text_habit_complete">Habit Completed</string>
+    <string name="text_habit_complete_rate">Habit Completed Rate</string>
     <string name="text_total_perfect_day">Total perfect days</string>
 <!--  Date Text -->
     <string name="text_date_today">Today,</string>
@@ -119,6 +120,7 @@
     <string name="text_week_two_fri">Fr</string>
     <string name="text_week_two_sat">Sa</string>
 <!-- Title -->
+    <string name="title_calendar_stat">Calendar Stats</string>
     <string name="title_color">Color</string>
     <string name="title_choose_color">Choose Color</string>
     <string name="title_choose_icon">Choose Icon</string>

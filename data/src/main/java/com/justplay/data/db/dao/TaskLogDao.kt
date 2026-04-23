@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.justplay.data.TASK_LOG_TABLE
+import com.justplay.data.db.classPkg.DailyCompletedCount
 import com.justplay.data.db.classPkg.TaskStatus
 import com.justplay.data.db.classPkg.TaskWeeklyCount
 import com.justplay.data.db.entity.TaskLogEntity
@@ -31,6 +32,9 @@ interface TaskLogDao {
     @Query("SELECT * FROM $TASK_LOG_TABLE WHERE taskId = :taskId AND date = :date LIMIT 1")
     suspend fun get(taskId: Long, date: LocalDate): TaskLogEntity?
 
+    @Query("SELECT MIN(date) FROM $TASK_LOG_TABLE")
+    suspend fun getEarliestDate(): LocalDate?
+
     @Query("""
     SELECT COUNT(*) 
     FROM $TASK_LOG_TABLE
@@ -44,6 +48,9 @@ interface TaskLogDao {
         startDate: LocalDate,
         endDate: LocalDate
     ): Int
+
+    @Query("SELECT taskId FROM $TASK_LOG_TABLE")
+    suspend fun getActiveTaskIds(): List<Long>
 
     @Query("""
         SELECT taskId AS taskId, COUNT(*) AS cnt
@@ -59,6 +66,31 @@ interface TaskLogDao {
         startDate: LocalDate,
         endDate: LocalDate
     ): Flow<List<TaskWeeklyCount>>
+
+    @Query(
+        """
+    SELECT date, COUNT(*) AS count
+    FROM task_log
+    WHERE date BETWEEN :startDate AND :endDate
+      AND status = :completedStatus
+    GROUP BY date
+    ORDER BY date ASC
+    """
+    )
+    fun observeDailyCompletedCountInRange(
+        startDate: LocalDate,
+        endDate: LocalDate,
+        completedStatus: TaskStatus = TaskStatus.COMPLETED
+    ): Flow<List<DailyCompletedCount>>
+
+    @Query("""
+        SELECT COUNT(*)
+        FROM $TASK_LOG_TABLE
+        WHERE status = :status 
+    """)
+    fun observeAllCompleteCount(
+        status: TaskStatus = TaskStatus.COMPLETED
+    ): Flow<Int>
 
     // Today 還會用到「今天每個 task 的狀態」
     @Query("""
@@ -97,4 +129,14 @@ interface TaskLogDao {
      */
     @Query("SELECT * FROM $TASK_LOG_TABLE WHERE taskId = :taskId AND date >= :fromDate")
     suspend fun getLogsFrom(taskId: Long, fromDate: LocalDate): List<TaskLogEntity>
+
+    @Query("""
+        SELECT * FROM task_log
+        WHERE taskId IN (:taskIds)
+        AND date >= :fromDate
+    """)
+    suspend fun getLogsFromTasks(
+        taskIds: List<Long>,
+        fromDate: LocalDate
+    ): List<TaskLogEntity>
 }

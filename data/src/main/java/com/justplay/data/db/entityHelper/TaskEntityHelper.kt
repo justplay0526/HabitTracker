@@ -7,6 +7,12 @@ import com.justplay.data.db.entity.TaskEntity
 import com.justplay.data.mapper.toUiDayIndex
 import java.time.LocalDate
 
+fun baseSortOrder(
+    type: TaskType
+): Long = when (type) {
+    TaskType.REGULAR -> 0L
+    TaskType.ONE_TIME -> 100000L
+}
 /**
  * streak：只看 scheduled days
  * - 只算 COMPLETED
@@ -66,6 +72,20 @@ fun TaskEntity.occursOn(date: LocalDate): Boolean {
     }
 }
 
+fun TaskEntity.shouldAppearOn(date: LocalDate): Boolean {
+    if (isArchived) return false
+
+    return when (type) {
+        TaskType.ONE_TIME -> {
+            oneTimeDate == date
+        }
+
+        TaskType.REGULAR -> {
+            shouldRegularAppearOn(date)
+        }
+    }
+}
+
 fun TaskEntity.previousScheduledDate(
     from: LocalDate
 ): LocalDate? {
@@ -79,9 +99,39 @@ fun TaskEntity.previousScheduledDate(
     return null
 }
 
-fun baseSortOrder(
-    type: TaskType
-): Long = when (type) {
-    TaskType.REGULAR -> 0L
-    TaskType.ONE_TIME -> 100000L
+private fun TaskEntity.shouldRegularAppearOn(date: LocalDate): Boolean {
+    val start = startDate ?: return false
+
+    if (date < start) return false
+
+    if (endHabitOn && endHabitDate != null && date > endHabitDate) {
+        return false
+    }
+
+    val interval = freq ?: 1
+
+    return when (repeatOption) {
+        RepeatOption.DAILY -> {
+            val daysBetween = java.time.temporal.ChronoUnit.DAYS.between(start, date)
+            daysBetween % interval == 0L
+        }
+
+        RepeatOption.WEEKLY -> {
+            val dayOfWeek = date.dayOfWeek.value % 7 // Sunday=0
+            val weeksBetween = java.time.temporal.ChronoUnit.WEEKS.between(
+                start,
+                date
+            )
+            dayOfWeek in selectedDaySet && weeksBetween % interval == 0L
+        }
+
+        RepeatOption.MONTHLY -> {
+            val monthsBetween =
+                (date.year - start.year) * 12 + (date.monthValue - start.monthValue)
+
+            date.dayOfMonth in selectedDaysOfMonth && monthsBetween % interval == 0
+        }
+
+        null -> false
+    }
 }
