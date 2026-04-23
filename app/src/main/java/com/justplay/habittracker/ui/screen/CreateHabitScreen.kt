@@ -21,7 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.justplay.habittracker.R
@@ -29,10 +29,12 @@ import com.justplay.habittracker.ui.screen.task.OneTimeTaskScreen
 import com.justplay.habittracker.ui.screen.task.RegularTaskScreen
 import com.justplay.habittracker.ui.screen.task.model.OneTimeTaskViewModel
 import com.justplay.habittracker.ui.screen.task.model.RegularTaskViewModel
+import com.justplay.habittracker.ui.screen.task.state.OneTimeTaskUiState
+import com.justplay.habittracker.ui.screen.task.state.RegularTaskUiState
+import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.CustomHorizontalPager
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateNewHabitScreen(
     onBackClick: () -> Unit
@@ -40,8 +42,29 @@ fun CreateNewHabitScreen(
     val regularVm: RegularTaskViewModel = hiltViewModel()
     val oneTimeVm: OneTimeTaskViewModel = hiltViewModel()
 
-    var currentPage by rememberSaveable { mutableIntStateOf(0) }
+    CreateNewHabitScreen(
+        onBackClick = onBackClick,
+        regularPage = { RegularTaskScreen(vm = regularVm) },
+        oneTimePage = { OneTimeTaskScreen(vm = oneTimeVm) },
+        onSaveClick = { currentPage ->
+            when (currentPage) {
+                0 -> regularVm.save()
+                1 -> oneTimeVm.save()
+                else -> false
+            }
+        }
+    )
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CreateNewHabitScreen(
+    onBackClick: () -> Unit,
+    regularPage: @Composable () -> Unit,
+    oneTimePage: @Composable () -> Unit,
+    onSaveClick: suspend (currentPage: Int) -> Boolean
+) {
+    var currentPage by rememberSaveable { mutableIntStateOf(0) }
     val scope = rememberCoroutineScope()
 
     Scaffold(
@@ -58,19 +81,14 @@ fun CreateNewHabitScreen(
                     }
                 }
             )
-    },
+        },
         bottomBar = {
             Button(
                 onClick = {
                     scope.launch {
-                        val success = when (currentPage) {
-                            0 -> regularVm.save()
-                            1 -> oneTimeVm.save()
-                            else -> false
-                        }
-                        if (success ) onBackClick()
+                        val success = onSaveClick(currentPage)
+                        if (success) onBackClick()
                     }
-
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -89,8 +107,8 @@ fun CreateNewHabitScreen(
         )
 
         val taskPages: List<@Composable () -> Unit> = listOf(
-            { RegularTaskScreen(regularVm) },
-            { OneTimeTaskScreen(oneTimeVm) }
+            regularPage,
+            oneTimePage
         )
 
         CustomHorizontalPager(
@@ -103,10 +121,15 @@ fun CreateNewHabitScreen(
     }
 }
 
-@PreviewScreenSizes
+@Preview
 @Composable
-fun CreateNewHabitScreenPreView() {
-    CreateNewHabitScreen(
-        onBackClick = {}
-    )
+fun CreateNewHabitScreenPreview() {
+    HabitTrackerTheme {
+        CreateNewHabitScreen(
+            onBackClick = {},
+            regularPage = { RegularTaskScreen(uiState = RegularTaskUiState()) {} },
+            oneTimePage = { OneTimeTaskScreen(uiState = OneTimeTaskUiState()) {} },
+            onSaveClick = { false }
+        )
+    }
 }

@@ -3,12 +3,10 @@ package com.justplay.habittracker.ui.screen.task
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.graphics.toColorInt
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.justplay.data.db.classPkg.PeriodOption
 import com.justplay.data.db.classPkg.RepeatOption
@@ -19,6 +17,7 @@ import com.justplay.habittracker.data.formatUniformDays
 import com.justplay.habittracker.ui.mapper.toLabelRes
 import com.justplay.habittracker.ui.screen.task.event.RegularTaskEvent
 import com.justplay.habittracker.ui.screen.task.model.RegularTaskViewModel
+import com.justplay.habittracker.ui.screen.task.state.RegularTaskUiState
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.view.LastColorCircleIndex
 import timber.log.Timber
@@ -26,15 +25,13 @@ import timber.log.Timber
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegularTaskScreen(
-    vm: RegularTaskViewModel = hiltViewModel()
+    uiState: RegularTaskUiState,
+    onEvent: (RegularTaskEvent) -> Unit
 ) {
     val periodOptions = remember {
         PeriodOption.entries.filterNot { it == PeriodOption.ALL }.toList()
     }
     val repeatOptions = remember { RepeatOption.entries.toList() }
-
-    val uiState by vm.uiState.collectAsStateWithLifecycle()
-    val onEvent = vm::onEvent
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
@@ -244,10 +241,23 @@ fun RegularTaskScreen(
     }
 }
 
+@Composable
+fun RegularTaskScreen(
+    vm: RegularTaskViewModel
+) {
+    RegularTaskScreen(
+        uiState = vm.uiState.collectAsStateWithLifecycle().value,
+        onEvent = vm::onEvent
+    )
+}
+
 @Preview(showBackground = true, locale = "en")
 @Composable
 fun RegularTaskScreenPreview() {
     HabitTrackerTheme {
-        RegularTaskScreen()
+        RegularTaskScreen(
+            uiState = RegularTaskUiState(),
+            onEvent = {}
+        )
     }
 }
