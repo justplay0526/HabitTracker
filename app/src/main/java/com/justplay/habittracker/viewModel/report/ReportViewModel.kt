@@ -6,6 +6,10 @@ import com.justplay.data.db.repo.MoodRepo
 import com.justplay.data.db.repo.TaskRepo
 import com.justplay.habittracker.data.Summary
 import com.justplay.habittracker.ui.uiEvent.report.ReportEvent
+import com.justplay.habittracker.ui.uiState.report.ReportCompletedUiState
+import com.justplay.habittracker.ui.uiState.report.ReportRateCalendarUiState
+import com.justplay.habittracker.ui.uiState.report.ReportRateLineUiState
+import com.justplay.habittracker.ui.uiState.report.ReportSummaryUiState
 import com.justplay.habittracker.ui.uiState.report.ReportUiState
 import com.justplay.habittracker.ui.viewUtils.buildDailyCompletedRates
 import com.justplay.habittracker.ui.viewUtils.buildDailyCompletedCounts
@@ -21,6 +25,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.DayOfWeek
@@ -218,18 +223,36 @@ class ReportViewModel @Inject constructor(
                 val min = ((intDailyRate.minOrNull()?.minus(rateStep) ?: 0)
                     .coerceAtLeast(0) / 10) * 10
 
+                val summaryUiState = ReportSummaryUiState(
+                    streak = summary.streak,
+                    completedRate = ((summary.completed.toFloat() / summary.total.toFloat())*100).toInt(),
+                    completed = summary.completed,
+                    perfectDays = summary.perfectDays
+                )
+
+                val completedUiState = ReportCompletedUiState(
+                    counts = completedList.map { it.count.toFloat() },
+                    labels = completedList.map { it.date.dayOfMonth.toString() }
+                )
+
+                val rateLineUiState = ReportRateLineUiState(
+                    rateList = intDailyRate,
+                    labels = completedList.map { it.date.dayOfMonth.toString() },
+                    max = max.toDouble(),
+                    min = min.toDouble()
+                )
+
+                val rateCalendarUiState = ReportRateCalendarUiState(
+                    currentMonth = _currentMonth.value,
+                    rateList = monthlyCompleteRate
+                )
+
                 _uiState.value.copy(
-                    allCompletedCount = summary.completed,
-                    completeRate = ((summary.completed.toFloat() / summary.total.toFloat())*100).toInt(),
-                    completedCounts = completedList.map { it.count.toFloat() },
-                    completedLabels = completedList.map { it.date.dayOfMonth.toString() },
-                    completedRateForLine = intDailyRate,
-                    completedRateForCalendar = monthlyCompleteRate,
-                    maxStreak = summary.streak,
-                    moodPoints = moodList,
-                    perfectDays = summary.perfectDays,
-                    completeRateMax = max.toDouble(),
-                    completeRateMin = min.toDouble()
+                    summaryUiState = summaryUiState,
+                    completedUiState = completedUiState,
+                    rateLineUiState = rateLineUiState,
+                    rateCalendarUiState = rateCalendarUiState,
+                    moodPoints = moodList
                 )
             }.collectLatest { newState ->
                 Timber.tag(TAG).d("uiState collectLatest")
