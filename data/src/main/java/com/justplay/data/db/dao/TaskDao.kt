@@ -79,6 +79,35 @@ interface TaskDao {
     """)
     fun observeTasksByType(type: TaskType): Flow<List<TaskEntity>>
 
+    @Query(
+        """
+    SELECT * FROM $TASK_TABLE
+    WHERE isArchived = 0
+    AND (
+        (
+            type = "ONE_TIME"
+            AND oneTimeDate BETWEEN :startDate AND :endDate
+        )
+        OR
+        (
+            type = 'REGULAR'
+            AND startDate IS NOT NULL
+            AND startDate <= :endDate
+            AND (
+                endHabitOn = 0
+                OR endHabitDate IS NULL
+                OR endHabitDate >= :startDate
+            )
+        )
+    )
+    ORDER BY sortOrder ASC
+    """
+    )
+    fun observeTasksForCalendarRange(
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): Flow<List<TaskEntity>>
+
     /**
      * 所有任務（包含 archived）
      * 管理頁 / 設定頁會用到

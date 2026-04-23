@@ -1,6 +1,12 @@
 package com.justplay.data.db.classPkg
 
 import com.justplay.data.db.entity.TaskEntity
+import java.time.LocalDate
+
+data class DailyCompletedCount(
+    val date: LocalDate,
+    val count: Int
+)
 
 data class TodayTaskItem(
     val task: TaskEntity,

@@ -1,5 +1,6 @@
 package com.justplay.data.db.repo
 
+import com.justplay.data.db.classPkg.DailyCompletedCount
 import com.justplay.data.db.classPkg.TaskStatus
 import com.justplay.data.db.classPkg.TaskType
 import com.justplay.data.db.classPkg.TodayTaskItem
@@ -23,6 +24,21 @@ interface TaskRepo {
         taskId: Long,
         startDate: LocalDate, endDate: LocalDate
     ): Flow<List<TaskLogEntity>>
+
+    fun observeDailyCompletedCountInRange(
+        startDate: LocalDate,
+        endDate: LocalDate,
+        completedStatus: TaskStatus = TaskStatus.COMPLETED
+    ): Flow<List<DailyCompletedCount>>
+
+    fun observeAllCompleteCount(
+        status: TaskStatus = TaskStatus.COMPLETED
+    ): Flow<Int>
+
+    fun observeTasksForCalendarRange(
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): Flow<List<TaskEntity>>
 
     fun observeWeeklyCompletedCounts(
         taskIds: List<Long>,
@@ -67,6 +83,16 @@ interface TaskRepo {
      */
     suspend fun setStatus(
         taskId: Long, date: LocalDate, status: TaskStatus?)
+
+    suspend fun getActiveTaskIds(): List<Long>
+
+    suspend fun getEarliestDate(): LocalDate?
+
+    suspend fun getMaxStreak(
+        taskIds: List<Long>,
+        today: LocalDate,
+        lookBackDays: Long
+    ): Int
 
     /**
      * 抓特定 [taskId] 的 task 最近一段時間的 log，轉成 Map<LocalDate, TaskStatus>
