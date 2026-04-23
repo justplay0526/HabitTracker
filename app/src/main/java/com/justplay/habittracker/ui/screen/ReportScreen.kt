@@ -40,7 +40,6 @@ import com.justplay.habittracker.ui.uiState.report.ReportUiState
 import com.justplay.habittracker.ui.view.chart.HabitCompletedColumnChart
 import com.justplay.habittracker.ui.view.chart.HabitRateLineChart
 import com.justplay.habittracker.ui.view.customChart.CompleteRateCalendar
-import com.justplay.habittracker.ui.view.customChart.MoodChart
 import com.justplay.habittracker.ui.view.taskDetail.RegularDetailGridItem
 import com.justplay.habittracker.viewModel.report.ReportViewModel
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
@@ -190,15 +189,6 @@ fun ReportScreen(
                     onNextMonth = {
                         onEvent(ReportEvent.MonthNext)
                     }
-                )
-            }
-
-            item {
-                MoodChart(
-                    points = uiState.moodPoints,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
                 )
             }
         }
