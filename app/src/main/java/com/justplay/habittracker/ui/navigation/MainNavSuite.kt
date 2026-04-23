@@ -31,14 +31,11 @@ import androidx.navigation.navArgument
 import androidx.window.core.layout.WindowSizeClass
 import com.justplay.habittracker.data.HomeNavDest
 import com.justplay.habittracker.data.MainNavSuiteDest
-import com.justplay.habittracker.data.MoodStatDest
 import com.justplay.habittracker.data.MyHabitsNavDest
 import com.justplay.habittracker.ui.screen.CreateNewHabitScreen
 import com.justplay.habittracker.ui.screen.HomeScreen
-import com.justplay.habittracker.ui.screen.MoodStatScreen
 import com.justplay.habittracker.ui.screen.MyHabitsScreen
 import com.justplay.habittracker.ui.screen.ReportScreen
-import com.justplay.habittracker.ui.screen.moodHistory.MoodHistoryScreen
 import com.justplay.habittracker.ui.screen.taskDetail.RegularTaskDetailScreen
 import com.justplay.habittracker.ui.screen.taskEdit.OneTimeTaskEditScreen
 import com.justplay.habittracker.ui.screen.taskEdit.RegularTaskEditScreen
@@ -121,9 +118,6 @@ fun MainNavHost(
                     MainNavSuiteDest.HOME -> HomeScreen(onFabClick =
                         { navHost.navigate(HomeNavDest.CREATE_NEW_HABIT.name) }
                     )
-                    MainNavSuiteDest.MOOD_STAT -> MoodStatScreen(onHistoryClick =
-                        { navHost.navigate(MoodStatDest.MOOD_STAT_HISTORY.name) }
-                    )
                     MainNavSuiteDest.REPORT -> ReportScreen()
                     MainNavSuiteDest.MY_HABITS -> MyHabitsScreen(
                         onEditRegularTask = { taskId ->
@@ -144,14 +138,6 @@ fun MainNavHost(
                     )
                 }
             }
-        }
-
-        composable(
-            route = MoodStatDest.MOOD_STAT_HISTORY.name
-        ) {
-            MoodHistoryScreen(
-                onBackClick = { navHost.popBackStack() }
-            )
         }
 
         composable(

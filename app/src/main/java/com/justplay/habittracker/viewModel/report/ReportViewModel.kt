@@ -2,7 +2,6 @@ package com.justplay.habittracker.viewModel.report
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.justplay.data.db.repo.MoodRepo
 import com.justplay.data.db.repo.TaskRepo
 import com.justplay.habittracker.data.Summary
 import com.justplay.habittracker.ui.uiEvent.report.ReportEvent
@@ -11,10 +10,9 @@ import com.justplay.habittracker.ui.uiState.report.ReportRateCalendarUiState
 import com.justplay.habittracker.ui.uiState.report.ReportRateLineUiState
 import com.justplay.habittracker.ui.uiState.report.ReportSummaryUiState
 import com.justplay.habittracker.ui.uiState.report.ReportUiState
-import com.justplay.habittracker.ui.viewUtils.buildDailyCompletedRates
 import com.justplay.habittracker.ui.viewUtils.buildDailyCompletedCounts
+import com.justplay.habittracker.ui.viewUtils.buildDailyCompletedRates
 import com.justplay.habittracker.ui.viewUtils.buildDailyTaskCounts
-import com.justplay.habittracker.ui.viewUtils.buildMoodPoints
 import com.justplay.habittracker.ui.viewUtils.getTotalTaskCount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -39,7 +37,6 @@ import kotlin.math.abs
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ReportViewModel @Inject constructor(
-    private val moodRepo: MoodRepo,
     private val taskRepo: TaskRepo
 ): ViewModel() {
     private val _currentMonth = MutableStateFlow(YearMonth.now())
@@ -58,9 +55,6 @@ class ReportViewModel @Inject constructor(
             )
 
         val weekEnd = weekStart.plusDays(6L)
-
-        val weekStartWithPre = weekStart.minusDays(1L)
-        val weekEndWithNext = weekEnd.plusDays(1L)
 
         val rateStep = 10
 
@@ -154,19 +148,6 @@ class ReportViewModel @Inject constructor(
                 )
             }
 
-            val moodFlow = moodRepo.observeLogsInRange(
-                startDate = weekStartWithPre,
-                endDate = weekEndWithNext
-            ).map { logs ->
-                Timber.tag(TAG).d("moodFlow emit")
-                buildMoodPoints(
-                    startDate = weekStartWithPre,
-                    endDate = weekEndWithNext,
-                    logs = logs
-                )
-            }
-
-
             val monthlyCompleteRateFlow = _currentMonth.flatMapLatest { yearMonth ->
                 val monthStart = yearMonth.atDay(1).minusDays(14L)
                 val monthEnd = yearMonth.atEndOfMonth().plusDays(14L)
@@ -205,9 +186,8 @@ class ReportViewModel @Inject constructor(
                 summaryFlow,
                 completedCountFlow,
                 totalCountFlow,
-                moodFlow,
                 monthlyCompleteRateFlow
-            ) { summary, completedList, totalList, moodList,
+            ) { summary, completedList, totalList,
                 monthlyCompleteRate ->
 
                 val dailyRate = completedList.zip(totalList) { completed, total ->
@@ -251,8 +231,7 @@ class ReportViewModel @Inject constructor(
                     summaryUiState = summaryUiState,
                     completedUiState = completedUiState,
                     rateLineUiState = rateLineUiState,
-                    rateCalendarUiState = rateCalendarUiState,
-                    moodPoints = moodList
+                    rateCalendarUiState = rateCalendarUiState
                 )
             }.collectLatest { newState ->
                 Timber.tag(TAG).d("uiState collectLatest")
