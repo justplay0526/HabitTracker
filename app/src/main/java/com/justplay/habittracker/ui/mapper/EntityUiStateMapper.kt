@@ -17,7 +17,7 @@ fun TaskEntity.toHabitEditUi(): HabitEditUi = HabitEditUi(
     id = id,
     color = colorInt,
     title = name,
-    icon = iconRes
+    emoji = emoji
 )
 
 // TODO 之後擴充
@@ -25,7 +25,7 @@ fun TaskEntity.toRegularDetailUiState(): RegularDetailUiState {
     return RegularDetailUiState(
         taskId = id,
         habitName = name,
-        iconRes = iconRes,
+        emoji = emoji,
         daySet = selectedDaySet,
         dayOfMonth = selectedDaysOfMonth,
         freq = freq
@@ -58,7 +58,7 @@ fun TaskEntity.toRegularEditUiState(): RegularEditUiState {
         selectedDaysOfMonthError = false,
         selectedEndHabitDay = 1,
         selectedFreq = if (freq == null) 5 else freq!!,
-        selectedIconRes = iconRes,
+        selectedEmoji = emoji,
         selectedPeriodOption = periodOption!!,
         selectedRepeatOption = repeatOption!!,
         endHabitType = EndHabitDayType.DATE,
@@ -92,7 +92,7 @@ fun TaskEntity.toOneTimeEditUiState(): OneTimeEditUiState {
             Color.Red.toArgb()
         },
         selectedDate = oneTimeDate!!,
-        selectedIconRes = iconRes,
+        selectedEmoji = emoji,
         selectedPeriodOption = periodOption!!,
         selectedTime = if (time == null) LocalTime.now() else time!!,
         reminderState = reminderEnabled,
