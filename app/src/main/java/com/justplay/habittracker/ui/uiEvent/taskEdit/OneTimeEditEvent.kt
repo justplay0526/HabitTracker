@@ -12,8 +12,8 @@ sealed interface OneTimeEditEvent {
     data class ColorPicked(val color: Int) : OneTimeEditEvent
     data class ColorSelected(val index: Int) : OneTimeEditEvent
     data class ColorIntSelected(val color: Int) : OneTimeEditEvent
-    data class IconPicked(val iconRes: Int) : OneTimeEditEvent
-    data class IconSelected(val index: Int) : OneTimeEditEvent
+    data class EmojiPicked(val emoji: String) : OneTimeEditEvent
+    data class EmojiSelected(val emoji: String) : OneTimeEditEvent
 
     // Repeat
     data class PeriodOptionChanged(val option: PeriodOption) : OneTimeEditEvent

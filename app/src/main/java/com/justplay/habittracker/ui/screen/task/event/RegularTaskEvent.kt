@@ -14,8 +14,8 @@ sealed interface RegularTaskEvent {
     data class ColorPicked(val color: Int) : RegularTaskEvent
     data class ColorSelected(val index: Int) : RegularTaskEvent
     data class ColorIntSelected(val color: Int) : RegularTaskEvent
-    data class IconPicked(val iconRes: Int) : RegularTaskEvent
-    data class IconSelected(val index: Int) : RegularTaskEvent
+    data class EmojiPicked(val emoji: String) : RegularTaskEvent
+    data class EmojiSelected(val emoji: String) : RegularTaskEvent
 
     // Repeat
     data class PeriodOptionChanged(val option: PeriodOption) : RegularTaskEvent

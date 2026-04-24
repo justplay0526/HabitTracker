@@ -14,8 +14,8 @@ sealed interface RegularEditEvent {
     data class ColorPicked(val color: Int) : RegularEditEvent
     data class ColorSelected(val index: Int) : RegularEditEvent
     data class ColorIntSelected(val color: Int) : RegularEditEvent
-    data class IconPicked(val iconRes: Int) : RegularEditEvent
-    data class IconSelected(val index: Int) : RegularEditEvent
+    data class EmojiPicked(val emoji: String) : RegularEditEvent
+    data class EmojiSelected(val emoji: String) : RegularEditEvent
 
     // Repeat
     data class PeriodOptionChanged(val option: PeriodOption) : RegularEditEvent
