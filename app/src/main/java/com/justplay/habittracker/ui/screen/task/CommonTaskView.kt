@@ -279,6 +279,7 @@ fun EndHabitOnSection(
     }
 }
 
+@Deprecated("Use EmojiPicker")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IconPickerBottomSheet(
@@ -298,6 +299,7 @@ fun IconPickerBottomSheet(
     }
 }
 
+@Deprecated("Use EmojiSection")
 @Composable
 fun IconSection(
     selectedIcon: Int,
