@@ -1,12 +1,10 @@
 package com.justplay.habittracker.ui.screen.task.state
 
 import androidx.annotation.ColorInt
-import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.justplay.data.db.classPkg.PeriodOption
 import com.justplay.habittracker.ui.view.ColorResource
-import com.justplay.habittracker.ui.view.IconsRes
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -22,10 +20,7 @@ data class OneTimeTaskUiState(
     // Selected State
     val selectedDate: LocalDate = LocalDate.now(),
     val selectedFreq: Int = 5,
-    /**
-     * 被選擇的 Icon 資源 ID
-     */
-    @param:DrawableRes val selectedIconRes: Int = IconsRes.first(),
+    val selectedEmoji: String = "\uD83E\uDEE0",
     val selectedPeriodOption: PeriodOption = PeriodOption.MORNING,
     val selectedTime: LocalTime = LocalTime.now(),
     // Switch State

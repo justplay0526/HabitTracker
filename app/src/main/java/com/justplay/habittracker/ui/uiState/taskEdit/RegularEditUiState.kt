@@ -37,6 +37,7 @@ data class RegularEditUiState(
      * 被選擇的 Icon 資源 ID
      */
     @param:DrawableRes val selectedIconRes: Int = IconsRes.first(),
+    val selectedEmoji: String = "\uD83E\uDEE0",
     val selectedPeriodOption: PeriodOption = PeriodOption.MORNING,
     val selectedRepeatOption: RepeatOption = RepeatOption.DAILY,
     val endHabitType: EndHabitDayType = EndHabitDayType.DATE,
