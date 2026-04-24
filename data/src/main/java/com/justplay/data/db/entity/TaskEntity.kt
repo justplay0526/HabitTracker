@@ -1,7 +1,6 @@
 package com.justplay.data.db.entity
 
 import androidx.annotation.ColorInt
-import androidx.annotation.DrawableRes
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.justplay.data.TASK_TABLE
@@ -21,7 +20,7 @@ data class TaskEntity(
     val name: String,
 
     @param:ColorInt val colorInt: Int,
-    @param:DrawableRes val iconRes: Int,
+    val emoji: String,
 
     /**
      * periodOption: morning / afternoon / evening
