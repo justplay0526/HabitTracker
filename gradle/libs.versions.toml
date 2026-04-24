@@ -24,6 +24,7 @@ uiGraphics = "1.10.4"
 firebaseBom = "34.10.0"
 firebaseCrashlytics = "3.0.6"
 googleServices = "4.4.4"
+emojipicker = "1.6.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -64,6 +65,7 @@ androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", ve
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
+emojipicker = { group = "androidx.emoji2", name = "emoji2-emojipicker", version.ref = "emojipicker"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -93,7 +95,8 @@ androidx = [
     "androidx-paging-runtime",
     "androidx-paging-common",
     "androidx-paging-compose",
-    "androidx-room-paging"
+    "androidx-room-paging",
+    "emojipicker"
 ]
 
 base-androidx = [
