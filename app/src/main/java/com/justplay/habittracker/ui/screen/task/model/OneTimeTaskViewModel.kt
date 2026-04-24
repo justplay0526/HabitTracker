@@ -60,11 +60,11 @@ class OneTimeTaskViewModel @Inject constructor(
                 is OneTimeTaskEvent.HideTimePicker ->
                     state.copy(showTimePicker = false)
 
-                is OneTimeTaskEvent.IconPicked ->
-                    state.copy(selectedIconRes = event.iconRes)
+                is OneTimeTaskEvent.EmojiPicked ->
+                    state.copy(selectedEmoji = event.emoji)
 
-                is OneTimeTaskEvent.IconSelected ->
-                    state.copy(selectedIconRes = event.index)
+                is OneTimeTaskEvent.EmojiSelected ->
+                    state.copy(selectedEmoji = event.emoji)
 
                 is OneTimeTaskEvent.NameChanged -> {
                     state.copy(

@@ -102,11 +102,11 @@ class RegularEditViewModel @Inject constructor(
                 is RegularEditEvent.HideTimePicker ->
                     state.copy(showTimePicker = false)
 
-                is RegularEditEvent.IconPicked ->
-                    state.copy(selectedIconRes = event.iconRes)
+                is RegularEditEvent.EmojiPicked ->
+                    state.copy(selectedEmoji = event.emoji)
 
-                is RegularEditEvent.IconSelected ->
-                    state.copy(selectedIconRes = event.index)
+                is RegularEditEvent.EmojiSelected ->
+                    state.copy(selectedEmoji = event.emoji)
 
                 is RegularEditEvent.MonthDaysChanged ->
                     state.copy(

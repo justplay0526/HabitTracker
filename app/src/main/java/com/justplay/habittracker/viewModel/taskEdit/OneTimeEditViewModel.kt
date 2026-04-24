@@ -89,11 +89,11 @@ class OneTimeEditViewModel @Inject constructor(
                 is OneTimeEditEvent.HideTimePicker ->
                     state.copy(showTimePicker = false)
 
-                is OneTimeEditEvent.IconPicked ->
-                    state.copy(selectedIconRes = event.iconRes)
+                is OneTimeEditEvent.EmojiPicked ->
+                    state.copy(selectedEmoji = event.emoji)
 
-                is OneTimeEditEvent.IconSelected ->
-                    state.copy(selectedIconRes = event.index)
+                is OneTimeEditEvent.EmojiSelected ->
+                    state.copy(selectedEmoji = event.emoji)
 
                 is OneTimeEditEvent.NameChanged -> {
                     state.copy(

@@ -72,11 +72,11 @@ class RegularTaskViewModel @Inject constructor(
                 is RegularTaskEvent.HideTimePicker ->
                     state.copy(showTimePicker = false)
 
-                is RegularTaskEvent.IconPicked ->
-                    state.copy(selectedIconRes = event.iconRes)
+                is RegularTaskEvent.EmojiPicked ->
+                    state.copy(selectedEmoji = event.emoji)
 
-                is RegularTaskEvent.IconSelected ->
-                    state.copy(selectedIconRes = event.index)
+                is RegularTaskEvent.EmojiSelected ->
+                    state.copy(selectedEmoji = event.emoji)
 
                 is RegularTaskEvent.MonthDaysChanged ->
                     state.copy(
@@ -112,7 +112,6 @@ class RegularTaskViewModel @Inject constructor(
                         selectedDaySetError = !event.enabled
                     )
                 }
-
 
                 is RegularTaskEvent.ShowColorPicker ->
                     state.copy(showColorPicker = true)

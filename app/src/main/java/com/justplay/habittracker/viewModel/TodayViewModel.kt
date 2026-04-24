@@ -98,7 +98,7 @@ class TodayViewModel @Inject constructor(
             id = task.id,
             title = task.name,
             period = task.periodOption ?: PeriodOption.ALL,
-            icon = task.iconRes,
+            emoji = task.emoji,
             color = task.colorInt,
             state = dragState,
             streak = streak               // OneTime = null
