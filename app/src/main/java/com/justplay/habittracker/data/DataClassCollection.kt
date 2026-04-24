@@ -45,7 +45,7 @@ data class HabitUi(
     val id: Long,
     @param:ColorInt val color: Int,
     val title: String,
-    val icon: Int,
+    val emoji: String,
     val state: DragToActionValue = DragToActionValue.Settle,
     val period: PeriodOption = PeriodOption.ALL,
     val streak: Int? = null
@@ -55,7 +55,7 @@ data class HabitEditUi(
     val id: Long = 1L,
     @param:ColorInt val color: Int = ColorResource.first().toArgb(),
     val title: String = "",
-    val icon: Int = IconsRes.first(),
+    val emoji: String,
 )
 
 data class MoodDayUi(
