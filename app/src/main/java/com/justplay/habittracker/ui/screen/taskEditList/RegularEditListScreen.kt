@@ -71,7 +71,7 @@ fun RegularEditListScreen(
                     HabitEditListItem(
                         color = habit.color,
                         text = habit.title,
-                        iconRes = habit.icon,
+                        emoji = habit.emoji,
                         modifier = Modifier
                             .clickable { onEditRegularTask(habit.id) }
                             .draggableHandle(

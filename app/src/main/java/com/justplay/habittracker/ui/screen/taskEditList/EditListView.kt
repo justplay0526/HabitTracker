@@ -1,8 +1,6 @@
 package com.justplay.habittracker.ui.screen.taskEditList
 
 import androidx.annotation.ColorInt
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -15,7 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.justplay.habittracker.R
 import com.justplay.habittracker.ui.view.HabitListItemHeight
 
@@ -23,7 +24,7 @@ import com.justplay.habittracker.ui.view.HabitListItemHeight
 fun HabitEditListItem(
     @ColorInt color: Int,
     text: String,
-    @DrawableRes iconRes: Int,
+    emoji: String,
     modifier: Modifier = Modifier
 ) {
     ListItem(
@@ -41,9 +42,10 @@ fun HabitEditListItem(
             )
         },
         leadingContent = {
-            Image(
-                painter = painterResource(iconRes),
-                contentDescription = "Image"
+            Text(
+                text = emoji,
+                textAlign = TextAlign.Center,
+                style = TextStyle(fontSize = 36.sp)
             )
         },
         trailingContent = {

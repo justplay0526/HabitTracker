@@ -34,8 +34,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.justplay.data.db.classPkg.PeriodOption
@@ -101,7 +104,7 @@ fun TodayScreen(
                     ) {
                         TodayHabitsListItem(color = habit.color,
                             habit.title,
-                            habit.icon,
+                            emoji = habit.emoji,
                             habit.state,
                             modifier = it
                         )
@@ -130,7 +133,7 @@ fun TodayScreen(
                     TodayHabitsListItem(
                         color = habit.color,
                         text = habit.title,
-                        iconRes = habit.icon,
+                        emoji = habit.emoji,
                         state = DragToActionValue.COMPLETE
                     )
                     Spacer(modifier = Modifier.height(12.dp))
@@ -151,7 +154,7 @@ fun TodayScreen(
                     TodayHabitsListItem(
                         color = habit.color,
                         text = habit.title,
-                        iconRes = habit.icon,
+                        emoji = habit.emoji,
                         state = DragToActionValue.SKIP
                     )
                     Spacer(modifier = Modifier.height(12.dp))
@@ -187,6 +190,41 @@ fun TodayHabitsListItem(
             Image(
                 painter = painterResource(iconRes),
                 contentDescription = "Image"
+            )
+        },
+        trailingContent = {
+            TrailingIcon(state)
+        }
+    )
+}
+
+@Composable
+fun TodayHabitsListItem(
+    @ColorInt color: Int,
+    text: String,
+    emoji: String,
+    state: DragToActionValue,
+    modifier: Modifier = Modifier
+) {
+    ListItem(
+        modifier = modifier
+            .clip(RoundedCornerShape(8.dp))
+            .height(HabitListItemHeight),
+        colors = ListItemDefaults.colors(
+            containerColor = Color(color)
+        ),
+        headlineContent = {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.scrim
+            )
+        },
+        leadingContent = {
+            Text(
+                text = emoji,
+                textAlign = TextAlign.Center,
+                style = TextStyle(fontSize = 36.sp)
             )
         },
         trailingContent = {

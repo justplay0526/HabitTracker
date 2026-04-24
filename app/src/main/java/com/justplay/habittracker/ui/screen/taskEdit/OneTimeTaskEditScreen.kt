@@ -40,8 +40,6 @@ import com.justplay.habittracker.ui.screen.task.ColorPickerBottomSheet
 import com.justplay.habittracker.ui.screen.task.ColorSection
 import com.justplay.habittracker.ui.screen.task.DatePickerBottomSheet
 import com.justplay.habittracker.ui.screen.task.DeleteHabitBottomSheet
-import com.justplay.habittracker.ui.screen.task.IconPickerBottomSheet
-import com.justplay.habittracker.ui.screen.task.IconSection
 import com.justplay.habittracker.ui.screen.task.NameSection
 import com.justplay.habittracker.ui.screen.task.ReminderSection
 import com.justplay.habittracker.ui.screen.task.SectionSpace
@@ -49,11 +47,13 @@ import com.justplay.habittracker.ui.screen.task.SingleChoiceSection
 import com.justplay.habittracker.ui.screen.task.TaskScaffold
 import com.justplay.habittracker.ui.screen.task.TimePickerDialog
 import com.justplay.habittracker.ui.screen.task.WhenSection
-import com.justplay.habittracker.ui.uiState.taskEdit.OneTimeEditUiState
-import com.justplay.habittracker.viewModel.taskEdit.OneTimeEditViewModel
+import com.justplay.habittracker.ui.screen.task.commonView.EmojiPicker
+import com.justplay.habittracker.ui.screen.task.commonView.EmojiSection
 import com.justplay.habittracker.ui.theme.HabitTrackerTheme
 import com.justplay.habittracker.ui.uiEvent.taskEdit.OneTimeEditEvent
+import com.justplay.habittracker.ui.uiState.taskEdit.OneTimeEditUiState
 import com.justplay.habittracker.ui.view.LastColorCircleIndex
+import com.justplay.habittracker.viewModel.taskEdit.OneTimeEditViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -125,19 +125,12 @@ fun OneTimeTaskEditScreen(
         }
     )
 
-    IconPickerBottomSheet(
-        show = uiState.showIconPicker,
-        initIcon = uiState.selectedIconRes,
-        sheetState = sheetState,
-        onDismissRequest = {
-            onEvent(OneTimeEditEvent.HideIconPicker)
-        },
-        onIconSelected = { icon ->
-            // TODO When finish database, show this to lastest
-            onEvent(OneTimeEditEvent.IconPicked(icon))
-            onEvent(OneTimeEditEvent.HideIconPicker)
-        }
-    )
+    EmojiPicker(
+        show = uiState.showIconPicker
+    ) {
+        onEvent(OneTimeEditEvent.EmojiPicked(it))
+        onEvent(OneTimeEditEvent.HideIconPicker)
+    }
 
     TimePickerDialog(
         show = uiState.showTimePicker,
@@ -214,10 +207,17 @@ fun OneTimeTaskEditScreen(
 
             SectionSpace()
 
-            IconSection(
-                selectedIcon = uiState.selectedIconRes,
-                onIconSelected = {
-                    onEvent(OneTimeEditEvent.IconSelected(it))
+            EmojiSection(
+                selectedEmoji = uiState.selectedEmoji,
+                emojiList = listOf(
+                    "\uD83E\uDEE0",
+                    "\uD83E\uDEE1",
+                    "\uD83E\uDEE2",
+                    "\uD83E\uDEE3",
+                    "\uD83E\uDEE4",
+                ),
+                onEmojiSelected = {
+                    onEvent(OneTimeEditEvent.EmojiPicked(it))
                 },
                 showPicker = {
                     onEvent(OneTimeEditEvent.ShowIconPicker)

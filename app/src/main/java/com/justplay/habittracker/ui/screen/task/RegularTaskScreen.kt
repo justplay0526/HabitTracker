@@ -15,6 +15,8 @@ import com.justplay.habittracker.data.formatReminderTime
 import com.justplay.habittracker.data.formatUniformDate
 import com.justplay.habittracker.data.formatUniformDays
 import com.justplay.habittracker.ui.mapper.toLabelRes
+import com.justplay.habittracker.ui.screen.task.commonView.EmojiPicker
+import com.justplay.habittracker.ui.screen.task.commonView.EmojiSection
 import com.justplay.habittracker.ui.screen.task.event.RegularTaskEvent
 import com.justplay.habittracker.ui.screen.task.model.RegularTaskViewModel
 import com.justplay.habittracker.ui.screen.task.state.RegularTaskUiState
@@ -50,18 +52,25 @@ fun RegularTaskScreen(
         }
     )
 
-    IconPickerBottomSheet(
-        show = uiState.showIconPicker,
-        initIcon = uiState.selectedIconRes,
-        sheetState = sheetState,
-        onDismissRequest = {
-            onEvent(RegularTaskEvent.HideIconPicker)
-        },
-        onIconSelected = { icon ->
-            onEvent(RegularTaskEvent.IconPicked(icon))
-            onEvent(RegularTaskEvent.HideIconPicker)
-        }
-    )
+    EmojiPicker(
+        show = uiState.showIconPicker
+    ) {
+        onEvent(RegularTaskEvent.EmojiPicked(it))
+        onEvent(RegularTaskEvent.HideIconPicker)
+    }
+
+//    IconPickerBottomSheet(
+//        show = uiState.showIconPicker,
+//        initIcon = uiState.selectedIconRes,
+//        sheetState = sheetState,
+//        onDismissRequest = {
+//            onEvent(RegularTaskEvent.HideIconPicker)
+//        },
+//        onIconSelected = { icon ->
+//            onEvent(RegularTaskEvent.IconPicked(icon))
+//            onEvent(RegularTaskEvent.HideIconPicker)
+//        }
+//    )
 
     DatePickerBottomSheet(
         show = uiState.showDatePicker,
@@ -114,15 +123,32 @@ fun RegularTaskScreen(
 
         SectionSpace()
 
-        IconSection(
-            selectedIcon = uiState.selectedIconRes,
-            onIconSelected = {
-                onEvent(RegularTaskEvent.IconSelected(it))
+        EmojiSection(
+            selectedEmoji = uiState.selectedEmoji,
+            emojiList = listOf(
+                "\uD83E\uDEE0",
+                "\uD83E\uDEE1",
+                "\uD83E\uDEE2",
+                "\uD83E\uDEE3",
+                "\uD83E\uDEE4",
+            ),
+            onEmojiSelected = {
+                onEvent(RegularTaskEvent.EmojiPicked(it))
             },
             showPicker = {
                 onEvent(RegularTaskEvent.ShowIconPicker)
             }
         )
+
+//        IconSection(
+//            selectedIcon = uiState.selectedIconRes,
+//            onIconSelected = {
+//                onEvent(RegularTaskEvent.IconSelected(it))
+//            },
+//            showPicker = {
+//                onEvent(RegularTaskEvent.ShowIconPicker)
+//            }
+//        )
 
         SectionSpace()
 
@@ -240,6 +266,7 @@ fun RegularTaskScreen(
         SectionSpace()
     }
 }
+
 
 @Composable
 fun RegularTaskScreen(

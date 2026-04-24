@@ -17,6 +17,8 @@ import com.justplay.habittracker.R
 import com.justplay.habittracker.data.formatReminderTime
 import com.justplay.habittracker.data.formatUniformDate
 import com.justplay.habittracker.ui.mapper.toLabelRes
+import com.justplay.habittracker.ui.screen.task.commonView.EmojiPicker
+import com.justplay.habittracker.ui.screen.task.commonView.EmojiSection
 import com.justplay.habittracker.ui.screen.task.event.OneTimeTaskEvent
 import com.justplay.habittracker.ui.screen.task.model.OneTimeTaskViewModel
 import com.justplay.habittracker.ui.screen.task.state.OneTimeTaskUiState
@@ -63,19 +65,12 @@ fun OneTimeTaskScreen(
         }
     )
 
-    IconPickerBottomSheet(
-        show = uiState.showIconPicker,
-        initIcon = uiState.selectedIconRes,
-        sheetState = sheetState,
-        onDismissRequest = {
-            onEvent(OneTimeTaskEvent.HideIconPicker)
-        },
-        onIconSelected = { icon ->
-            // TODO When finish database, show this to lastest
-            onEvent(OneTimeTaskEvent.IconPicked(icon))
-            onEvent(OneTimeTaskEvent.HideIconPicker)
-        }
-    )
+    EmojiPicker(
+        show = uiState.showIconPicker
+    ) {
+        onEvent(OneTimeTaskEvent.EmojiPicked(it))
+        onEvent(OneTimeTaskEvent.HideIconPicker)
+    }
 
     TimePickerDialog(
         show = uiState.showTimePicker,
@@ -103,10 +98,17 @@ fun OneTimeTaskScreen(
 
         SectionSpace()
 
-        IconSection(
-            selectedIcon = uiState.selectedIconRes,
-            onIconSelected = {
-                onEvent(OneTimeTaskEvent.IconSelected(it))
+        EmojiSection(
+            selectedEmoji = uiState.selectedEmoji,
+            emojiList = listOf(
+                "\uD83E\uDEE0",
+                "\uD83E\uDEE1",
+                "\uD83E\uDEE2",
+                "\uD83E\uDEE3",
+                "\uD83E\uDEE4",
+            ),
+            onEmojiSelected = {
+                onEvent(OneTimeTaskEvent.EmojiPicked(it))
             },
             showPicker = {
                 onEvent(OneTimeTaskEvent.ShowIconPicker)

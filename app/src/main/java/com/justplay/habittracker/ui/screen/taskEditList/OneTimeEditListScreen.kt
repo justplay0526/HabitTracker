@@ -71,7 +71,7 @@ fun OneTimeEditListScreen(
                     HabitEditListItem(
                         color = habit.color,
                         text = habit.title,
-                        iconRes = habit.icon,
+                        emoji = habit.emoji,
                         modifier = Modifier
                             .clickable { onEditOneTimeTask(habit.id) }
                             .draggableHandle(
